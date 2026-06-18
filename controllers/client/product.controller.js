@@ -1,3 +1,4 @@
+// [GET] /products
 const Product = require("../../models/product.model");
 
 module.exports.index = async (req, res) => {
@@ -13,7 +14,7 @@ module.exports.index = async (req, res) => {
     });
 
     // console.log(products);
-
+    
     res.render("client/pages/products/index", {
         pageTitle: "Trang danh sách sản phẩm",
         products: newProducts

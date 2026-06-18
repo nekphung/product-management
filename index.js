@@ -20,6 +20,7 @@ app.set("view engine", "pug");
 app.use(express.static('public'));
 
 // App Locals Variable, do không include vào trong file .pug được nên phải dùng cái này.
+// Và nó đã trở thành biến toàn cục.
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
 // Routes
