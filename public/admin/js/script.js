@@ -19,7 +19,7 @@ if (buttonStatus.length > 0) {
                 url.searchParams.delete("status");
             }
 
-            console.log(url.href);
+            // console.log(url.href);
             // Chuyển hướng sang trang khác 
             window.location.href = url.href; 
         });
@@ -27,3 +27,27 @@ if (buttonStatus.length > 0) {
 }
 
 // End Button Status 
+
+// Form Search
+const formSearch = document.querySelector("#form-search");
+if (formSearch) {
+    // Muốn tìm kiếm kết hợp với lọc 
+    let url = new URL(window.location.href); // Lấy ra url để tìm kiếm trong cái đã lọc 
+    formSearch.addEventListener("submit", (event) => {
+        event.preventDefault(); // Ngăn chặn load lại trang khi tìm kiếm 
+
+        const keyword = event.target.elements.keyword.value;
+
+        if (keyword) {
+            url.searchParams.set("keyword", keyword);
+        } else {
+            url.searchParams.delete("keyword");
+        }
+        // console.log(event);
+        // console.log(event.target.elements.keyword.value);
+
+        // Chuyển hướng sang url mới 
+        window.location.href = url.href; 
+    })
+}
+// End Form Search 

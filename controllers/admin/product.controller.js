@@ -34,10 +34,21 @@ module.exports.index = async (req, res) => {
             return item.status == "";   
         });
         filterStatus[index].class="active";
-    }
+    };
 
     let find = {
         deleted: false
+    };
+
+    let keyword = "";
+
+    if (req.query.keyword) {
+        keyword = req.query.keyword;
+
+        // const regex = /keyword/i;
+        // i: Không phân biệt chữ hoa và chữ thường.
+        const regex = new RegExp(keyword, "i");
+        find.title = regex;
     }
 
     // Lấy ra từ request 
@@ -52,6 +63,7 @@ module.exports.index = async (req, res) => {
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sách sản phẩm",
         products: products,
-        filterStatus: filterStatus
+        filterStatus: filterStatus,
+        keyword: keyword
     })
 }
