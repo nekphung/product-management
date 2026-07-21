@@ -1,18 +1,61 @@
-/* Header */
+/* ===== VARIABLES ===== */
+:root {
+    --blue-50:  #E6F1FB;
+    --blue-100: #B5D4F4;
+    --blue-200: #85B7EB;
+    --blue-400: #378ADD;
+    --blue-600: #185FA5;
+    --blue-800: #0C447C;
+    --blue-900: #042C53;
+
+    --gray-50:  #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-900: #2C2C2A;
+
+    --green-400: #639922;
+    --red-500:   #C0392B;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+}
+
+/* ===== RESET ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--blue-50);
+    color: var(--gray-900);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+}
+
+/* ===== HEADER ===== */
 .header {
-    background: #333;
-    padding: 15px 0;
+    background: var(--blue-900);
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(4, 44, 83, 0.3);
+}
+
+.header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
 }
 
 .header .inner-logo {
-    position: relative;
-    left: -150px;
+    position: static;
 }
 
 .header .inner-logo img {
     max-width: 100%;
-    height: 60px;
-    object-fit: cover;
+    height: 52px;
+    object-fit: contain;
 }
 
 .header .inner-menu ul {
@@ -20,99 +63,133 @@
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
 }
 
 .header .inner-menu li {
-    margin-left: 20px;
+    margin-left: 0;
 }
 
 .header .inner-menu a {
-    color: white;
+    color: var(--blue-100);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s, color 0.2s;
 }
 
 .header .inner-menu a:hover {
-    color: orange;
+    background: var(--blue-800);
+    color: #ffffff;
 }
 
-
-/* Footer */
+/* ===== FOOTER ===== */
 .footer {
-    background: #222;
-    color: white;
+    background: var(--blue-900);
+    color: var(--blue-100);
     text-align: center;
-    padding: 20px 0;
-    margin-top: 30px;
+    padding: 24px 0;
+    margin-top: 48px;
+    font-size: 14px;
 }
 
-/* Tiêu đề */
+.footer a {
+    color: var(--blue-200);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #ffffff;
+}
+
+/* ===== TIÊU ĐỀ (BOX HEAD) ===== */
 .box-head {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--blue-100);
 }
 
 .box-head .inner-title {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
+    color: var(--blue-900);
+    margin: 0;
+    letter-spacing: -0.3px;
 }
 
-
-/* Card sản phẩm */
+/* ===== CARD SẢN PHẨM ===== */
 .product-item {
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    border: 1px solid var(--blue-100);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    transition: 0.3s;
-    background: #fff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(24, 95, 165, 0.18);
 }
 
 .product-item .inner-image {
     width: 100%;
-    height: 250px;
+    height: 220px;
     overflow: hidden;
+    background: var(--blue-50);
 }
 
 .product-item .inner-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.product-item:hover .inner-image img {
+    transform: scale(1.05);
 }
 
 .product-item .inner-content {
-    padding: 15px;
+    padding: 16px 18px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-item .inner-title {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 600;
-    margin-bottom: 10px;
+    color: var(--blue-900);
+    margin: 0 0 12px;
+    line-height: 1.4;
 }
 
 .product-item .inner-price-new {
-    color: #28a745;
+    color: var(--green-400);
     font-size: 22px;
     font-weight: 700;
 }
 
 .product-item .inner-price-old {
-    color: #999;
+    color: var(--gray-400);
     text-decoration: line-through;
-    margin-top: 5px;
+    font-size: 14px;
+    margin-top: 4px;
 }
 
 .product-item .inner-discount {
     display: inline-block;
-    background: #dc3545;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
+    background: var(--red-500);
+    color: #ffffff;
+    padding: 3px 10px;
+    border-radius: 20px;
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
+    align-self: flex-start;
 }
