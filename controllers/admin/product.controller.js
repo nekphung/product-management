@@ -1,62 +1,60 @@
 const Product = require("../../models/product.model");
 
+const filterStatusHelper = require("../../helpers/filterStatus");
+const searchHelper = require("../../helpers/search")
+const paginationHelper = require("../../helpers/pagination")
+
 // [GET] admin/products
 module.exports.index = async (req, res) => {
     // console.log(req.query.status);
 
-    // Cái này sẽ được load lại sau mỗi request 
-    let filterStatus = [
-        {
-            name: "Tất cả",
-            status: "",
-            class: ""
-        },
-        {
-            name: "Hoạt động",
-            status: "active",
-            class: ""
-        },
-        {
-            name: "Dừng hoạt động",
-            status: "inactive",
-            class: ""
-        }
-    ];
+    const filterStatus = filterStatusHelper(req.query);
 
-    if (req.query.status) {
-        const index = filterStatus.findIndex(item => {
-            return item.status == req.query.status;   
-        });
-        filterStatus[index].class="active";
-        // console.log(index);
-    } else {
-        const index = filterStatus.findIndex(item => {
-            return item.status == "";   
-        });
-        filterStatus[index].class="active";
-    };
+    // console.log(filterStatus);
 
     let find = {
         deleted: false
     };
-
-    let keyword = "";
-
-    if (req.query.keyword) {
-        keyword = req.query.keyword;
-
-        // const regex = /keyword/i;
-        // i: Không phân biệt chữ hoa và chữ thường.
-        const regex = new RegExp(keyword, "i");
-        find.title = regex;
-    }
 
     // Lấy ra từ request 
     if (req.query.status) {
         find.status = req.query.status;
     }
 
-    const products = await Product.find(find);
+    const objectSearch = searchHelper(req.query);
+
+    // console.log(objectSearch);
+
+    if (objectSearch.regex) {
+        find.title = objectSearch.regex;
+    }
+
+    const countProducts = await Product.countDocuments(find);
+    
+    // Pagination
+    let objectPagination = paginationHelper(
+        {
+            currentPage: 1,
+            limitItem: 4
+        }, 
+        req.query, 
+        countProducts
+    );
+    // if (req.query.page) {
+    //     objectPagination.currentPage = parseInt(req.query.page);
+    // }
+
+    // objectPagination.skip = (objectPagination.currentPage - 1) * objectPagination.limitItem;
+    // // console.log(objectPagination.currentPage);
+
+    // const countProducts = await Product.countDocuments(find);
+    // const totalPage = Math.ceil(countProducts/objectPagination.limitItem);
+    // objectPagination.totalPage = totalPage;
+    // console.log(totalPage);
+    // End Pagination
+
+    const products = await Product.find(find).limit(objectPagination.limitItem).
+    skip(objectPagination.skip);
 
     // console.log(products);
 
@@ -64,6 +62,7 @@ module.exports.index = async (req, res) => {
         pageTitle: "Danh sách sản phẩm",
         products: products,
         filterStatus: filterStatus,
-        keyword: keyword
-    })
+        keyword: objectSearch.keyword,
+        pagination: objectPagination
+    });
 }
