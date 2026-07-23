@@ -69,3 +69,80 @@ if (buttonPagination) {
 }
 
 // End Pagination
+
+// Checkbox Multi
+const checkboxMulti = document.querySelector("[checkbox-multi]");
+if (checkboxMulti) {
+    const inputCheckAll = checkboxMulti.querySelector("input[name='checkall']");
+    const inputsId = checkboxMulti.querySelectorAll("input[name='id']");
+
+    // console.log(inputCheckAll);
+    // console.log(inputsId);
+    inputCheckAll.addEventListener("click", () => {
+        // console.log(inputCheckAll.checked);
+        if (inputCheckAll.checked) {
+            // console.log("Check tat ca");
+            inputsId.forEach(input => {
+                input.checked = true;
+            })
+        } else {
+            // console.log("Bo check tat ca");
+            inputsId.forEach(input => {
+                input.checked = false;
+            })
+        }
+    });
+
+    inputsId.forEach((input) => {
+        input.addEventListener("click", () => {
+            const countChecked = checkboxMulti.querySelectorAll(
+                "input[name='id']:checked"
+            ).length;
+            
+            // console.log(countChecked);
+            // console.log(inputsId.length);
+
+            if (countChecked == inputsId.length) {
+                inputCheckAll.checked = true;
+            } else {
+                inputCheckAll.checked = false;
+            }
+        });
+    });
+}
+
+// End Checkbox Multi
+
+// Form Change Multi
+const formChangeMulti = document.querySelector("[form-change-multi]");
+if (formChangeMulti) {
+    // console.log(formChangeMulti);
+    formChangeMulti.addEventListener("submit", (e) => {
+        e.preventDefault(); // ngăn chặn load lại trang web
+        // console.log(e);
+
+        const checkboxMulti = document.querySelector("[checkbox-multi]");
+        const inputsChecked = checkboxMulti.querySelectorAll(
+            "input[name='id']:checked"
+        );
+
+        // console.log(inputsChecked);
+        if (inputsChecked.length > 0) {
+            let ids = [];
+            const inputIds = formChangeMulti.querySelector("input[name='ids']");
+
+            inputsChecked.forEach(input => {
+                const id = input.value;
+                ids.push(id);
+            })
+            // console.log(ids.join(", "));
+            inputIds.value = ids.join(", ");
+
+            formChangeMulti.submit();
+        } else {
+            alert("Vui lòng chọn ít nhất một bản ghi!");
+        }
+    })
+}
+
+// End Form Change Multi
