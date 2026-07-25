@@ -53,8 +53,10 @@ module.exports.index = async (req, res) => {
     // console.log(totalPage);
     // End Pagination
 
-    const products = await Product.find(find).limit(objectPagination.limitItem).
-    skip(objectPagination.skip);
+    const products = await Product.find(find)
+        .sort({position: "asc"})
+        .limit(objectPagination.limitItem)
+        .skip(objectPagination.skip);
 
     // console.log(products);
 
@@ -75,6 +77,8 @@ module.exports.changeStatus = async (req, res) => {
 
     await Product.updateOne({_id: id}, {status: status});
 
+    req.flash("success", "Cập nhật trạng thái thành công!");
+
     res.redirect(req.get("Referrer") || "/");
 }
 
@@ -91,12 +95,37 @@ module.exports.changeMulti = async (req, res) => {
                 {_id: {$in: ids}}, 
                 { status: "active" }
             )
+            req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
             break;
         case "inactive":
             await Product.updateMany(
                 {_id: {$in: ids}}, 
                 { status: "inactive" }
             )
+            req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
+            break;
+        case "delete-all":
+            await Product.updateMany(
+                {_id: {$in: ids}},
+                { 
+                    deleted: true,
+                    deletedAt: new Date()
+                }
+            )
+            req.flash("success", `Đã xóa thành công ${ids.length} sản phẩm!`);
+            break;
+        case "change-position":
+            // console.log(ids);
+            for (const item of ids) {
+                let [id, position] = item.split("-");
+                position = parseInt(position);
+                // console.log(id);
+                // console.log(position);
+                await Product.updateOne({_id: id}, {
+                    position: position                
+                })
+            }
+            req.flash("success", `Đã đổi vị trí thành công ${ids.length} sản phẩm!`);
             break;
         default:
             break;
@@ -116,5 +145,8 @@ module.exports.deleteItem = async (req, res) => {
         deletedAt: new Date() // cái này lấy thời gian thực
     });
 
+    req.flash("success", `Đã xóa thành công sản phẩm!`);
+
     res.redirect(req.get("Referrer") || "/");
 }
+
