@@ -67,7 +67,10 @@ block main
             ) 
 
         // Ảnh 
-        .form-group
+        div(
+            class="form-group"
+            upload-image
+        )
             label(for="thumbnail") Ảnh (URL) 
             input( 
                 type="file" 
@@ -75,6 +78,12 @@ block main
                 id="thumbnail" 
                 name="thumbnail" 
                 accept="image/*" 
+                upload-image-input
+            )
+            img(
+                src=""
+                upload-image-preview
+                class="image-preview"
             )
 
         // Vị trí 
