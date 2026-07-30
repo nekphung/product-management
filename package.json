@@ -21,6 +21,7 @@
     "mongodb": "^7.3.0",
     "mongoose": "^9.7.1",
     "mongoose-slug-updater": "^3.3.0",
+    "multer": "^2.2.0",
     "pug": "^3.0.4"
   },
   "devDependencies": {
