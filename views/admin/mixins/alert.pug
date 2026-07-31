@@ -6,3 +6,14 @@ mixin alert-success(time)
                     show-alert
                     data-time=time
                 ) #{messages.success} <span close-alert>&times;</span>
+
+
+mixin alert-error(time)
+    - if (messages.error)
+        .message.into 
+            div(
+                class="alert alert-danger"
+                show-alert 
+                data-time=time
+            ) #{messages.error} <span close-alert>&times;</span>
+
