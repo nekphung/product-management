@@ -1,0 +1,108 @@
+extends ../../layouts/default.pug 
+include ../../mixins/alert.pug 
+
+block main 
+    h1(class="mb-4") Thêm mới danh mục sản phẩm
+    
+    +alert-error(5000)
+
+    form(
+        action=`${prefixAdmin}/products-category/create`
+        id="form-create-product-category"
+        method="POST"
+        enctype="multipart/form-data"
+    ) 
+        // Tiêu đề 
+        div(class="form-group")
+            label(for="title") Tiêu đề 
+            input(
+                type="text"
+                class="form-control"
+                id="title"
+                name="title"
+            )
+
+        // Danh mục cha (parent_id)
+        div(class="form-group")
+            label(for="parent_id") Danh mục cha
+            input(
+                type="text"
+                class="form-control"
+                id="parent_id"
+                name="parent_id"
+            )
+                //- option(value="") -- Chọn danh mục cha --
+                //- //- Ở đây sau này bạn sẽ loop qua danh sách danh mục hiện có
+                //- //- mỗi option sẽ có value=category.id
+                //- if records
+                //-     each item in records
+                //-         option(value=item.id) #{item.title}
+
+        // Mô tả 
+        div(class="form-group") 
+            label(for="desc") Mô tả 
+            textarea(
+                class="form-control textarea-mce"
+                id="desc"
+                name="description"
+                rows="5"
+            )
+
+        // Ảnh (thumbnail)
+        div(
+            class="form-group"
+            upload-image
+        )
+            label(for="thumbnail") Ảnh danh mục
+            input( 
+                type="file" 
+                class="form-control-file"
+                id="thumbnail" 
+                name="thumbnail" 
+                accept="image/*" 
+                upload-image-input
+            )
+            img(
+                src=""
+                upload-image-preview
+                class="image-preview"
+            )
+
+        // Vị trí 
+        .form-group
+            label(for="position") Vị trí 
+            input( 
+                type="number" 
+                class="form-control"
+                id="position"
+                name="position" 
+                min="1" 
+                placeholder="Tự động tăng"
+            ) 
+
+        // Trạng thái 
+        .form-group
+            label.d-block Trạng thái 
+            .form-check.form-check-inline 
+                input.form-check-input( 
+                    type="radio" 
+                    id="statusActive" 
+                    name="status" 
+                    value="active" 
+                    checked 
+                ) 
+                label.form-check-label(for="statusActive") Hoạt động 
+            
+            .form-check.form-check-inline 
+                input.form-check-input( 
+                    type="radio" 
+                    id="statusInactive" 
+                    name="status" 
+                    value="inactive" 
+                ) 
+                label.form-check-label(for="statusInactive") Dừng hoạt động
+
+        // Nút submit 
+        button.btn.btn-primary(type="submit") Tạo danh mục
+
+    script(src="/admin/js/product-category.js")
