@@ -42,6 +42,19 @@ module.exports.index = async (req, res) => {
         req.query, 
         countProducts
     );
+
+    // End Pagination 
+
+    // Sort 
+    let sort = {};
+
+    if (req.query.sortKey && req.query.sortValue) {
+        sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+        sort.position = "desc";
+    }
+    // End Sort 
+
     // if (req.query.page) {
     //     objectPagination.currentPage = parseInt(req.query.page);
     // }
@@ -56,7 +69,7 @@ module.exports.index = async (req, res) => {
     // End Pagination
 
     const products = await Product.find(find)
-        .sort({position: "asc"})
+        .sort(sort)
         .limit(objectPagination.limitItem)
         .skip(objectPagination.skip);
 
