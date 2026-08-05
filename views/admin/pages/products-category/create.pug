@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug 
 include ../../mixins/alert.pug 
+include ../../mixins/select-tree.pug
 
 block main 
     h1(class="mb-4") Thêm mới danh mục sản phẩm
@@ -25,18 +26,22 @@ block main
         // Danh mục cha (parent_id)
         div(class="form-group")
             label(for="parent_id") Danh mục cha
-            input(
-                type="text"
+            //- input(
+            //-     type="text"
+            //-     class="form-control"
+            //-     id="parent_id"
+            //-     name="parent_id"
+            //- )
+            select(
                 class="form-control"
                 id="parent_id"
                 name="parent_id"
             )
-                //- option(value="") -- Chọn danh mục cha --
-                //- //- Ở đây sau này bạn sẽ loop qua danh sách danh mục hiện có
-                //- //- mỗi option sẽ có value=category.id
-                //- if records
-                //-     each item in records
-                //-         option(value=item.id) #{item.title}
+                option(value="") -- Chọn danh mục cha --
+                //- Ở đây sau này bạn sẽ loop qua danh sách danh mục hiện có
+                //- mỗi option sẽ có value=category.id
+                if records
+                    +select-tree(records)
 
         // Mô tả 
         div(class="form-group") 
