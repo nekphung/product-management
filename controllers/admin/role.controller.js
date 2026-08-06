@@ -1,6 +1,7 @@
 const Role = require("../../models/role.model");
 
 const systemConfig = require("../../config/system");
+const { removeAllListeners } = require("../../models/products-category.model");
 
 // [GET] /admin/roles 
 module.exports.index = async (req, res) => {
@@ -67,5 +68,45 @@ module.exports.editPatch = async (req, res) => {
         res.redirect(req.get("Referrer") || "/");
     } catch (error) {
         req.flash("error", "Cập nhật nhóm quyền thất bại!");
+    }
+}
+
+// [GET] /admin/roles/permissions
+module.exports.permissions = async (req, res) => {
+    let find = {
+        deleted: false
+    }
+
+    const records = await Role.find(find);
+
+    res.render("admin/pages/roles/permissions", {
+        pageTitle: "Phân quyền",
+        records: records
+    })
+}
+
+// [PATCH] /admin/roles/permissions
+module.exports.permissionsPatch = async (req, res) => {
+    try {
+        const permissions = JSON.parse(req.body.permissions);
+        // console.log(req.body);
+
+        // console.log(permissions);
+
+        for (const item of permissions) {
+            const id = item.id;
+            const permissions = item.permissions;
+            
+            await Role.updateOne(
+                { _id: id },
+                { permissions: permissions } // Chỉ cập nhật đúng mảng permissions
+            );
+        }
+
+        req.flash("success", "Cập nhật phân quyền thành công!");
+
+        res.redirect(req.get("Referrer") || "/");
+    } catch (error) {
+        req.flash("error", "Cập nhật phân quyền thất bại!");
     }
 }
