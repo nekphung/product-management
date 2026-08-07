@@ -1,80 +1,85 @@
 extends ../../layouts/default.pug
 
 block main 
-  h1(class="mb-4") Danh sách tài khoản 
+  if (role.permissions.includes("accounts_view"))
+    h1(class="mb-4") Danh sách tài khoản 
 
-  .card.mb-3 
-    .card-header Danh sách  
-    .card-body 
-      .row.mb-3
-        .col-8 
-        .col-4.text-right 
-          a(
-            href=`${prefixAdmin}/accounts/create`
-            class="btn btn-outline-success"
-          ) + Thêm mới
+    .card.mb-3 
+      .card-header Danh sách  
+      .card-body 
+        .row.mb-3
+          .col-8 
+          .col-4.text-right 
+            if (role.permissions.includes("accounts_create"))
+              a(
+                href=`${prefixAdmin}/accounts/create`
+                class="btn btn-outline-success"
+              ) + Thêm mới
 
-      table(class="table table-hover table-sm")
-        thead
-          tr
-            th STT
-            th Avatar
-            th Họ tên
-            th Phân quyền 
-            th Email
-            th Trạng thái
-            th Hành động
-        tbody
-          if (records && records.length > 0)
-            each item, index in records
-              tr
-                td #{index + 1}
-                td
-                  if (item.avatar)
-                    img(
-                      src=item.avatar
-                      alt=item.fullName
-                      width="40px"
-                      height="40px"
-                      style="border-radius: 50%; object-fit: cover;"
-                    )
-                  else
-                    //- Hiển thị ảnh mặc định nếu tài khoản không có avatar
-                    img(
-                      src="/admin/images/default-avatar.png" 
-                      alt=item.fullName
-                      width="40px"
-                      height="40px"
-                      style="border-radius: 50%; object-fit: cover;"
-                    )
-                td #{item.fullName}
-
-                //- Hiển thị tên vai trò (Tùy theo Cách 1 hay Cách 2 ở Controller)
-                //- Cách 1 (dùng populate): item.role_id.title
-                //- Cách 2 (gán record.role): item.role ? item.role.title : ''
-                td #{item.role.title}
-
-                td #{item.email}
-
-                td
-                  if (item.status === "active")
-                    span(class="badge badge-success") Hoạt động
-                  else
-                    span(class="badge badge-danger") Dừng hoạt động
-                td
-                  a(
-                    href=`${prefixAdmin}/accounts/detail/${item._id}`
-                    class="btn btn-secondary btn-sm mr-1"
-                  ) Chi tiết
-                  a(
-                    href=`${prefixAdmin}/accounts/edit/${item._id}`
-                    class="btn btn-warning btn-sm mr-1"
-                  ) Sửa
-                  button(
-                    class="btn btn-danger btn-sm"
-                    data-id=item._id
-                  ) Xóa
-          else
+        table(class="table table-hover table-sm")
+          thead
             tr
-              //- Cập nhật colspan="8" vì đã thêm 1 cột
-              td(colspan="8" class="text-center") Chưa có tài khoản nào được tạo.
+              th STT
+              th Avatar
+              th Họ tên
+              th Phân quyền 
+              th Email
+              th Trạng thái
+              th Hành động
+          tbody
+            if (records && records.length > 0)
+              each item, index in records
+                tr
+                  td #{index + 1}
+                  td
+                    if (item.avatar)
+                      img(
+                        src=item.avatar
+                        alt=item.fullName
+                        width="40px"
+                        height="40px"
+                        style="border-radius: 50%; object-fit: cover;"
+                      )
+                    else
+                      //- Hiển thị ảnh mặc định nếu tài khoản không có avatar
+                      img(
+                        src="/admin/images/default-avatar.png" 
+                        alt=item.fullName
+                        width="40px"
+                        height="40px"
+                        style="border-radius: 50%; object-fit: cover;"
+                      )
+                  td #{item.fullName}
+
+                  //- Hiển thị tên vai trò (Tùy theo Cách 1 hay Cách 2 ở Controller)
+                  //- Cách 1 (dùng populate): item.role_id.title
+                  //- Cách 2 (gán record.role): item.role ? item.role.title : ''
+                  td #{item.role.title}
+
+                  td #{item.email}
+
+                  td
+                    if (role.permissions.includes("accounts_edit"))
+                      if (item.status === "active")
+                        span(class="badge badge-success") Hoạt động
+                      else
+                        span(class="badge badge-danger") Dừng hoạt động
+                  td
+                    a(
+                      href=`${prefixAdmin}/accounts/detail/${item._id}`
+                      class="btn btn-secondary btn-sm mr-1"
+                    ) Chi tiết
+                    if (role.permissions.includes("accounts_edit"))
+                      a(
+                        href=`${prefixAdmin}/accounts/edit/${item._id}`
+                        class="btn btn-warning btn-sm mr-1"
+                      ) Sửa
+                    if (role.permissions.includes("accounts_delete"))
+                      button(
+                        class="btn btn-danger btn-sm"
+                        data-id=item._id
+                      ) Xóa
+            else
+              tr
+                //- Cập nhật colspan="8" vì đã thêm 1 cột
+                td(colspan="8" class="text-center") Chưa có tài khoản nào được tạo.
