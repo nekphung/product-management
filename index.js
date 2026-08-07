@@ -31,7 +31,12 @@ app.set("view engine", "pug");
 
 // flash
 app.use(cookieParser('nekphung7122006'));
-app.use(session({ cookie: { maxAge: 60000 }}));
+app.use(session({
+    secret: 'nekphung7122006',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60000 }
+}));
 app.use(flash());
 // End flash
 
