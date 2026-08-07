@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("express-flash");
+const moment = require("moment");
 
 require("dotenv").config();
 
@@ -49,6 +50,7 @@ app.use(express.static(`${__dirname}/public`));
 // App Locals Variable, do không include vào trong file .pug được nên phải dùng cái này.
 // Và nó đã trở thành biến toàn cục.
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+app.locals.moment = moment;
 
 // Routes
 routeAdmin(app); 
