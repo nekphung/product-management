@@ -54,15 +54,25 @@ block main
         name="phone"
       )
 
-    // Avatar
-    div(class="form-group mb-3")
+    // Avatar (Sửa name="thumbnail" thành name="avatar")
+    div(
+      class="form-group mb-3"
+      upload-image
+    )
       label(for="avatar") Avatar
-      input(
-        type="file"
+      input( 
+        type="file" 
         class="form-control-file d-block"
-        id="avatar"
-        name="avatar"
-        accept="image/*"
+        id="avatar" 
+        name="avatar" 
+        accept="image/*" 
+        upload-image-input
+      )
+      img(
+        src=""
+        upload-image-preview
+        class="image-preview"
+        style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-top: 10px;"
       )
 
     // Phân quyền

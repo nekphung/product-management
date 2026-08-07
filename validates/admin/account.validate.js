@@ -19,3 +19,19 @@ module.exports.createPost = (req, res, next) => {
 
     next(); // next sang buoc ke tiep 
 }
+
+module.exports.editPatch = (req, res, next) => {
+    if (!req.body.fullName) {
+        req.flash("error", "Vui lòng nhập họ tên!");
+        res.redirect(req.get("Referrer") || "/");
+        return;
+    }
+
+    if (!req.body.email) {
+        req.flash("error", "Vui lòng nhập email!");
+        res.redirect(req.get("Referrer") || "/");
+        return;
+    }
+
+    next(); // next sang buoc ke tiep 
+}
