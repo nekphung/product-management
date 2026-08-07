@@ -1,4 +1,4 @@
-//- extends ../../layouts/auth.pug
+extends ../../layouts/auth.pug
 include ../../mixins/alert.pug
 
 block main
@@ -14,7 +14,7 @@ block main
           method="POST"
         )
           div(class="form-group mb-3")
-            label(for="email") Email *
+            label(for="email") Email
             input(
               type="email"
               class="form-control"
@@ -23,7 +23,7 @@ block main
               required
             )
           div(class="form-group mb-3")
-            label(for="password") Mật khẩu *
+            label(for="password") Mật khẩu
             input(
               type="password"
               class="form-control"
