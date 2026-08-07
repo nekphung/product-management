@@ -193,3 +193,22 @@ body {
     font-weight: 600;
     align-self: flex-start;
 }
+
+/* Styling cho Layout Auth */
+body {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-layout {
+  width: 100%;
+}
+
+.auth-layout .card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
