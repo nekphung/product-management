@@ -1,13 +1,12 @@
-header.header 
+header.header.py-3
     .container-fluid 
-        .row.align-item-center
+        .row.align-items-center
             .col-3 
                 .inner-logo
-                    a(href=`${prefixAdmin}/dashboard`) AMIN
+                    a(href=`${prefixAdmin}/dashboard`) ADMIN
             
-            .col-9
-                div(class="text-right")
-                    a(
-                        href=`${prefixAdmin}/auth/logout`
-                        class="btn btn-danger btn-sm"
-                    ) Đăng xuất
+            .col-9.d-flex.justify-content-end
+                a(
+                    href=`${prefixAdmin}/auth/logout`
+                    class="btn btn-danger btn-sm"
+                ) Đăng xuất
