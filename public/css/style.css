@@ -194,16 +194,27 @@ body {
     align-self: flex-start;
 }
 
-/* Styling cho Layout Auth */
+/* Style chung cho toàn bộ website */
 body {
   background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Đặt chiều dọc để Header ở trên, Footer ở dưới */
+}
+
+/* Style cho phần nội dung ở giữa (giúp đẩy Footer xuống dưới cùng) */
+.main-content {
+  flex: 1;
+}
+
+/* Styling cho Layout Đăng nhập / Đăng ký (Chỉ căn giữa với trang Auth) */
+.auth-layout {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.auth-layout {
   width: 100%;
 }
 
@@ -211,10 +222,235 @@ body {
   border: none;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Giới hạn độ rộng khung login */
 }
 
-header.header .col-9 {
+/* Styling cho Header */
+header.header {
+  background-color: #0b325b;
+  padding: 10px 0;
+  width: 100%;
+}
+
+/* Style cho danh sách menu */
+header.header .inner-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  justify-content: flex-end; /* Đẩy sang góc bên phải tuyệt đối */
   align-items: center;
+  gap: 20px;
+}
+
+header.header .inner-menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+header.header .inner-menu a:hover {
+  color: #64b5f6;
+}
+
+/* Layout chung */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.main-content {
+  flex: 1; /* Đẩy footer xuống đáy */
+}
+
+/* Footer */
+footer.footer {
+  background-color: #0b325b;
+  color: #b0bec5;
+  padding: 16px 0;
+  margin-top: auto;
+  font-size: 14px;
+}
+
+footer.footer p {
+  margin: 0;
+}
+
+/* ===== HEADER ===== */
+header.header {
+  background-color: #0b325b;
+  padding: 14px 0;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+header.header .container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 24px;
+}
+
+header.header .inner-logo img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+
+/* Đẩy menu sang phải bằng margin-left: auto, không phụ thuộc justify-content của .container */
+header.header .inner-menu {
+  margin-left: auto;
+}
+
+header.header .inner-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+header.header .inner-menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+header.header .inner-menu a:hover {
+  color: #64b5f6;
+}
+
+/* ================= MENU MULTI-LEVEL ================= */
+
+.inner-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.inner-menu li {
+  position: relative;
+}
+
+/* Link chung cho mọi cấp */
+.inner-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15.5px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover cấp 1 (menu chính trên header) */
+.inner-menu > ul > li > a:hover,
+.inner-menu > ul > li.sub-menu:hover > a {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Mũi tên cho mọi mục có submenu */
+.inner-menu li.sub-menu > a::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+/* Cấp 1: mũi tên chỉ xuống, xoay lên khi hover */
+.inner-menu > ul > li.sub-menu > a::after {
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+.inner-menu > ul > li.sub-menu:hover > a::after {
+  transform: rotate(225deg) translate(-1px, 1px);
+}
+
+/* Cấp 2 trở đi: mũi tên chỉ sang phải (báo hiệu submenu bung ngang) */
+.inner-menu li.sub-menu li.sub-menu > a::after {
+  transform: rotate(-45deg);
+  margin-left: auto;
+}
+
+/* ===== DROPDOWN — chỉ hiện khi hover đúng mục cha, dùng chung cho mọi cấp ===== */
+.inner-menu li.sub-menu > ul {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background-color: #10233b;
+  min-width: 220px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  padding: 6px;
+
+  /* Ẩn mặc định — chỉ hiện khi hover đúng li.sub-menu cha (rule bên dưới) */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 1000;
+}
+
+.inner-menu li.sub-menu:hover > ul {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Cấp 3 trở đi: bung sang PHẢI thay vì xuống dưới */
+.inner-menu li.sub-menu li.sub-menu > ul {
+  top: -6px;
+  left: calc(100% + 6px);
+  transform: translateX(6px);
+}
+.inner-menu li.sub-menu li.sub-menu:hover > ul {
+  transform: translateX(0);
+}
+
+/* Item bên trong dropdown (mọi cấp con) */
+.inner-menu li.sub-menu ul li {
+  width: 100%;
+}
+
+.inner-menu li.sub-menu ul a {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.65);
+  border-left: 2px solid transparent;
+}
+
+.inner-menu li.sub-menu ul li:hover > a {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-left: 2px solid #64b5f6;
 }
