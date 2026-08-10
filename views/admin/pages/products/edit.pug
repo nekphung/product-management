@@ -39,6 +39,27 @@ block main
                     option(value="") -- Chọn danh mục --
                     if category
                         +select-tree(category, 1, product.product_category_id)
+            
+            .form-group 
+                .form-check.form-check-inline 
+                    input.form-check-input( 
+                        type="radio" 
+                        id="featured1" 
+                        name="featured" 
+                        value="1" 
+                        checked=(product.featured == "1" ? true : false)
+                    ) 
+                    label.form-check-label(for="featured1") Nổi bật 
+                
+                .form-check.form-check-inline 
+                    input.form-check-input( 
+                        type="radio" 
+                        id="featured0" 
+                        name="featured" 
+                        value="0" 
+                        checked=(product.featued == "0" ? true : false)
+                    ) 
+                    label.form-check-label(for="featured0") Không 
 
             // Mô tả 
             div(class="form-group") 

@@ -38,6 +38,26 @@ block main
                     if category
                         +select-tree(category)
 
+            .form-group 
+                .form-check.form-check-inline 
+                    input.form-check-input( 
+                        type="radio" 
+                        id="featured1" 
+                        name="featured" 
+                        value="1" 
+                    ) 
+                    label.form-check-label(for="featured1") Nổi bật 
+                
+                .form-check.form-check-inline 
+                    input.form-check-input( 
+                        type="radio" 
+                        id="featured0" 
+                        name="featured" 
+                        value="0" 
+                        checked
+                    ) 
+                    label.form-check-label(for="featured0") Không
+
             // Mô tả 
             div(class="form-group") 
                 label(for="desc") Mô tả 
@@ -48,7 +68,7 @@ block main
                     rows="5"
                 )
             
-            // Mô tả 
+            // Nội dung 
             div(class="form-group") 
                 label(for="desc") Nội dung  
                 textarea(
@@ -136,7 +156,7 @@ block main
                         id="statusActive" 
                         name="status" 
                         value="active" 
-                        checked 
+                        checked
                     ) 
                     label.form-check-label(for="statusActive") Hoạt động 
                 

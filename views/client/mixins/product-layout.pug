@@ -1,0 +1,10 @@
+include product-item.pug 
+
+mixin product-grid(products) 
+    .row
+        if (products && products.length > 0)
+            each item in products
+                +product-item(item)
+        else
+            .col-12
+            p.alert.alert-warning Chưa có sản phẩm nổi bật nào.

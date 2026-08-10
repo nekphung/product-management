@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema(
         thumbnail: String,
         status: String,
         position: Number,
+        featured: String,
         slug: {
             type: String,
             slug: "title",
@@ -42,7 +43,7 @@ const productSchema = new mongoose.Schema(
                 account_id: String,
                 updatedAt: Date
             }
-        ],
+        ]
     }, 
     {
         timestamps: true 
