@@ -1,7 +1,6 @@
 extends ../../layouts/default.pug 
 
 block main 
-    //- CSS Custom riêng cho trang chi tiết phía Client (hiện đại, chuẩn E-commerce)
     style.
         .client-product-detail {
             background: #ffffff;
@@ -30,71 +29,140 @@ block main
         .client-img:hover {
             transform: scale(1.03);
         }
+
+        /* Danh mục sản phẩm */
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .category-badge:hover {
+            background-color: #1890ff;
+            color: #fff;
+        }
+
+        /* Khối hiển thị giá hiện đại */
         .client-price-box {
-            background: #fff5f5;
-            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%);
+            padding: 18px 24px;
             border-radius: 12px;
-            border: 1px dashed #ff4d4f;
+            border: 1px solid #ffe3e3;
             margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
         .price-new-client {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
-            color: #d9363e;
+            color: #e50914;
+            letter-spacing: -0.5px;
+            line-height: 1;
         }
         .price-old-client {
-            font-size: 18px;
+            font-size: 16px;
             color: #8c8c8c;
             text-decoration: line-through;
-            margin-left: 10px;
+            font-weight: 500;
         }
         .badge-discount-client {
-            background: linear-gradient(135deg, #ff7875 0%, #ff4d4f 100%);
-            color: #fff;
+            background: #e50914;
+            color: #ffffff;
             padding: 4px 10px;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 14px;
-            margin-left: 12px;
-            box-shadow: 0 4px 10px rgba(255, 77, 79, 0.3);
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(229, 9, 20, 0.25);
         }
+
+        /* Tình trạng hàng */
         .stock-status {
-            font-size: 15px;
-            color: #595959;
-            margin-bottom: 25px;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
         }
-        .btn-add-cart {
-            background-color: #fff0f6;
-            color: #c41d7f;
-            border: 1px solid #ffadd2;
+
+        /* Cụm mua hàng & Số lượng */
+        .purchase-action-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .input-quantity-custom {
+            width: 75px !important;
+            height: 48px !important;
+            text-align: center;
+            border-radius: 10px !important;
+            border: 1.5px solid #e0e0e0;
             font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
             transition: all 0.2s;
         }
-        .btn-add-cart:hover {
-            background-color: #ffadd2;
-            color: #fff;
+        .input-quantity-custom:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
         }
-        .btn-buy-now {
-            background: linear-gradient(135deg, #ff7875 0%, #ff4d4f 100%);
-            color: #fff;
+
+        .btn-add-cart {
+            height: 48px;
+            background-color: #fff0f1;
+            color: #e50914;
+            border: 1.5px solid #ffccd1;
             font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 8px;
+            padding: 0 24px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-add-cart:hover {
+            background-color: #ffe0e3;
+            color: #d0000d;
+            border-color: #ffb3b9;
+        }
+
+        .btn-buy-now {
+            height: 48px;
+            background: linear-gradient(135deg, #ff4d4f 0%, #e50914 100%);
+            color: #fff !important;
+            font-weight: 600;
+            padding: 0 32px;
+            border-radius: 10px;
             border: none;
-            box-shadow: 0 4px 15px rgba(255, 77, 79, 0.3);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 14px rgba(229, 9, 20, 0.3);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
         .btn-buy-now:hover {
-            transform: translateY(-2px);
-            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(229, 9, 20, 0.4);
         }
+
+        /* Mô tả sản phẩm */
         .desc-title {
             font-size: 20px;
             font-weight: 700;
             color: #262626;
-            border-left: 4px solid #ff4d4f;
+            border-left: 4px solid #e50914;
             padding-left: 12px;
             margin-bottom: 15px;
         }
@@ -104,17 +172,17 @@ block main
             font-size: 16px;
         }
 
-    .container.my-3 
+    .container.my-4 
         if (product)
-            //- Hàng chứa Tên sản phẩm chính ở Client
+            //- Tiêu đề sản phẩm
             .row 
                 .col-12 
-                    h1(class="mb-4 text-start font-weight-bold" style="color: #262626; font-size: 32px;") #{product.title}
+                    h1(class="mb-3 text-start font-weight-bold" style="color: #262626; font-size: 28px;") #{product.title}
             
-            //- Vùng chi tiết thông tin sản phẩm
+            //- Khối thông tin sản phẩm
             .client-product-detail
                 .row
-                    //- Cột bên trái: Ảnh lớn của sản phẩm
+                    //- Cột trái: Ảnh sản phẩm
                     .col-md-5.col-12.mb-4.mb-md-0
                         if (product.thumbnail)
                             .client-img-wrapper
@@ -127,36 +195,44 @@ block main
                             .client-img-wrapper
                                 span.text-muted Không có hình ảnh sản phẩm
 
-                    //- Cột bên phải: Giá, số lượng và nút mua hàng
+                    //- Cột phải: Thông tin & Mua hàng
                     .col-md-7.col-12
-                        //- Khối hiển thị giá thông minh
-                        .client-price-box
-                            if (product.discountPercentage)
-                                - const priceNew = (product.price * (1 - product.discountPercentage / 100)).toFixed(0)
-                                span.price-new-client #{priceNew}đ
-                                span.price-old-client #{product.price}đ
-                                span.badge-discount-client Giảm #{product.discountPercentage}%
-                            else if (product.price)
-                                span.price-new-client #{product.price}đ
+                        //- Danh mục sản phẩm (nếu có)
+                        if (product.category)
+                            div.mb-3
+                                span.text-muted.me-2 Danh mục:
+                                a(
+                                    href=`/products/${product.category.slug}` 
+                                    class="category-badge"
+                                ) 🏷️ #{product.category.title}
 
-                        //- Số lượng kho hàng hiển thị thân thiện
+                        //- Khối hiển thị giá
+                        .client-price-box
+                            if (product.discountPercentage && product.discountPercentage > 0)
+                                span.price-new-client #{parseInt(product.priceNew).toLocaleString('vi-VN')}đ
+                                span.price-old-client #{parseInt(product.price).toLocaleString('vi-VN')}đ
+                                span.badge-discount-client -#{product.discountPercentage}%
+                            else if (product.price)
+                                span.price-new-client #{parseInt(product.price).toLocaleString('vi-VN')}đ
+
+                        //- Tình trạng hàng
                         if (product.stock > 0)
                             .stock-status
-                                i(class="fa-solid fa-boxes-stacked me-2 text-success")
+                                i(class="fa-solid fa-circle-check me-2 text-success")
                                 | Tình trạng: 
-                                span.text-success.font-weight-bold Còn hàng (#{product.stock} sản phẩm)
+                                span.text-success.font-weight-bold.ms-1 Còn hàng (#{product.stock} sản phẩm)
                         else 
                             .stock-status
                                 i(class="fa-solid fa-circle-xmark me-2 text-danger")
                                 | Tình trạng: 
-                                span.text-danger.font-weight-bold Hết hàng
+                                span.text-danger.font-weight-bold.ms-1 Hết hàng
 
-                        //- Khu vực tương tác mua hàng (Form thêm vào giỏ)
+                        //- Cụm chọn số lượng & Nút mua
                         if (product.stock > 0)
                             form(
                                 action=`/cart/add/${product.id}`
                                 method="POST"
-                                class="d-flex flex-wrap gap-3 align-items-center my-4"
+                                class="purchase-action-group my-4"
                             )
                                 input(
                                     type="number"
@@ -164,23 +240,21 @@ block main
                                     value="1"
                                     min="1"
                                     max=product.stock
-                                    class="form-control"
-                                    style="width: 70px; height: 48px; text-align: center; border-radius: 8px;"
+                                    class="form-control input-quantity-custom"
                                 )
                                 button(
                                     type="submit" 
-                                    class="btn btn-add-cart d-flex align-items-center gap-2"
-                                    style="height: 48px;"
+                                    class="btn btn-add-cart"
                                 )
+                                    i(class="fa-solid fa-cart-plus")
                                     span Thêm vào giỏ hàng
                                 
                                 a(
                                     href=`/checkout/instant/${product.id}` 
-                                    class="btn btn-buy-now d-flex align-items-center justify-content-center"
-                                    style="height: 48px;"
+                                    class="btn btn-buy-now"
                                 ) Mua ngay
 
-                //- Khối mô tả sản phẩm chi tiết nằm ngang toàn bộ phía dưới
+                //- Khối mô tả sản phẩm
                 if (product.description)
                     .row.mt-5
                         .col-12.pt-4(style="border-top: 1px solid #f0f0f0;")
@@ -194,5 +268,3 @@ block main
                         | 🏷️ Sản phẩm hiện không tồn tại hoặc đã bị ẩn. 
                         br
                         a(href="/products" class="alert-link mt-2 d-inline-block") Quay lại danh sách sản phẩm
-
-    //- Script bổ sung cho các tính năng logic phía Client (nếu có)

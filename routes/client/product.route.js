@@ -5,15 +5,9 @@ const controller = require("../../controllers/client/product.controller");
 
 router.get("/", controller.index);
 
-router.get("/:slug", controller.detail);
+router.get("/:slugCategory", controller.category);
 
-// router.get("/edit", (req, res) => {
-//     res.render("....");
-// });
-
-// router.get("/delete", (req, res) => {
-//     res.render("....");
-// });
+router.get("/detail/:slugProduct", controller.detail);
 
 // Bên kia sẽ dùng nối chuỗi với cái này để có được nhiều cái endpoints
 module.exports = router;
