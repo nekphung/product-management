@@ -1,6 +1,9 @@
 extends ../../layouts/default.pug 
+include ../../mixins/alert.pug 
 
 block main 
+    +alert-success(2000)
+    
     style.
         .client-product-detail {
             background: #ffffff;

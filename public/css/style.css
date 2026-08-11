@@ -572,3 +572,50 @@ header.header .inner-menu a:hover {
   border-radius: 4px;
   display: inline-block;
 }
+
+/* Show Alert */
+[show-alert] {
+    position: fixed;
+    top: 70px;
+    right: 15px;
+    z-index: 9999;
+    
+    /* FIX CHÍNH Ở ĐÂY: Thêm padding-right lớn để chữ né dấu x ra */
+    padding-right: 60px; 
+}
+
+[show-alert].alert-hidden {
+    animation-name: alert-hidden;
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+}
+
+@keyframes alert-hidden {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+[show-alert] [close-alert] {
+    position: absolute;
+    top: 50%;
+    /* FIX Ở ĐÂY: Đổi sang 15px hoặc 20px để nó nằm gọn sát lề phải hẳn */
+    right: 15px; 
+    transform: translateY(-50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.7);
+    cursor: pointer;
+}
+/* End Show Alert */
