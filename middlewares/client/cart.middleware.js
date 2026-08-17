@@ -16,7 +16,15 @@ module.exports.cartId = async (req, res, next) => {
         });
     } else {
         // Khi da co gio hang 
+        const cart = await Cart.findOne({
+            _id: req.cookies.cartId
+        });
         
+        // console.log(cart);
+        cart.totalQuantity = cart.products.reduce((sum, item) => sum + item.quantity, 0);
+
+        // console.log(cart);
+        res.locals.miniCart = cart;
     }
 
     next();

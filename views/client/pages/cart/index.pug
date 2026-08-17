@@ -1,0 +1,61 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  .container.my-3
+    .row
+      .col-12
+        +box-head(pageTitle)
+
+    .row
+      .col-12
+        if(cart.products.length > 0)
+          table.table.table-bordered(cart-table)
+            thead
+              tr
+                th STT
+                th Ảnh
+                th Tên
+                th Giá
+                th Số lượng
+                th Tổng tiền
+                th Hành động
+            tbody
+              each item, index in cart.products
+                tr
+                  td #{index + 1}
+                  td
+                    img(
+                      src=item.productInfo.thumbnail 
+                      alt=item.productInfo.title 
+                      width="80px"
+                    )
+                  td
+                    a(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
+                  td #{item.productInfo.priceNew} VND
+                  td
+                    input(
+                      type="number"
+                      name="quantity"
+                      value=item.quantity
+                      min="1"
+                      item-id=item.product_id
+                      style="width: 60px;"
+                    )
+                  td #{item.totalPrice} VND
+                  td
+                    a(
+                        href=`/cart/delete/${item.product_id}`
+                        class="btn btn-danger"
+                    ) Xóa
+
+          h3.text-right.mt-3 Tổng đơn hàng: 
+            span(class="text-danger") #{cart.totalPrice} VND
+
+          div(class="text-right mt-3")
+            a(
+              href="/checkout"
+              class="btn btn-success"
+            ) THANH TOÁN
+        else
+          p.text-center Không có sản phẩm nào trong giỏ hàng.
