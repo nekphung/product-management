@@ -3,6 +3,12 @@ include ../../mixins/alert.pug
 
 block main 
     +alert-success(2000)
+
+    .container.my-5
+        button(
+            class="btn btn-secondary" 
+            button-go-back 
+        ) Trở lại
     
     style.
         .client-product-detail {
