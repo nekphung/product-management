@@ -1,0 +1,86 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+
+  .container.my-4
+    .row
+      .col-12
+        +box-head("Chi tiết Đơn hàng & Thanh toán")
+
+    if (order)
+      .row.mt-3
+        //- Thông tin cá nhân
+        .col-md-4
+          .card.mb-3
+            .card-body
+              h5.card-title.font-weight-bold Thông tin cá nhân
+              .text-center.my-3
+                img(src="/images/avatar-default.png" alt="Avatar" width="80" class="rounded-circle")
+                h5.mt-2.font-weight-bold #{order.userInfo.fullName}
+              
+              hr
+              p.card-text
+                strong Phone: 
+                | #{order.userInfo.phone}
+              p.card-text
+                strong Address: 
+                | #{order.userInfo.address}
+              hr
+              p.card-text.text-muted.small
+                strong Đơn hàng ID: 
+                br
+                | #{order._id}
+
+        //- Thông tin đơn hàng
+        .col-md-8
+          .card
+            .card-body
+              h5.card-title.font-weight-bold Thông tin đơn hàng
+              
+              table.table.table-hover.align-middle
+                thead
+                  tr
+                    th Sản phẩm
+                    th Giá
+                    th Discount
+                    th Số lượng
+                    th Giá mới
+                tbody
+                  - var totalBill = 0
+                  if (order.products && order.products.length > 0)
+                    each item in order.products
+                      - var priceNew = item.price * (1 - item.discountPercentage / 100)
+                      - var totalPrice = priceNew * item.quantity
+                      - totalBill += totalPrice
+                      tr
+                        td
+                          .d-flex.align-items-center
+                            //- Trường hợp đã populate productInfo ở Backend
+                            if (item.productInfo)
+                              img(src=item.productInfo.thumbnail alt=item.productInfo.title width="60" class="mr-2 img-thumbnail")
+                              div
+                                strong #{item.productInfo.title}
+                            else
+                              //- Trường hợp chưa populate
+                              img(src="/images/product-default.png" alt="Sản phẩm" width="60" class="mr-2 img-thumbnail")
+                              div
+                                span Sản phẩm ID: 
+                                small.text-muted #{item.product_id}
+                        td #{item.price.toLocaleString()} đ
+                        td #{item.discountPercentage}%
+                        td #{item.quantity}
+                        td.font-weight-bold #{totalPrice.toLocaleString()} đ
+
+              h5.font-weight-bold.mt-4 Thanh toán
+              p.text-muted.small Cart ID: #{order.cart_id}
+
+              .alert.alert-light.border.mt-3
+                strong Thanh toán qua ví điện tử
+
+              .row.text-muted.small.mt-2
+                .col-6 Ngày tạo: #{new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                .col-6 Cập nhật: #{new Date(order.updatedAt).toLocaleDateString("vi-VN")}
