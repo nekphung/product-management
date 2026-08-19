@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+  +alert-success(5000)
+
+  .container.my-5
+    .row.justify-content-center
+      .col-12.col-md-8.col-lg-5
+        .card.shadow-lg.border-0.rounded-lg
+          .card-header.bg-primary.text-white.text-center.py-4
+            h3.font-weight-bold.mb-0 Đăng Nhập
+            small.text-white-50 Vui lòng đăng nhập để tiếp tục
+
+          .card-body.p-4.p-md-5
+            form(
+              action="/user/login"
+              method="POST"
+            )
+              .form-group.mb-3
+                label.form-label.font-weight-semibold(for="email") Email
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.fa-envelope
+                  input#email.form-control(
+                    type="email"
+                    name="email"
+                    placeholder="example@gmail.com"
+                    required
+                  )
+
+              .form-group.mb-3
+                label.form-label.font-weight-semibold(for="password") Mật khẩu
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.fa-lock
+                  input#password.form-control(
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                  )
+
+              .d-flex.justify-content-between.align-items-center.mb-4
+                .form-check
+                  input#remember.form-check-input(type="checkbox" name="remember")
+                  label.form-check-label.small(for="remember") Ghi nhớ đăng nhập
+                a.small.text-primary(href="/user/password/forgot") Quên mật khẩu?
+
+              button.btn.btn-primary.btn-block.w-100.py-2.font-weight-bold.text-uppercase(type="submit")
+                | Đăng nhập
+
+          .card-footer.text-center.bg-light.py-3
+            span.text-muted Chưa có tài khoản? 
+            a.font-weight-bold.text-primary(href="/user/register") Đăng ký ngay
