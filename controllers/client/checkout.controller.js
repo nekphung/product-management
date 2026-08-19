@@ -86,7 +86,7 @@ module.exports.order = async (req, res) => {
 
 // [GET] /checkout/success/:orderId
 module.exports.success = async (req, res) => {
-    console.log(req.params.orderId);
+    // console.log(req.params.orderId);
     const order = await Order.findOne({
         _id: req.params.orderId
     })

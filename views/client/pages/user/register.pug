@@ -1,0 +1,76 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+
+  .container.my-5
+    .row.justify-content-center
+      .col-12.col-md-8.col-lg-5
+        .card.shadow-lg.border-0.rounded-lg
+          .card-header.bg-primary.text-white.text-center.py-4
+            h3.font-weight-bold.mb-0 Đăng Ký Tài Khoản
+            small.text-white-50 Tạo tài khoản mới để trải nghiệm dịch vụ
+
+          .card-body.p-4.p-md-5
+            form(
+              action="/user/register"
+              method="POST"
+            )
+              .form-group.mb-3
+                label.form-label.font-weight-semibold(for="fullName") Họ và tên
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.i-user
+                  input#fullName.form-control(
+                    type="text"
+                    name="fullName"
+                    placeholder="Nguyễn Văn A"
+                    required
+                  )
+
+              .form-group.mb-3
+                label.form-label.font-weight-semibold(for="email") Email
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.i-envelope
+                  input#email.form-control(
+                    type="email"
+                    name="email"
+                    placeholder="example@gmail.com"
+                    required
+                  )
+
+              .form-group.mb-3
+                label.form-label.font-weight-semibold(for="phone") Số điện thoại
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.i-phone
+                  input#phone.form-control(
+                    type="text"
+                    name="phone"
+                    placeholder="0379xxxxxx"
+                  )
+
+              .form-group.mb-4
+                label.form-label.font-weight-semibold(for="password") Mật khẩu
+                .input-group
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.i-lock
+                  input#password.form-control(
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                  )
+
+              button.btn.btn-primary.btn-block.w-100.py-2.font-weight-bold.text-uppercase(type="submit")
+                | Đăng ký ngay
+
+          .card-footer.text-center.bg-light.py-3
+            span.text-muted Bạn đã có tài khoản? 
+            a.font-weight-bold.text-primary(href="/user/login") Đăng nhập
