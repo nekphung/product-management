@@ -1,6 +1,7 @@
 const md5 = require("md5");
 const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
+const Cart = require("../../models/cart.model");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -74,6 +75,16 @@ module.exports.loginPost = async (req, res) => {
         return;
     }
 
+    // Luu user_id vao collection carts
+    // console.log(user.id);
+    // console.log(req.cookies.cartId);
+    
+    await Cart.updateOne({
+        _id: req.cookies.cartId
+    }, {
+        user_id: user.id
+    });
+
     res.cookie("tokenUser", user.tokenUser);
 
     res.redirect("/");
@@ -125,7 +136,7 @@ module.exports.forgotPasswordPost = async (req, res) => {
     const html = `
         Mã OTP xác minh lấy lại mật khẩu là <b>${otp}</b>. Thời hạn sử dụng là 3 phút. Lưu ý không được để lộ mã OTP.
     `
-    console.log("Email người nhận:", email);
+    // console.log("Email người nhận:", email);
     sendMailHelper.sendMail(email, subject, html);
 
     res.redirect(`/user/password/otp?email=${email}`);

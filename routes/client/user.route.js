@@ -6,6 +6,7 @@ const storageMulter = require("../../helpers/storageMulter");
 
 const upload = multer();
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
+const authMiddleware = require("../../middlewares/client/auth.middleware");
 
 const validate = require("../../validates/client/user.validate");
 
@@ -37,7 +38,7 @@ router.patch("/info/edit",
     controller.infoEditPatch
 );
 
-router.get("/info", controller.info);
+router.get("/info", authMiddleware.requireAuth, controller.info);
 
 router.get("/password/reset", controller.resetPassword);
 
