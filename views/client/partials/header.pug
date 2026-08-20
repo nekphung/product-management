@@ -39,10 +39,44 @@ header.header
                   +sub-menu(layoutProductsCategory, pathProduct)
             li
               a(href="/cart") Giỏ hàng (#{miniCart ? miniCart.totalQuantity : "0"})
+            // Trạng thái Đăng nhập / Người dùng
             if (user)
-              a(href="user/logout") Đăng xuất
+              li.dropdown
+                a.dropdown-toggle.d-flex.align-items-center.text-dark.text-decoration-none(
+                  href="#"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                )
+                  img.rounded-circle.mr-2(
+                    src=(user.avatar ? user.avatar : "/images/avatar-default.png")
+                    alt=user.fullName
+                    width="32"
+                    height="32"
+                    style="object-fit: cover;"
+                  )
+                  span.font-weight-bold #{user.fullName}
+
+                .dropdown-menu.dropdown-menu-right.shadow.border-0.mt-2
+                  a.dropdown-item(href="/user/info")
+                    i.fas.fa-user-circle.mr-2.text-primary
+                    | Thông tin tài khoản
+                  a.dropdown-item.py-2(href="/user/info/edit")
+                    i.fas.fa-user-edit.mr-2.text-info.fa-fw
+                    | Chỉnh sửa tài khoản
+                  a.dropdown-item(href="/user/orders")
+                    i.fas.fa-shopping-bag.mr-2.text-success
+                    | Đơn hàng của tôi
+                  a.dropdown-item(href="/user/password/change")
+                    i.fas.fa-key.mr-2.text-warning
+                    | Đổi mật khẩu
+                  .dropdown-divider
+                  a.dropdown-item.text-danger(href="/user/logout")
+                    i.fas.fa-sign-out-alt.mr-2
+                    | Đăng xuất
             else 
+              li.mr-2 
+                a.btn.btn-outline-secondary.btn-sm(href="/user/login") Đăng nhập 
               li 
-                a(href="/user/login") Đăng nhập 
-              li 
-                a(href="/user/register") Đăng ký
+                a.btn.btn-primary.btn-sm(href="/user/register") Đăng ký

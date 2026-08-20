@@ -72,6 +72,12 @@ module.exports.order = async (req, res) => {
         products: products
     }
 
+    // Nếu người dùng đã đăng nhập, gán user_id và avatar vào đơn hàng
+    if (res.locals.user) {
+        objectOrder.user_id = res.locals.user.id; // ✅ Thêm user_id vào đơn hàng
+        objectOrder.userInfo.avatar = res.locals.user.avatar; // ✅ Thêm avatar
+    }
+
     const order = new Order(objectOrder);
     await order.save();
 

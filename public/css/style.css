@@ -619,3 +619,141 @@ header.header .inner-menu a:hover {
     cursor: pointer;
 }
 /* End Show Alert */
+
+
+/* Fix tên người dùng trên thanh Header màu tối */
+.header .dropdown-toggle {
+  color: #ffffff !important; /* Chuyển chữ thành màu trắng */
+}
+
+.header .dropdown-toggle:hover {
+  color: #f8f9fa !important;
+  text-decoration: none;
+}
+
+/* Fix các đường dẫn bên trong menu Dropdown */
+.header .dropdown-menu .dropdown-item {
+  color: #333333 !important; /* Chữ màu tối trên nền trắng */
+  padding: 10px 20px;
+  background-color: transparent; /* Loại bỏ background chèn đè */
+}
+
+/* Hiệu ứng khi rê chuột vào menu item */
+.header .dropdown-menu .dropdown-item:hover {
+  background-color: #f1f5f9 !important;
+  color: #0d6efd !important;
+}
+
+/* Riêng nút Đăng xuất */
+.header .dropdown-menu .dropdown-item.text-danger {
+  color: #dc3545 !important;
+}
+
+.header .dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: #ffe6e6 !important;
+  color: #dc3545 !important;
+}
+
+.product-item .inner-image img {
+  width: 100%;
+  height: 100%;
+  /* Đổi từ cover sang contain để ảnh hiển thị trọn vẹn */
+  object-fit: contain; 
+  
+  /* Thêm khoảng đệm nhỏ để ảnh không dính sát viền khung */
+  padding: 10px; 
+}
+
+/* Đảm bảo khung chứa ảnh có kích thước cố định và có nền trắng */
+.product-item .inner-image {
+  width: 100%;
+  height: 250px; /* Hoặc chiều cao khung ảnh bạn đang đặt */
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cart-thumb-box {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.cart-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+/* Style cho bộ tăng/giảm số lượng */
+.quantity-group {
+  width: 110px;
+}
+.cart-quantity-input::-webkit-outer-spin-button,
+.cart-quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.cart-quantity-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Khung chứa bộ tăng giảm số lượng */
+.cart-quantity-box {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 28px; /* Giảm chiều cao xuống nhỏ gọn */
+}
+
+/* 2 Nút + và - */
+.btn-qty {
+  width: 28px;
+  height: 100%;
+  border: none;
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-qty:hover {
+  background-color: #e2e6ea;
+}
+
+/* Ô nhập số lượng ở giữa */
+.cart-quantity-input {
+  width: 36px !important;
+  height: 100% !important;
+  border: none !important;
+  border-left: 1px solid #ced4da !important;
+  border-right: 1px solid #ced4da !important;
+  border-radius: 0 !important;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 !important;
+  outline: none;
+  box-shadow: none !important;
+}
+
+/* Ẩn mũi tên mặc định của input number */
+.cart-quantity-input::-webkit-outer-spin-button,
+.cart-quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.cart-quantity-input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -7,80 +7,151 @@ block main
   +alert-error(5000)
 
   .container.my-4
-    .row
+    .row.mb-3
       .col-12
         +box-head("Chi tiết Đơn hàng & Thanh toán")
 
     if (order)
-      .row.mt-3
-        //- Thông tin cá nhân
-        .col-md-4
-          .card.mb-3
-            .card-body
-              h5.card-title.font-weight-bold Thông tin cá nhân
+      .row.g-4
+        //- Thông tin người nhận
+        .col-lg-4.col-md-5
+          .card.border-0.shadow-sm.rounded-4.overflow-hidden
+            .card-body.p-4
+              h5.card-title.fw-bold.mb-4
+                i.fa-solid.fa-user.me-2.text-primary
+                | Thông tin nhận hàng
+
               .text-center.my-3
-                img(src="/images/avatar-default.png" alt="Avatar" width="80" class="rounded-circle")
-                h5.mt-2.font-weight-bold #{order.userInfo.fullName}
-              
-              hr
-              p.card-text
-                strong Phone: 
-                | #{order.userInfo.phone}
-              p.card-text
-                strong Address: 
-                | #{order.userInfo.address}
-              hr
-              p.card-text.text-muted.small
-                strong Đơn hàng ID: 
-                br
-                | #{order._id}
+                //- Thay đoạn img avatar cũ bằng đoạn này:
+                .avatar-wrapper.mx-auto.mb-3
+                    img.rounded-circle.object-fit-cover(
+                        src=(order.userInfo && order.userInfo.avatar ? order.userInfo.avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(order.userInfo.fullName)}&background=random`)
+                        alt=order.userInfo.fullName
+                        width="80"
+                        height="80"
+                    )
+                h5.fw-bold.mb-1 #{order.userInfo.fullName}
+                span.badge.bg-light.text-dark.border Đơn hàng ID: #{order._id}
 
-        //- Thông tin đơn hàng
-        .col-md-8
-          .card
-            .card-body
-              h5.card-title.font-weight-bold Thông tin đơn hàng
-              
-              table.table.table-hover.align-middle
-                thead
-                  tr
-                    th Sản phẩm
-                    th Giá
-                    th Discount
-                    th Số lượng
-                    th Giá mới
-                tbody
-                  - var totalBill = 0
-                  if (order.products && order.products.length > 0)
-                    each item in order.products
-                      - var priceNew = item.price * (1 - item.discountPercentage / 100)
-                      - var totalPrice = priceNew * item.quantity
-                      - totalBill += totalPrice
-                      tr
-                        td
-                          .d-flex.align-items-center
-                            //- Trường hợp đã populate productInfo ở Backend
-                            if (item.productInfo)
-                              img(src=item.productInfo.thumbnail alt=item.productInfo.title width="60" class="mr-2 img-thumbnail")
-                              div
-                                strong #{item.productInfo.title}
+              hr.my-4.text-muted
+
+              .info-group.space-y-3
+                .d-flex.align-items-center.gap-2.mb-2
+                  i.fa-solid.fa-phone.text-muted
+                  strong.me-1 Điện thoại: 
+                  span #{order.userInfo.phone}
+                
+                .d-flex.align-items-start.gap-2.mb-2
+                  i.fa-solid.fa-location-dot.text-muted.mt-1
+                  div
+                    strong.d-block Địa chỉ nhận hàng:
+                    span.text-secondary #{order.userInfo.address}
+
+        //- Danh sách sản phẩm & Thanh toán
+        .col-lg-8.col-md-7
+          .card.border-0.shadow-sm.rounded-4.overflow-hidden
+            .card-body.p-4
+              h5.card-title.fw-bold.mb-4
+                i.fa-solid.fa-bag-shopping.me-2.text-primary
+                | Danh sách sản phẩm
+
+              .table-responsive
+                table.table.align-middle.table-hover.border-bottom
+                  thead.table-light
+                    tr
+                      th.text-center(style="width: 50px;") STT
+                      th Sản phẩm
+                      th.text-end Don giá
+                      th.text-center Giảm
+                      th.text-center SL
+                      th.text-end Tạm tính
+                  tbody
+                    - var totalBill = 0
+                    if (order.products && order.products.length > 0)
+                      each item, index in order.products
+                        - var priceNew = item.price * (1 - (item.discountPercentage || 0) / 100)
+                        - var totalPrice = priceNew * item.quantity
+                        - totalBill += totalPrice
+                        tr
+                          td.text-center.fw-bold.text-muted #{index + 1}
+                          td
+                            .d-flex.align-items-center.gap-3
+                              //- Khối hiển thị ảnh sản phẩm
+                              .product-thumb-box
+                                if (item.productInfo && item.productInfo.thumbnail)
+                                  img.product-thumb-img(
+                                    src=item.productInfo.thumbnail
+                                    alt=item.productInfo.title
+                                  )
+                                else
+                                  .product-thumb-placeholder
+                                    i.fa-solid.fa-image.text-muted
+
+                              //- Tên sản phẩm
+                              .product-info
+                                if (item.productInfo && item.productInfo.title)
+                                  a.fw-semibold.text-dark.text-decoration-none(href=`/products/detail/${item.productInfo.slug || ''}`) #{item.productInfo.title}
+                                else
+                                  span.text-muted Sản phẩm ID: 
+                                  small.text-break #{item.product_id}
+
+                          td.text-end #{parseInt(item.price).toLocaleString('vi-VN')} đ
+                          td.text-center
+                            if (item.discountPercentage > 0)
+                              span.badge.bg-danger-subtle.text-danger -#{item.discountPercentage}%
                             else
-                              //- Trường hợp chưa populate
-                              img(src="/images/product-default.png" alt="Sản phẩm" width="60" class="mr-2 img-thumbnail")
-                              div
-                                span Sản phẩm ID: 
-                                small.text-muted #{item.product_id}
-                        td #{item.price.toLocaleString()} đ
-                        td #{item.discountPercentage}%
-                        td #{item.quantity}
-                        td.font-weight-bold #{totalPrice.toLocaleString()} đ
+                              span.text-muted 0%
+                          td.text-center.fw-bold #{item.quantity}
+                          td.text-end.fw-bold.text-primary #{parseInt(totalPrice).toLocaleString('vi-VN')} đ
 
-              h5.font-weight-bold.mt-4 Thanh toán
-              p.text-muted.small Cart ID: #{order.cart_id}
+              //- Khối tổng tiền & Thanh toán
+              .mt-4.p-3.bg-light.rounded-3
+                .d-flex.justify-content-between.align-items-center.mb-2
+                  span.text-muted Hình thức thanh toán:
+                  span.badge.bg-success-subtle.text-success.px-3.py-2
+                    i.fa-solid.fa-wallet.me-1
+                    | Ví điện tử / Online
+                
+                .d-flex.justify-content-between.align-items-center.pt-2.border-top
+                  span.fw-bold.fs-5 Tổng chi phí đơn hàng:
+                  span.fw-bold.fs-4.text-danger #{parseInt(totalBill).toLocaleString('vi-VN')} đ
 
-              .alert.alert-light.border.mt-3
-                strong Thanh toán qua ví điện tử
+              //- Ngày tháng
+              .row.text-muted.small.mt-3.px-1
+                .col-6
+                  i.fa-regular.fa-clock.me-1
+                  | Ngày tạo: #{new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                .col-6.text-end
+                  i.fa-solid.fa-rotate.me-1
+                  | Cập nhật: #{new Date(order.updatedAt).toLocaleDateString("vi-VN")}
 
-              .row.text-muted.small.mt-2
-                .col-6 Ngày tạo: #{new Date(order.createdAt).toLocaleDateString("vi-VN")}
-                .col-6 Cập nhật: #{new Date(order.updatedAt).toLocaleDateString("vi-VN")}
+  style.
+    /* Styling khung ảnh sản phẩm */
+    .product-thumb-box {
+      width: 64px;
+      height: 64px;
+      min-width: 64px;
+      border-radius: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .product-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+    .product-thumb-box:hover .product-thumb-img {
+      transform: scale(1.08);
+    }
+    .product-thumb-placeholder {
+      font-size: 20px;
+    }
+    .avatar-wrapper img {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      border: 2px solid #fff;
+    }

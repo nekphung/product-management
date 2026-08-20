@@ -12,6 +12,6 @@ mixin product-item(item)
             .inner-content
                 h3.inner-title 
                     a(href=`/products/detail/${item.slug}`) #{item.title}
-                .inner-price-new #{item.priceNew} VND 
-                .inner-price-old #{item.price} VND 
+                .inner-price-new #{parseInt(item.priceNew).toLocaleString('vi-VN')}đ
+                .inner-price-old #{parseInt(item.price).toLocaleString('vi-VN')}đ
                 .inner-discount -#{item.discountPercentage}%
