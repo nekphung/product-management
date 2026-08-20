@@ -39,4 +39,8 @@ router.patch("/info/edit",
 
 router.get("/info", controller.info);
 
+router.get("/password/reset", controller.resetPassword);
+
+router.post("/password/reset", validate.resetPasswordPost, controller.resetPasswordPost);
+
 module.exports = router;
