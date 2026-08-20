@@ -1,0 +1,71 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+
+  h1.mb-4 Cài đặt chung
+
+  form(
+    action=`/admin/settings/general?_method=PATCH`
+    method="POST"
+    enctype="multipart/form-data"
+  )
+    .form-group.mb-3
+      label(for="websiteName") Tên website
+      input#websiteName.form-control(
+        type="text"
+        name="websiteName"
+        value=(settingGeneral ? settingGeneral.websiteName : "")
+      )
+
+    .form-group.mb-3(upload-image)
+      label(for="logo") Logo
+      input#logo.form-control-file.d-block(
+        type="file"
+        name="logo"
+        accept="image/*"
+        upload-image-input
+      )
+      img(
+        src=(settingGeneral ? settingGeneral.logo : "")
+        upload-image-preview
+        class="image-preview mt-2"
+        style="max-width: 150px;"
+      )
+
+    .form-group.mb-3
+      label(for="phone") Số điện thoại
+      input#phone.form-control(
+        type="text"
+        name="phone"
+        value=(settingGeneral ? settingGeneral.phone : "")
+      )
+
+    .form-group.mb-3
+      label(for="email") Email
+      input#email.form-control(
+        type="email"
+        name="email"
+        value=(settingGeneral ? settingGeneral.email : "")
+      )
+
+    .form-group.mb-3
+      label(for="address") Địa chỉ
+      input#address.form-control(
+        type="text"
+        name="address"
+        value=(settingGeneral ? settingGeneral.address : "")
+      )
+
+    .form-group.mb-3
+      label(for="copyright") Bản quyền (Copyright)
+      input#copyright.form-control(
+        type="text"
+        name="copyright"
+        value=(settingGeneral ? settingGeneral.copyright : "")
+      )
+
+    .form-group.mb-3
+      button.btn.btn-primary(type="submit") Cập nhật
