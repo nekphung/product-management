@@ -705,6 +705,237 @@ header.header .inner-menu a:hover {
   -moz-appearance: textfield;
 }
 
+/* ===== PRODUCT LISTING PAGE ===== */
+.product-listing-page {
+  background: #f6f8fb;
+}
+
+.product-listing-page .breadcrumb {
+  padding: 0;
+  background: transparent;
+  font-size: 14px;
+}
+
+.product-listing-page .breadcrumb-item a {
+  color: #0b325b;
+  text-decoration: none;
+}
+
+.product-listing-page .breadcrumb-item a:hover {
+  color: #2f80ed;
+  text-decoration: underline;
+}
+
+.product-listing-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-listing-heading__eyebrow {
+  margin: 0 0 6px;
+  color: #2f80ed;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-listing-heading__title {
+  margin: 0;
+  color: #1f2937;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.product-listing-heading__description {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.product-listing-heading__count {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #e6f1fb;
+  color: #0b325b;
+  font-size: 14px;
+}
+
+.product-listing-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-listing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.product-listing-card__image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 236px;
+  padding: 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0f1f3;
+  overflow: hidden;
+}
+
+.product-listing-card__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.product-listing-card:hover .product-listing-card__image img {
+  transform: scale(1.04);
+}
+
+.product-listing-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #0b325b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.product-listing-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px;
+}
+
+.product-listing-card__title {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.product-listing-card__title a {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #1f2937;
+  text-decoration: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.product-listing-card__title a:hover {
+  color: #0b325b;
+}
+
+.product-listing-card__price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.product-listing-card__price-current {
+  color: #198754;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.product-listing-card__price-old {
+  color: #6b7280;
+  font-size: 14px;
+  text-decoration: line-through;
+}
+
+.product-listing-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.product-listing-card__discount {
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #fff1f2;
+  color: #dc3545;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.product-listing-card__action {
+  border-color: #0b325b;
+  color: #0b325b;
+  font-weight: 600;
+}
+
+.product-listing-card__action:hover,
+.product-listing-card__action:focus {
+  border-color: #0b325b;
+  background: #0b325b;
+  color: #fff;
+}
+
+.product-listing-empty {
+  padding: 56px 24px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+  color: #6b7280;
+}
+
+.product-listing-empty h2 {
+  margin-bottom: 8px;
+  color: #1f2937;
+  font-size: 22px;
+}
+
+@media (max-width: 575.98px) {
+  .product-listing-heading {
+    display: block;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+  }
+
+  .product-listing-heading__title {
+    font-size: 26px;
+  }
+
+  .product-listing-heading__description {
+    font-size: 15px;
+  }
+
+  .product-listing-heading__count {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  .product-listing-card__image {
+    height: 220px;
+  }
+}
+
 /* Khung chứa bộ tăng giảm số lượng */
 .cart-quantity-box {
   border: 1px solid #ced4da;
