@@ -1,80 +1,119 @@
 extends ../../layouts/default.pug
-include ../../mixins/box-head.pug
-include ../../mixins/alert.pug 
+include ../../mixins/alert.pug
 
 block main
-  .container.my-4
-    .row.mb-3
-      .col-12
-        +box-head(pageTitle)
-    
-    +alert-success(2000)
+  +alert-success(2000)
 
-    .row
-      .col-12
-        if (cart.products.length > 0)
-          .card.border-0.shadow-sm.rounded-4.overflow-hidden.mb-4
-            .card-body.p-0
-              .table-responsive
-                table.table.table-bordered.align-middle.mb-0(cart-table)
-                  thead.table-light
+  main.cart-page
+    .container.py-4.py-md-5
+      nav.cart-breadcrumb(aria-label="breadcrumb")
+        ol.breadcrumb.mb-3
+          li.breadcrumb-item
+            a(href="/") Trang chủ
+          li.breadcrumb-item.active(aria-current="page") Giỏ hàng
+
+      .cart-page-heading
+        .cart-page-heading__copy
+          p.cart-page-heading__eyebrow Đơn hàng của bạn
+          h1.cart-page-heading__title #{pageTitle}
+          if (cart.products.length > 0)
+            p.cart-page-heading__description Bạn đang có #{cart.products.length} sản phẩm trong giỏ hàng.
+          else
+            p.cart-page-heading__description Hãy chọn những sản phẩm bạn yêu thích để tiếp tục.
+        a.btn.btn-outline-primary.cart-page-heading__continue(href="/products") Tiếp tục mua sắm
+
+      if (cart.products.length > 0)
+        .row
+          .col-12.col-lg-8.mb-4.mb-lg-0
+            .cart-items-card
+              .cart-items-card__header
+                h2.cart-items-card__title Sản phẩm đã chọn
+                span.cart-items-card__count #{cart.products.length} sản phẩm
+
+              .table-responsive.d-none.d-md-block
+                table.table.cart-table.mb-0(cart-table)
+                  thead
                     tr
-                      th.text-center(style="width: 50px;") STT
-                      th.text-center(style="width: 100px;") Ảnh
-                      th Tên
+                      th Sản phẩm
                       th.text-center Đơn giá
-                      th.text-center(style="width: 140px;") Số lượng
-                      th.text-end Tổng tiền
-                      th.text-center(style="width: 100px;") Hành động
+                      th.text-center Số lượng
+                      th.text-right Tạm tính
+                      th
                   tbody
-                    each item, index in cart.products
+                    each item in cart.products
                       tr
-                        td.text-center.fw-bold.text-muted #{index + 1}
-                        td.text-center
-                          .cart-thumb-box.mx-auto
-                            img.cart-thumb-img(
-                              src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/default.jpg') 
-                              alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm') 
-                            )
                         td
-                          if (item.productInfo && item.productInfo.title)
-                            a.fw-semibold.text-dark.text-decoration-none(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
-                          else
-                            span.text-muted Sản phẩm không tồn tại
-                        td.text-center.text-nowrap #{item.productInfo && item.productInfo.priceNew ? item.productInfo.priceNew.toLocaleString('vi-VN') : 0}đ
-                        
-                        //- Khối tăng/giảm số lượng (-) (+)
+                          .cart-product
+                            a.cart-product__image(href=`/products/detail/${item.productInfo.slug}`)
+                              img(src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/default.jpg') alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm'))
+                            .cart-product__info
+                              a.cart-product__name(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
+                              if (item.productInfo.discountPercentage)
+                                span.cart-product__discount -#{item.productInfo.discountPercentage}%
+                        td.text-center.text-nowrap
+                          span.cart-table__price #{item.productInfo.priceNew.toLocaleString('vi-VN')}đ
                         td.text-center
                           .cart-quantity-box.d-inline-flex.align-items-center
-                            button.btn-qty.btn-minus(type="button") -
-                            input.cart-quantity-input(
-                              type="number"
-                              name="quantity"
-                              value=item.quantity
-                              min="1"
-                              item-id=item.product_id
-                            )
-                            button.btn-qty.btn-plus(type="button") +
+                            button.btn-qty.btn-minus(type="button" aria-label="Giảm số lượng") −
+                            input.cart-quantity-input(type="number" name="quantity" value=item.quantity min="1" item-id=item.product_id aria-label=`Số lượng ${item.productInfo.title}`)
+                            button.btn-qty.btn-plus(type="button" aria-label="Tăng số lượng") +
+                        td.text-right.text-nowrap
+                          strong.cart-table__total #{item.totalPrice.toLocaleString('vi-VN')}đ
+                        td.text-right
+                          a.cart-remove(href=`/cart/delete/${item.product_id}` aria-label=`Xóa ${item.productInfo.title} khỏi giỏ hàng`) Xóa
 
-                        td.text-end.fw-bold.text-primary.text-nowrap #{item.totalPrice ? item.totalPrice.toLocaleString('vi-VN') : 0}đ
-                        td.text-center
-                          a.btn.btn-danger.btn-sm.px-3(
-                            href=`/cart/delete/${item.product_id}`
-                          ) Xóa
+              .cart-mobile-items.d-md-none
+                each item in cart.products
+                  article.cart-mobile-item
+                    .cart-mobile-item__top
+                      a.cart-product__image(href=`/products/detail/${item.productInfo.slug}`)
+                        img(src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/default.jpg') alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm'))
+                      .cart-mobile-item__info
+                        a.cart-product__name(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
+                        span.cart-table__price #{item.productInfo.priceNew.toLocaleString('vi-VN')}đ
+                        if (item.productInfo.discountPercentage)
+                          span.cart-product__discount -#{item.productInfo.discountPercentage}%
+                    .cart-mobile-item__bottom
+                      .cart-quantity-box.d-inline-flex.align-items-center
+                        button.btn-qty.btn-minus(type="button" aria-label="Giảm số lượng") −
+                        input.cart-quantity-input(type="number" name="quantity" value=item.quantity min="1" item-id=item.product_id aria-label=`Số lượng ${item.productInfo.title}`)
+                        button.btn-qty.btn-plus(type="button" aria-label="Tăng số lượng") +
+                      .text-right
+                        strong.cart-table__total #{item.totalPrice.toLocaleString('vi-VN')}đ
+                        a.cart-remove.d-block.mt-2(href=`/cart/delete/${item.product_id}`) Xóa
 
-          //- Khối Tổng đơn hàng & Nút Thanh toán
-          .card.border-0.shadow-sm.rounded-4.p-4.bg-white
-            .d-flex.flex-column.align-items-end.gap-3
-              h3.mb-0.fw-bold Tổng đơn hàng: 
-                span.text-danger #{cart.totalPrice ? cart.totalPrice.toLocaleString('vi-VN') : 0}đ
+          .col-12.col-lg-4
+            aside.cart-summary-card
+              h2.cart-summary-card__title Tóm tắt đơn hàng
+              .cart-summary-card__line
+                span Tạm tính
+                span #{cart.totalPrice.toLocaleString('vi-VN')}đ
+              .cart-summary-card__line
+                span Phí giao hàng
+                span.cart-summary-card__free Miễn phí
+              .cart-summary-card__total
+                span Tổng cộng
+                strong #{cart.totalPrice.toLocaleString('vi-VN')}đ
+              a.btn.btn-primary.btn-block.cart-summary-card__checkout(href="/checkout") Tiến hành thanh toán
+              p.cart-summary-card__note Thanh toán an toàn. Bạn có thể kiểm tra lại thông tin ở bước tiếp theo.
 
-              a.btn.btn-success.btn-lg.px-5.fw-bold.shadow-sm(
-                href="/checkout"
-              ) THANH TOÁN
-        else
-          .card.border-0.shadow-sm.rounded-4.p-5.text-center
-            p.text-muted.fs-5.mb-0 Không có sản phẩm nào trong giỏ hàng.
+            .cart-support-card
+              h2.cart-support-card__title Mua sắm an tâm
+              ul.cart-support-card__list
+                li
+                  strong Giao hàng nhanh
+                  span Hỗ trợ giao hàng toàn quốc
+                li
+                  strong Thanh toán thuận tiện
+                  span Xác nhận đơn hàng ở bước tiếp theo
+                li
+                  strong Hỗ trợ khách hàng
+                  span Liên hệ chúng tôi khi cần trợ giúp
+      else
+        .cart-empty-state.text-center
+          span.cart-empty-state__icon(aria-hidden="true") 🛒
+          h2 Giỏ hàng của bạn đang trống
+          p Khám phá các sản phẩm mới và thêm món phù hợp vào giỏ hàng.
+          a.btn.btn-primary(href="/products") Khám phá sản phẩm
 
   script(src="/js/cart.js")
-
-    

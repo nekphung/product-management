@@ -1,7 +1,15 @@
-mixin sub-menu(items, path) 
-    ul 
-        each item in items
-            li 
-                a(href=`${path}/${item.slug}`) #{item.title} 
-                if item.children && item.children.length > 0
-                    +sub-menu(item.children, path)
+mixin sub-menu(items, path, includeAll)
+  ul(class=includeAll ? "site-product-menu" : "site-product-menu__nested")
+    if includeAll
+      li
+        a(href=path) Xem tất cả sản phẩm
+    each item in items
+      li(class=item.children && item.children.length > 0 ? "has-children" : "")
+        if item.children && item.children.length > 0
+          .site-product-menu__branch
+            a(href=`${path}/${item.slug}`) #{item.title}
+            button.site-product-menu__toggle(type="button" data-product-submenu-toggle aria-expanded="false" aria-label=`Mở danh mục ${item.title}`)
+              span.site-product-menu__arrow(aria-hidden="true") ›
+          +sub-menu(item.children, path, false)
+        else
+          a(href=`${path}/${item.slug}`) #{item.title}

@@ -3,16 +3,57 @@ include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug 
 
 block main
-  .container.my-3
-    .row
-      .col-12
-        +box-head("Sản phẩm nổi bật")
-    
-    +product-grid(productsFeatued)
-    
-  .container.my-3
-    .row
-      .col-12
-        +box-head("Sản phẩm mới")
-    
-    +product-grid(productsNew)
+  main.home-page
+    section.home-hero
+      .container
+        .row.align-items-center
+          .col-12.col-lg-7
+            .home-hero__content
+              p.home-hero__eyebrow Mua sắm thông minh mỗi ngày
+              h1 Khám phá sản phẩm phù hợp với bạn
+              p.home-hero__description Chọn nhanh những sản phẩm nổi bật, cập nhật mới và được yêu thích tại cửa hàng.
+              .home-hero__actions
+                a.btn.btn-primary.btn-lg(href="/products") Khám phá sản phẩm
+                a.btn.btn-outline-primary.btn-lg(href="#featured-products") Xem nổi bật
+          .col-12.col-lg-5
+            .home-hero__visual(aria-hidden="true")
+              .home-orbit.home-orbit--one
+              .home-orbit.home-orbit--two
+              .home-hero__card.home-hero__card--main
+                span Sản phẩm mới mỗi ngày
+                strong Chọn đúng, mua dễ
+              .home-hero__card.home-hero__card--small Giao hàng nhanh
+
+    section#featured-products.home-section
+      .container
+        .home-section__heading
+          div
+            p.home-section__eyebrow Được quan tâm nhất
+            h2 Sản phẩm nổi bật
+          a.home-section__link(href="/products") Xem tất cả →
+        +product-grid(productsFeatued)
+
+    section.home-section.home-section--soft
+      .container
+        .home-section__heading
+          div
+            p.home-section__eyebrow Vừa cập nhật
+            h2 Sản phẩm mới
+          a.home-section__link(href="/products") Xem tất cả →
+        +product-grid(productsNew)
+
+    section.home-benefits
+      .container
+        .row
+          .col-12.col-md-4.mb-3.mb-md-0
+            .home-benefit
+              strong Giao hàng linh hoạt
+              span Hỗ trợ giao hàng nhanh chóng và thuận tiện.
+          .col-12.col-md-4.mb-3.mb-md-0
+            .home-benefit
+              strong Sản phẩm rõ ràng
+              span Thông tin giá và ưu đãi được hiển thị minh bạch.
+          .col-12.col-md-4
+            .home-benefit
+              strong Mua sắm an tâm
+              span Dễ dàng xem, lựa chọn và đặt sản phẩm.

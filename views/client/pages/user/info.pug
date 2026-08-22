@@ -5,49 +5,38 @@ block main
   +alert-success(5000)
   +alert-error(5000)
 
-  .container.my-5
+  .client-account-page.container.my-5
     .row.justify-content-center
       .col-12.col-md-8
-        .card.shadow-lg.border-0.rounded-lg
+        .card.client-account-card.shadow-lg.border-0
           .card-header.bg-primary.text-white.text-center.py-3
-            h4.font-weight-bold.mb-0 Thông Tin Cá Nhân
+            h4.font-weight-bold.mb-0 Thông tin cá nhân
 
           .card-body.p-4.p-md-5
-            //- Avatar Căn Giữa
             .text-center.mb-4
-              img.rounded-circle.border.shadow-sm(
+              img.client-account-avatar.rounded-circle.border.shadow-sm(
                 src=(user && user.avatar ? user.avatar : "/images/avatar-default.png")
                 alt=user.fullName
-                style="width: 130px; height: 130px; object-fit: cover;"
               )
               h5.font-weight-bold.mt-3.mb-0 #{user.fullName}
               small.text-muted #{user.email}
 
             hr.my-4
 
-            //- Khối Thông Tin Chi Tiết
-            .row.g-3
+            .row
               .col-md-6.mb-3
-                label.form-label.text-muted.small.font-weight-bold HỌ VÀ TÊN
-                .p-2.bg-light.rounded.border #{user.fullName || "Chưa cập nhật"}
-
+                label.form-label.text-muted.small.font-weight-bold Họ và tên
+                .client-account-field #{user.fullName || "Chưa cập nhật"}
               .col-md-6.mb-3
-                label.form-label.text-muted.small.font-weight-bold EMAIL
-                .p-2.bg-light.rounded.border #{user.email || "Chưa cập nhật"}
-
+                label.form-label.text-muted.small.font-weight-bold Email
+                .client-account-field #{user.email || "Chưa cập nhật"}
               .col-md-6.mb-3
-                label.form-label.text-muted.small.font-weight-bold SỐ ĐIỆN THOẠI
-                .p-2.bg-light.rounded.border #{user.phone || "Chưa cập nhật"}
-
+                label.form-label.text-muted.small.font-weight-bold Số điện thoại
+                .client-account-field #{user.phone || "Chưa cập nhật"}
               .col-md-6.mb-3
-                label.form-label.text-muted.small.font-weight-bold ĐỊA CHỈ
-                .p-2.bg-light.rounded.border #{user.address || "Chưa cập nhật"}
+                label.form-label.text-muted.small.font-weight-bold Địa chỉ
+                .client-account-field #{user.address || "Chưa cập nhật"}
 
-            //- Nút Thao Tác
             .d-flex.justify-content-between.align-items-center.mt-4
-              a.btn.btn-outline-secondary.px-4(href="/")
-                i.fas.fa-arrow-left.mr-1
-                | Trang chủ
-              a.btn.btn-primary.px-4.font-weight-bold(href="/user/info/edit")
-                i.fas.fa-user-edit.mr-1
-                | Chỉnh sửa thông tin
+              a.btn.btn-outline-secondary.px-4(href="/") Trang chủ
+              a.btn.btn-primary.px-4.font-weight-bold(href="/user/info/edit") Chỉnh sửa thông tin

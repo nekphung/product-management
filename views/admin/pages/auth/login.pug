@@ -5,34 +5,23 @@ block main
   +alert-error(5000)
   +alert-success(5000)
 
-  .container.my-5
+  .container.auth-login
     .row.justify-content-center
-      .col-8
-        h1(class="text-center mb-4") Đăng nhập
-        form(
-          action=`${prefixAdmin}/auth/login`
-          method="POST"
-        )
-          div(class="form-group mb-3")
-            label(for="email") Email
-            input(
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              required
-            )
-          div(class="form-group mb-3")
-            label(for="password") Mật khẩu
-            input(
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              required
-            )
-          div(class="form-group text-center mt-4")
-            button(
-              type="submit"
-              class="btn btn-primary btn-block"
-            ) Đăng nhập
+      .col-12.col-sm-10.col-md-8.col-lg-5.col-xl-4
+        .auth-login-card
+          .auth-login-card__brand
+            span.auth-login-card__mark(aria-hidden="true") AP
+            p.auth-login-card__eyebrow Khu vực quản trị
+            h1 Đăng nhập
+            p.auth-login-card__description Đăng nhập để quản lý cửa hàng của bạn.
+
+          form.auth-login-form(action=`${prefixAdmin}/auth/login` method="POST")
+            .form-group
+              label(for="email") Email
+              input#email.form-control(type="email" name="email" autocomplete="email" placeholder="name@example.com" required)
+            .form-group.mb-4
+              label(for="password") Mật khẩu
+              input#password.form-control(type="password" name="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required)
+            button.btn.btn-primary.btn-block.auth-login-form__submit(type="submit") Đăng nhập
+
+          p.auth-login-card__footer Chỉ dành cho tài khoản quản trị được cấp quyền.

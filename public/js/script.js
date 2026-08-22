@@ -156,3 +156,43 @@ if (quantityBoxes.length > 0) {
     }
   });
 }
+
+// Product category menu: open categories only when the visitor clicks.
+const productMenuToggle = document.querySelector("[data-product-menu-toggle]");
+if (productMenuToggle) {
+  const productMenuRoot = productMenuToggle.closest(".sub-menu");
+  const closeProductMenu = () => {
+    productMenuRoot.classList.remove("is-open");
+    productMenuToggle.setAttribute("aria-expanded", "false");
+    productMenuRoot.querySelectorAll(".has-children.is-open").forEach((item) => {
+      item.classList.remove("is-open");
+      const nestedToggle = item.querySelector("[data-product-submenu-toggle]");
+      if (nestedToggle) nestedToggle.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  productMenuToggle.addEventListener("click", () => {
+    const opened = !productMenuRoot.classList.contains("is-open");
+    if (opened) productMenuRoot.classList.add("is-open");
+    else closeProductMenu();
+    productMenuToggle.setAttribute("aria-expanded", opened);
+  });
+
+  document.querySelectorAll("[data-product-submenu-toggle]").forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const item = toggle.closest(".has-children");
+      const opened = !item.classList.contains("is-open");
+      item.parentElement.querySelectorAll(":scope > .has-children.is-open").forEach((sibling) => {
+        sibling.classList.remove("is-open");
+        const siblingToggle = sibling.querySelector("[data-product-submenu-toggle]");
+        if (siblingToggle) siblingToggle.setAttribute("aria-expanded", "false");
+      });
+      if (opened) item.classList.add("is-open");
+      toggle.setAttribute("aria-expanded", opened);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!productMenuRoot.contains(event.target)) closeProductMenu();
+  });
+}

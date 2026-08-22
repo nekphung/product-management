@@ -1,17 +1,18 @@
 mixin product-item(item)
-    .col-4.mb-3
-        .product-item
-            .inner-image
-                img(
-                    src=item.thumbnail, 
-                    alt=item.title
-                )
-                if(item.featured == "1") 
-                    .inner-featured Nổi bật 
+    .col-12.col-sm-6.col-lg-4.mb-4
+        article.product-item
+            a.product-item__image(href=`/products/detail/${item.slug}` aria-label=`Xem chi tiết ${item.title}`)
+                img(src=item.thumbnail, alt=item.title)
+                if(item.featured == "1")
+                    span.product-item__badge Nổi bật
+                if(item.discountPercentage && item.discountPercentage > 0)
+                    span.product-item__discount-badge -#{item.discountPercentage}%
 
-            .inner-content
-                h3.inner-title 
+            .product-item__content
+                h3.product-item__title
                     a(href=`/products/detail/${item.slug}`) #{item.title}
-                .inner-price-new #{parseInt(item.priceNew).toLocaleString('vi-VN')}đ
-                .inner-price-old #{parseInt(item.price).toLocaleString('vi-VN')}đ
-                .inner-discount -#{item.discountPercentage}%
+                .product-item__pricing
+                    span.product-item__price-new #{parseInt(item.priceNew).toLocaleString('vi-VN')}đ
+                    if (item.price)
+                        span.product-item__price-old #{parseInt(item.price).toLocaleString('vi-VN')}đ
+                a.product-item__link(href=`/products/detail/${item.slug}`) Xem chi tiết →

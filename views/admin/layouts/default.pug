@@ -1,6 +1,8 @@
 doctype html 
 html 
     head 
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
         title #{pageTitle}
 
         link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
@@ -10,10 +12,10 @@ html
         if (role.permissions.length > 0) 
             include ../partials/header.pug
 
-            .body 
+            .admin-shell
                 include ../partials/sider.pug
 
-                .main 
+                main.main
                     block main 
 
             script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")

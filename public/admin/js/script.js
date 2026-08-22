@@ -1,4 +1,10 @@
 // button-status: tự định nghĩa nên đặt trong []
+const sidebarToggle = document.querySelector("[data-sidebar-toggle]");
+const adminSidebar = document.querySelector(".sider");
+if (sidebarToggle && adminSidebar) {
+  sidebarToggle.addEventListener("click", () => adminSidebar.classList.toggle("is-open"));
+}
+
 const buttonStatus = document.querySelectorAll("[button-status]");
 if (buttonStatus.length > 0) {
     // let url = window.location.href;
@@ -246,4 +252,4 @@ if (sort) {
     }
 }
 
-// End Sort 
+// End Sort

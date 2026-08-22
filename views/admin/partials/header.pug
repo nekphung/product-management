@@ -1,16 +1,7 @@
-header.header.py-3
-    .container-fluid 
-        .row.align-items-center
-            .col-3 
-                .inner-logo
-                    a(href=`${prefixAdmin}/dashboard`) ADMIN
-            
-            .col-9.d-flex.justify-content-end
-                a(
-                    href=`${prefixAdmin}/my-account`
-                    class="btn btn-primary btn-sm mr-2"
-                ) #{user.fullName}
-                a(
-                    href=`${prefixAdmin}/auth/logout`
-                    class="btn btn-danger btn-sm"
-                ) Đăng xuất
+header.admin-header
+  .admin-header__brand
+    button.admin-menu-toggle(type="button" data-sidebar-toggle aria-label="Mở menu quản trị") ☰
+    a(href=`${prefixAdmin}/dashboard`) Admin Panel
+  .admin-header__actions
+    a.admin-header__account(href=`${prefixAdmin}/my-account`) #{user.fullName}
+    a.btn.btn-outline-light.btn-sm(href=`${prefixAdmin}/auth/logout`) Đăng xuất
