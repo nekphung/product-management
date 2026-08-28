@@ -58,7 +58,8 @@ block main
                             th Hành động 
                     
                     tbody
-                        each item, index in products
+                        if (products && products.length > 0)
+                          each item, index in products
                             tr 
                                 td 
                                     input(
@@ -128,6 +129,12 @@ block main
                                             button-delete
                                             data-id=item.id
                                         ) Xóa
+                        else
+                          tr
+                            td.admin-empty-state(colspan="10")
+                              span.admin-empty-state__icon(aria-hidden="true") ∅
+                              strong Chưa có sản phẩm
+                              small Hãy tạo sản phẩm đầu tiên để nội dung hiển thị tại đây.
 
         +pagination(pagination)
 

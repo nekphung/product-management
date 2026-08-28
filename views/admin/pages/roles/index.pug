@@ -46,7 +46,7 @@ block main
                       ) Xóa
             else
               tr
-                td(
-                  colspan="4"
-                  class="text-center"
-                ) Chưa có nhóm quyền nào được tạo.
+                td.admin-empty-state(colspan="4")
+                  span.admin-empty-state__icon(aria-hidden="true") ∅
+                  strong Chưa có nhóm quyền
+                  small Nhóm quyền mới sẽ hiển thị tại đây sau khi được tạo.

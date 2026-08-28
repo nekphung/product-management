@@ -7,4 +7,7 @@ mixin product-grid(products)
                 +product-item(item)
         else
             .col-12
-            p.alert.alert-warning Chưa có sản phẩm nào.
+                .product-empty-state
+                    span.product-empty-state__icon(aria-hidden="true") ∅
+                    strong Chưa có sản phẩm
+                    p Sản phẩm sẽ sớm được cập nhật. Vui lòng quay lại sau.

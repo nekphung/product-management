@@ -31,4 +31,7 @@ block main
                             +table-tree(records)
                         else
                             tr
-                                td(colspan="6" class="text-center") Chưa có danh mục nào được tạo.
+                                td.admin-empty-state(colspan="6")
+                                    span.admin-empty-state__icon(aria-hidden="true") ∅
+                                    strong Chưa có danh mục sản phẩm
+                                    small Hãy thêm danh mục đầu tiên để bắt đầu quản lý sản phẩm.

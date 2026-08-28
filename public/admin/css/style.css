@@ -208,3 +208,9 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .admin-create-form .admin-form-actions { margin-top: 30px; }
 @media (min-width: 992px) { .main > .admin-create-form { padding: 34px 38px; } }
 @media (max-width: 575.98px) { .main > .admin-create-title { padding-left: 14px; } .main > .admin-create-form { padding: 20px; border-radius: 13px; } .admin-create-form .form-check-inline { display: flex; width: 100%; margin: 0 0 8px; align-items: center; } }
+
+/* Empty table states */
+.main .table td.admin-empty-state { padding: 42px 20px !important; background: linear-gradient(135deg, #f8fbff, #fff); color: #64748b; text-align: center; white-space: normal; }
+.admin-empty-state__icon { display: flex; width: 50px; height: 50px; align-items: center; justify-content: center; margin: 0 auto 13px; border-radius: 50%; background: #e6f1fb; color: #2f80ed; font-size: 25px; font-weight: 300; }
+.admin-empty-state strong { display: block; margin-bottom: 6px; color: #334155; font-size: 16px; font-weight: 750; }
+.admin-empty-state small { display: block; color: #64748b; font-size: 13px; }

@@ -78,4 +78,7 @@ block main
             else
               tr
                 //- Cập nhật colspan="8" vì đã thêm 1 cột
-                td(colspan="8" class="text-center") Chưa có tài khoản nào được tạo.
+                td.admin-empty-state(colspan="8")
+                  span.admin-empty-state__icon(aria-hidden="true") ∅
+                  strong Chưa có tài khoản
+                  small Tài khoản mới sẽ hiển thị tại đây sau khi được tạo.
