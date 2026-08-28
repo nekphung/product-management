@@ -1,5 +1,5 @@
 mixin sort()
-    div(sort)
+    .admin-sort-control(sort)
         select(
             class="form-control"
             name="sort"
@@ -13,6 +13,7 @@ mixin sort()
             option(value="title-desc") Tiêu đề Z - A
         
         button(
-            class="btn btn-danger mt-2"
+            class="btn btn-outline-secondary"
+            type="button"
             sort-clear
-        ) Clear
+        ) Xóa lọc

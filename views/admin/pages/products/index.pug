@@ -13,21 +13,20 @@ block main
 
         h1 Danh sách sản phẩm 
 
-        .card.mb-3 
-            .card-header Bộ lọc và Tìm kiếm 
-            .card-body 
-                .row 
-                    .col-6
-                        +filter-status(filterStatus)
-                    .col-6 
-                        +search(keyword)
-
-        .card.mb-3
-            .card-header Sắp xếp 
-            .card-body 
-                .row 
-                    .col-4 
+        .card.mb-3.admin-product-controls
+            .card-header Bộ lọc, tìm kiếm và sắp xếp
+            .card-body
+                .admin-product-toolbar
+                    .admin-product-toolbar__item.admin-product-toolbar__filter
+                        label Trạng thái
+                        .admin-status-buttons
+                            +filter-status(filterStatus)
+                    .admin-product-toolbar__item.admin-product-toolbar__sort
+                        label Sắp xếp theo
                         +sort()
+                    .admin-product-toolbar__item.admin-product-toolbar__search
+                        label Tìm sản phẩm
+                        +search(keyword)
         .card.mb-3 
             .card-header.admin-list-header
                 span Danh sách
