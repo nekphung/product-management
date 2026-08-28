@@ -81,3 +81,40 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .main .badge { padding: 5px 8px; border-radius: 999px; font-weight: 700; }
 .main .btn { border-radius: 7px; font-weight: 600; }
 @media (max-width: 575.98px) { .main > h1, .main > .container > h1, .main > .container-fluid > h1 { font-size: 25px; } .main > form { padding: 20px; } }
+
+/* CRUD lists, forms and detail views */
+.main .card-body > .row:first-child { align-items: center; }
+.main .card-body > .row:first-child > [class*="col-"]:last-child { display: flex; justify-content: flex-end; gap: 8px; }
+.main .table { min-width: 720px; }
+.main .table td:last-child { white-space: nowrap; }
+.main .table td:last-child .btn { min-width: 58px; margin: 2px !important; }
+.main .table .btn-secondary { border-color: #e2e8f0; background: #f1f5f9; color: #334155; }
+.main .table .btn-warning { border-color: #fbbf24; background: #fff7d6; color: #92400e; }
+.main .table .btn-danger { border-color: #fecaca; background: #fff1f2; color: #b91c1c; }
+.main .table .btn-secondary:hover { border-color: #cbd5e1; background: #e2e8f0; }
+.main .table .btn-warning:hover { border-color: #f59e0b; background: #fde68a; }
+.main .table .btn-danger:hover { border-color: #fca5a5; background: #fee2e2; }
+.main .table img { max-width: 88px; max-height: 64px; border: 1px solid #e2e8f0; border-radius: 8px; object-fit: contain; padding: 3px; background: #fff; }
+.main .table input[name="position"] { border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px; }
+.main .card-body > form, .main > .container form, .main > .container-fluid form { max-width: 960px; padding: 26px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: 0 6px 20px rgba(15,23,42,.05); }
+.main form label { color: #334155; font-size: 14px; font-weight: 650; }
+.main form .form-group { margin-bottom: 20px; }
+.main form .form-control-file { padding: 10px; border: 1px dashed #94a3b8; border-radius: 8px; background: #f8fafc; }
+.main form > .btn-primary, .main form .btn-primary[type="submit"] { min-width: 140px; min-height: 42px; margin-top: 4px; }
+.main .badge-success { background: #dcfce7; color: #15803d; }
+.main .badge-danger { background: #fee2e2; color: #b91c1c; }
+
+/* Product detail page: external CSS overrides the former inline styling */
+.main .product-detail-container { max-width: 1050px !important; margin: 0 auto !important; padding: 32px !important; border: 1px solid #e2e8f0 !important; border-radius: 16px !important; box-shadow: 0 8px 26px rgba(15,23,42,.06) !important; }
+.main .product-header { grid-template-columns: minmax(280px, .9fr) 1.1fr !important; gap: 32px !important; }
+.main .product-image-wrapper { height: 340px !important; border-color: #e2e8f0 !important; border-radius: 12px !important; background: #f8fafc !important; }
+.main .product-image { object-fit: contain !important; padding: 18px; }
+.main .price-container { border-left-color: #0b325b !important; border-radius: 12px !important; background: #eef6ff !important; }
+.main .price-new { color: #0b325b !important; }
+.main .discount-tag { background: #dc3545 !important; }
+.main .info-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #edf0f3; }
+.main .info-label { width: 105px !important; }
+.main .product-description { margin-top: 28px; padding: 26px 0 0 !important; }
+.main .action-box { justify-content: space-between !important; }
+.main .action-box .btn { border-radius: 8px; font-weight: 700 !important; }
+@media (max-width: 767.98px) { .main .card-body > .row:first-child > [class*="col-"]:last-child { justify-content: flex-start; margin-top: 12px; } .main .product-detail-container { padding: 20px !important; } .main .product-header { grid-template-columns: 1fr !important; } .main .product-image-wrapper { height: 260px !important; } }

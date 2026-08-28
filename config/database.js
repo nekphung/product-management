@@ -1,3 +1,4 @@
+const dns = require("node:dns");
 const mongoose = require("mongoose");
 
 module.exports.connect = async () => {
@@ -6,5 +7,6 @@ module.exports.connect = async () => {
         console.log("Connect Success!");
     } catch (error) {
         console.log("Connect Error!");
+        // console.log(error); // Bỏ comment dòng này!
     }
 }

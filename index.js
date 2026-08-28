@@ -17,8 +17,6 @@ const systemConfig = require("./config/system");
 const routeAdmin = require("./routes/admin/index.route");
 const route = require("./routes/client/index.route");
 
-database.connect();
-
 const app = express();
 const port = process.env.PORT;
 
@@ -62,6 +60,18 @@ app.get("{*path}", (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+const startServer = async () => {
+  try {
+    await database.connect();
+
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Unable to start the server because MongoDB connection failed:");
+    console.error(error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -5,6 +5,7 @@ header.site-header
     nav.navbar.navbar-expand-lg.p-0
       a.site-brand(href="/")
         img(src=settingGeneral.logo, alt="Trang chủ")
+        span.site-brand__name Cửa hàng
       button.navbar-toggler.site-nav-toggle(type="button" data-toggle="collapse" data-target="#siteNavigation" aria-controls="siteNavigation" aria-expanded="false" aria-label="Mở menu") Menu
       #siteNavigation.collapse.navbar-collapse
         form.site-search(action="/search" method="GET")
@@ -26,10 +27,22 @@ header.site-header
             li.nav-item.dropdown
               a.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") #{user.fullName}
               .dropdown-menu.dropdown-menu-right.site-user-menu
-                a.dropdown-item(href="/user/info") Tài khoản
-                a.dropdown-item(href="/user/info/edit") Chỉnh sửa thông tin
+                a.dropdown-item(href="/user/info")
+                  i.fas.fa-user-circle.mr-2.text-primary
+                  | Thông tin tài khoản
+                a.dropdown-item(href="/user/info/edit")
+                  i.fas.fa-user-edit.mr-2.text-info.fa-fw
+                  | Chỉnh sửa tài khoản
+                a.dropdown-item(href="/user/orders")
+                  i.fas.fa-shopping-bag.mr-2.text-success
+                  | Đơn hàng của tôi
+                a.dropdown-item(href="/user/password/change")
+                  i.fas.fa-key.mr-2.text-warning
+                  | Đổi mật khẩu
                 .dropdown-divider
-                a.dropdown-item.text-danger(href="/user/logout") Đăng xuất
+                a.dropdown-item.text-danger(href="/user/logout")
+                  i.fas.fa-sign-out-alt.mr-2
+                  | Đăng xuất
           else
             li.nav-item
               a.btn.btn-outline-light.btn-sm.site-login(href="/user/login") Đăng nhập
