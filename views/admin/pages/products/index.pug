@@ -29,17 +29,16 @@ block main
                     .col-4 
                         +sort()
         .card.mb-3 
-            .card-header Danh sách  
+            .card-header.admin-list-header
+                span Danh sách
+                if (role.permissions.includes("products_create"))
+                    a.admin-create-button(href=`${prefixAdmin}/products/create`)
+                        span.admin-create-button__icon(aria-hidden="true") +
+                        | Thêm mới
             .card-body 
                 .row 
-                    .col-8 
+                    .col-12
                         +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
-                    .col-4 
-                        if (role.permissions.includes("products_create"))
-                            a(
-                                href=`${prefixAdmin}/products/create`
-                                class="btn btn-outline-success"
-                            ) + Thêm mới 
         
                 table(
                     class="table table-hover table-sm"

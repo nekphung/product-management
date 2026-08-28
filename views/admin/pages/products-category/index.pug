@@ -6,17 +6,13 @@ block main
         h1 Danh mục sản phẩm 
 
         .card.mb-3 
-            .card-header Danh sách  
+            .card-header.admin-list-header
+                span Danh sách
+                if (role.permissions.includes("products-category_create"))
+                    a.admin-create-button(href=`${prefixAdmin}/products-category/create`)
+                        span.admin-create-button__icon(aria-hidden="true") +
+                        | Thêm mới
             .card-body 
-                .row.mb-3
-                    .col-8 
-                    .col-4 
-                        if (role.permissions.includes("products-category_create"))
-                            a(
-                                href=`${prefixAdmin}/products-category/create`
-                                class="btn btn-outline-success"
-                            ) + Thêm mới 
-
                 table(
                     class="table table-hover table-sm"
                     checkbox-multi
