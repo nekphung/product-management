@@ -24,6 +24,7 @@ app.use(methodOverride("_method"));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json({ limit: "32kb" }));
 
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");

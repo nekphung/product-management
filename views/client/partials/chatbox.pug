@@ -1,0 +1,37 @@
+.customer-chat(data-chatbox data-api-endpoint="/api/chat")
+  button.customer-chat__launcher(type="button" data-chatbox-toggle aria-label="Mở hộp thoại hỗ trợ" aria-expanded="false")
+    span.customer-chat__launcher-icon(aria-hidden="true")
+      svg(viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2")
+        path(d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z")
+    span.customer-chat__launcher-close(aria-hidden="true") ×
+    span.customer-chat__notification(data-chatbox-notification) 1
+
+  section.customer-chat__panel(data-chatbox-panel aria-label="Hộp thoại hỗ trợ" aria-hidden="true")
+    header.customer-chat__header
+      .customer-chat__agent
+        .customer-chat__avatar CS
+        div
+          h2 Hỗ trợ khách hàng
+          p
+            span.customer-chat__status-dot
+            | Sẵn sàng hỗ trợ
+      button.customer-chat__minimize(type="button" data-chatbox-close aria-label="Thu nhỏ hộp thoại") −
+
+    .customer-chat__messages(data-chatbox-messages aria-live="polite")
+      .customer-chat__day Hôm nay
+      .customer-chat__message.customer-chat__message--bot
+        .customer-chat__bubble
+          | Xin chào! Mình có thể giúp bạn tìm sản phẩm hoặc giải đáp thắc mắc. Bạn cần hỗ trợ gì?
+        time Vừa xong
+      .customer-chat__suggestions(data-chatbox-suggestions)
+        button(type="button" data-chatbox-suggestion="Tư vấn sản phẩm") Tư vấn sản phẩm
+        button(type="button" data-chatbox-suggestion="Kiểm tra đơn hàng") Kiểm tra đơn hàng
+        button(type="button" data-chatbox-suggestion="Chính sách đổi trả") Chính sách đổi trả
+
+    form.customer-chat__composer(data-chatbox-form)
+      textarea(data-chatbox-input rows="1" maxlength="1000" placeholder="Nhập tin nhắn..." aria-label="Nội dung tin nhắn")
+      button.customer-chat__send(type="submit" data-chatbox-send aria-label="Gửi tin nhắn")
+        svg(viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2")
+          path(d="m22 2-7 20-4-9-9-4Z")
+          path(d="M22 2 11 13")
+    .customer-chat__footer Phản hồi có thể được tạo bởi AI
