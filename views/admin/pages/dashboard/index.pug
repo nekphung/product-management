@@ -1,55 +1,33 @@
 extends ../../layouts/default.pug
 
 block main
-  h1.mb-4 Trang tổng quan
+  .admin-page-heading
+    div
+      p.admin-page-eyebrow Quản trị hệ thống
+      h1 Trang tổng quan
+      p Theo dõi nhanh tình trạng dữ liệu và tài khoản trong hệ thống.
 
-  .row.mt-4
-    //- Thông tin tài khoản
-    .col-12.mb-4
-      .card
-        .card-header Thông tin tài khoản
-        .card-body
-          if(user.fullName)
-            p Họ tên: <b>#{user.fullName}</b>
-          if(user.email)
-            p Email: <b>#{user.email}</b>
-          if(user.phone)
-            p Số điện thoại: <b>#{user.phone}</b>
-          if(role.title)
-            p Phân quyền: <b>#{role.title}</b>
+  .dashboard-profile-card
+    .dashboard-profile-card__avatar #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"}
+    .dashboard-profile-card__content
+      span Tài khoản đang đăng nhập
+      h2 #{user.fullName || "Quản trị viên"}
+      .dashboard-profile-card__meta
+        if(user.email)
+          span #{user.email}
+        if(user.phone)
+          span #{user.phone}
+        if(role.title)
+          span.dashboard-role-badge #{role.title}
 
-    //- Danh mục sản phẩm
-    .col-12.col-md-6.col-xl-4.mb-4
-      .card
-        .card-header Danh mục sản phẩm
-        .card-body
-          p Số lượng: <b>#{statistic.categoryProduct.total}</b>
-          p Hoạt động: <b>#{statistic.categoryProduct.active}</b>
-          p Dừng hoạt động: <b>#{statistic.categoryProduct.inactive}</b>
-
-    //- Sản phẩm
-    .col-12.col-md-6.col-xl-4.mb-4
-      .card
-        .card-header Sản phẩm
-        .card-body
-          p Số lượng: <b>#{statistic.product.total}</b>
-          p Hoạt động: <b>#{statistic.product.active}</b>
-          p Dừng hoạt động: <b>#{statistic.product.inactive}</b>
-
-    //- Tài khoản admin
-    .col-12.col-md-6.col-xl-4.mb-4
-      .card
-        .card-header Tài khoản admin
-        .card-body
-          p Số lượng: <b>#{statistic.account.total}</b>
-          p Hoạt động: <b>#{statistic.account.active}</b>
-          p Dừng hoạt động: <b>#{statistic.account.inactive}</b>
-
-    //- Tài khoản client
-    .col-6.mb-4
-      .card
-        .card-header Tài khoản client
-        .card-body
-          p Số lượng: <b>#{statistic.user.total}</b>
-          p Hoạt động: <b>#{statistic.user.active}</b>
-          p Dừng hoạt động: <b>#{statistic.user.inactive}</b>
+  .dashboard-stat-grid
+    each statCard in [{ label: "Danh mục sản phẩm", mark: "DM", caption: "Tổng danh mục", data: statistic.categoryProduct, color: "blue" }, { label: "Sản phẩm", mark: "SP", caption: "Tổng sản phẩm", data: statistic.product, color: "green" }, { label: "Tài khoản admin", mark: "AD", caption: "Tổng quản trị viên", data: statistic.account, color: "purple" }, { label: "Tài khoản khách hàng", mark: "KH", caption: "Tổng khách hàng", data: statistic.user, color: "orange" }]
+      .dashboard-stat-card(class=`dashboard-stat-card--${statCard.color}`)
+        .dashboard-stat-card__top
+          span #{statCard.label}
+          span.dashboard-stat-card__mark #{statCard.mark}
+        strong.dashboard-stat-card__total #{statCard.data.total}
+        span.dashboard-stat-card__caption #{statCard.caption}
+        .dashboard-stat-card__footer
+          span Hoạt động: <b>#{statCard.data.active}</b>
+          span Dừng: <b>#{statCard.data.inactive}</b>

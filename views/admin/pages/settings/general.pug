@@ -5,67 +5,58 @@ block main
   +alert-success(3000)
   +alert-error(3000)
 
-  h1.mb-4 Cài đặt chung
+  .admin-page-heading
+    div
+      p.admin-page-eyebrow Thiết lập website
+      h1 Cài đặt chung
+      p Quản lý thông tin thương hiệu và liên hệ hiển thị trên website.
 
-  form(
-    action=`/admin/settings/general?_method=PATCH`
-    method="POST"
-    enctype="multipart/form-data"
-  )
-    .form-group.mb-3
-      label(for="websiteName") Tên website
-      input#websiteName.form-control(
-        type="text"
-        name="websiteName"
-        value=(settingGeneral ? settingGeneral.websiteName : "")
-      )
+  form.admin-settings-form(action=`${prefixAdmin}/settings/general?_method=PATCH` method="POST" enctype="multipart/form-data")
+    .admin-settings-section
+      .admin-settings-section__heading
+        span.admin-settings-section__number 01
+        div
+          h2 Nhận diện website
+          p Tên và logo được sử dụng trên giao diện khách hàng.
+      .admin-settings-grid.admin-settings-grid--brand
+        .form-group
+          label(for="websiteName") Tên website
+          input#websiteName.form-control(type="text" name="websiteName" value=(settingGeneral ? settingGeneral.websiteName : "") placeholder="Nhập tên website")
+        .form-group.admin-logo-field(upload-image)
+          label(for="logo") Logo website
+          .admin-logo-upload
+            img(src=(settingGeneral && settingGeneral.logo ? settingGeneral.logo : "/images/avatar-default.png") upload-image-preview class="image-preview")
+            div
+              input#logo.form-control-file.d-block(type="file" name="logo" accept="image/*" upload-image-input)
+              small PNG, JPG hoặc WEBP. Nên sử dụng ảnh nền trong suốt.
 
-    .form-group.mb-3(upload-image)
-      label(for="logo") Logo
-      input#logo.form-control-file.d-block(
-        type="file"
-        name="logo"
-        accept="image/*"
-        upload-image-input
-      )
-      img(
-        src=(settingGeneral ? settingGeneral.logo : "")
-        upload-image-preview
-        class="image-preview mt-2"
-        style="max-width: 150px;"
-      )
+    .admin-settings-section
+      .admin-settings-section__heading
+        span.admin-settings-section__number 02
+        div
+          h2 Thông tin liên hệ
+          p Các thông tin giúp khách hàng liên hệ với cửa hàng.
+      .admin-settings-grid
+        .form-group
+          label(for="phone") Số điện thoại
+          input#phone.form-control(type="text" name="phone" value=(settingGeneral ? settingGeneral.phone : "") placeholder="Nhập số điện thoại")
+        .form-group
+          label(for="email") Email
+          input#email.form-control(type="email" name="email" value=(settingGeneral ? settingGeneral.email : "") placeholder="Nhập email liên hệ")
+        .form-group.admin-settings-grid__full
+          label(for="address") Địa chỉ
+          input#address.form-control(type="text" name="address" value=(settingGeneral ? settingGeneral.address : "") placeholder="Nhập địa chỉ cửa hàng")
 
-    .form-group.mb-3
-      label(for="phone") Số điện thoại
-      input#phone.form-control(
-        type="text"
-        name="phone"
-        value=(settingGeneral ? settingGeneral.phone : "")
-      )
+    .admin-settings-section
+      .admin-settings-section__heading
+        span.admin-settings-section__number 03
+        div
+          h2 Thông tin bản quyền
+          p Nội dung hiển thị ở cuối trang website.
+      .form-group.mb-0
+        label(for="copyright") Bản quyền (Copyright)
+        input#copyright.form-control(type="text" name="copyright" value=(settingGeneral ? settingGeneral.copyright : "") placeholder="Ví dụ: © 2026 Tên cửa hàng")
 
-    .form-group.mb-3
-      label(for="email") Email
-      input#email.form-control(
-        type="email"
-        name="email"
-        value=(settingGeneral ? settingGeneral.email : "")
-      )
-
-    .form-group.mb-3
-      label(for="address") Địa chỉ
-      input#address.form-control(
-        type="text"
-        name="address"
-        value=(settingGeneral ? settingGeneral.address : "")
-      )
-
-    .form-group.mb-3
-      label(for="copyright") Bản quyền (Copyright)
-      input#copyright.form-control(
-        type="text"
-        name="copyright"
-        value=(settingGeneral ? settingGeneral.copyright : "")
-      )
-
-    .form-group.mb-3
-      button.btn.btn-primary(type="submit") Cập nhật
+    .admin-settings-actions
+      span Kiểm tra lại thông tin trước khi lưu thay đổi.
+      button.btn.btn-primary(type="submit") Lưu cài đặt
