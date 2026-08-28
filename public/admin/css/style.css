@@ -101,6 +101,13 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .main form .form-group { margin-bottom: 20px; }
 .main form .form-control-file { padding: 10px; border: 1px dashed #94a3b8; border-radius: 8px; background: #f8fafc; }
 .main form > .btn-primary, .main form .btn-primary[type="submit"] { min-width: 140px; min-height: 42px; margin-top: 4px; }
+.main .admin-form-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin: 28px -26px -26px; padding: 18px 26px; border-top: 1px solid #e2e8f0; border-radius: 0 0 14px 14px; background: #f8fafc; }
+.main .admin-form-actions .btn { display: inline-flex; min-width: 132px; min-height: 44px; align-items: center; justify-content: center; margin: 0; padding: 10px 20px; border-radius: 9px; font-size: 14px; font-weight: 700; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease; }
+.main .admin-form-actions .btn-primary { border-color: #0b325b; background: linear-gradient(135deg, #0b325b, #13548d); box-shadow: 0 5px 14px rgba(11,50,91,.2); }
+.main .admin-form-actions .btn-primary:hover { border-color: #082844; background: linear-gradient(135deg, #082844, #0e4778); box-shadow: 0 7px 18px rgba(11,50,91,.26); transform: translateY(-1px); }
+.main .admin-form-actions .btn-outline-secondary { border-color: #cbd5e1; background: #fff; color: #475569; }
+.main .admin-form-actions .btn-outline-secondary:hover { border-color: #94a3b8; background: #eef2f7; color: #1e293b; transform: translateY(-1px); }
+.main .admin-form-actions .btn:focus { box-shadow: 0 0 0 .2rem rgba(47,128,237,.18); }
 .main .badge-success { background: #dcfce7; color: #15803d; }
 .main .badge-danger { background: #fee2e2; color: #b91c1c; }
 
@@ -118,3 +125,4 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .main .action-box { justify-content: space-between !important; }
 .main .action-box .btn { border-radius: 8px; font-weight: 700 !important; }
 @media (max-width: 767.98px) { .main .card-body > .row:first-child > [class*="col-"]:last-child { justify-content: flex-start; margin-top: 12px; } .main .product-detail-container { padding: 20px !important; } .main .product-header { grid-template-columns: 1fr !important; } .main .product-image-wrapper { height: 260px !important; } }
+@media (max-width: 575.98px) { .main .admin-form-actions { flex-direction: column-reverse; margin: 24px -20px -20px; padding: 16px 20px; } .main .admin-form-actions .btn { width: 100%; } }

@@ -30,5 +30,7 @@ block main
                     rows="5"
                 )
 
-            // Nút submit 
-            button.btn.btn-primary(type="submit") Tạo mới
+            // Nút thao tác
+            .admin-form-actions
+                a.btn.btn-outline-secondary(href=`${prefixAdmin}/roles`) Hủy
+                button.btn.btn-primary(type="submit") Tạo nhóm quyền

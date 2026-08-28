@@ -111,6 +111,7 @@ block main
         )
         label(for="statusInActive" class="form-check-label") Dừng hoạt động
 
-      // Nút submit 
-      div(class="form-group")
-        button.btn.btn-primary(type="submit") Tạo mới
+      // Nút thao tác
+      .form-group.admin-form-actions
+        a.btn.btn-outline-secondary(href=`${prefixAdmin}/accounts`) Hủy
+        button.btn.btn-primary(type="submit") Tạo tài khoản

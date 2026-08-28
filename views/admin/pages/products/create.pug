@@ -160,7 +160,9 @@ block main
                     label.form-check-label(for="statusInactive") Dừng hoạt động
                 
 
-            // Nút submit 
-            button.btn.btn-primary(type="submit") Tạo sản phẩm
+            // Nút thao tác
+            .admin-form-actions
+                a.btn.btn-outline-secondary(href=`${prefixAdmin}/products`) Hủy
+                button.btn.btn-primary(type="submit") Tạo sản phẩm
     
         script(src="/admin/js/product.js")
