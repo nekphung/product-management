@@ -3,11 +3,11 @@ include ../../mixins/alert.pug
 
 block main 
   if (role.permissions.includes("accounts_create"))
-    h1(class="mb-4") Thêm mới tài khoản
+    h1.admin-create-title Thêm mới tài khoản
 
     +alert-error(5000)
 
-    form(
+    form.admin-create-form(
       action=`${prefixAdmin}/accounts/create`
       method="POST"
       enctype="multipart/form-data"
