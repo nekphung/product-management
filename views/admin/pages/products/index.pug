@@ -35,9 +35,10 @@ block main
                         span.admin-create-button__icon(aria-hidden="true") +
                         | Thêm mới
             .card-body 
-                .row 
-                    .col-12
-                        +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
+                if (products && products.length > 0)
+                    .row 
+                        .col-12
+                            +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
         
                 table(
                     class="table table-hover table-sm"
@@ -132,9 +133,28 @@ block main
                         else
                           tr
                             td.admin-empty-state(colspan="10")
-                              span.admin-empty-state__icon(aria-hidden="true") ∅
-                              strong Chưa có sản phẩm
-                              small Hãy tạo sản phẩm đầu tiên để nội dung hiển thị tại đây.
+                              .admin-empty-state__content
+                                .admin-empty-state__visual(aria-hidden="true")
+                                  svg(viewBox="0 0 64 64")
+                                    path(d="M13 22 32 12l19 10-19 10-19-10Z")
+                                    path(d="m13 22 19 10 19-10v21L32 53 13 43V22Z")
+                                    path(d="M32 32v21")
+                                    path(d="M43 17 24 27")
+                                  span +
+                                p.admin-empty-state__eyebrow Kho sản phẩm đang trống
+                                strong Chưa có sản phẩm nào
+                                small Tạo sản phẩm đầu tiên để bắt đầu quản lý tồn kho, giá bán và nội dung hiển thị trên cửa hàng.
+                                .admin-empty-state__features
+                                  span
+                                    i(aria-hidden="true") ✓
+                                    | Quản lý giá và tồn kho
+                                  span
+                                    i(aria-hidden="true") ✓
+                                    | Hiển thị ngay ngoài cửa hàng
+                                if (role.permissions.includes("products_create"))
+                                  a.admin-empty-state__action(href=`${prefixAdmin}/products/create`)
+                                    span(aria-hidden="true") +
+                                    | Thêm sản phẩm đầu tiên
 
         +pagination(pagination)
 
