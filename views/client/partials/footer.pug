@@ -1,38 +1,83 @@
 footer.site-footer
+  .site-footer__decoration.site-footer__decoration--left(aria-hidden="true")
+    svg(viewBox="0 0 64 64")
+      path(d="M5 24h31v22H13a8 8 0 0 1-8-8V24Z")
+      path(d="M36 30h12l9 9v7H36V30Z")
+      circle(cx="18" cy="48" r="6")
+      circle(cx="47" cy="48" r="6")
+  .site-footer__decoration.site-footer__decoration--right(aria-hidden="true")
+    svg(viewBox="0 0 64 64")
+      rect(x="10" y="25" width="38" height="28" rx="4")
+      path(d="M18 25v-8a11 11 0 0 1 22 0v8M23 39l5 5 9-11")
   .container
-    .site-footer__content
-      .site-footer__identity
-        span.site-footer__eyebrow Mua sắm tiện lợi
-        a.site-footer__brand(href="/") #{settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Cửa hàng sản phẩm"}
-        p Sản phẩm rõ ràng, hỗ trợ nhanh chóng và trải nghiệm mua sắm an tâm.
+    .site-footer__panel
+      .site-footer__benefits(aria-label="Cam kết mua sắm")
+        .site-footer__benefit
+          span.site-footer__benefit-icon(aria-hidden="true")
+            svg(viewBox="0 0 24 24")
+              path(d="M3 6h11v10H3z")
+              path(d="M14 9h4l3 3v4h-7zM5 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z")
+          strong Giao hàng linh hoạt.
+        .site-footer__benefit
+          span.site-footer__benefit-icon(aria-hidden="true")
+            svg(viewBox="0 0 24 24")
+              path(d="M4 3h11v18H4zM8 7h3M8 11h3M8 15h3")
+              circle(cx="18" cy="15" r="4")
+              path(d="m15 18 6-6")
+          strong Sản phẩm rõ ràng.
+        .site-footer__benefit
+          span.site-footer__benefit-icon(aria-hidden="true")
+            svg(viewBox="0 0 24 24")
+              path(d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14l1 11H4z")
+              path(d="m9 15 2 2 4-4")
+          strong Mua sắm an tâm.
 
-      if settingGeneral && (settingGeneral.email || settingGeneral.phone)
-        address.site-footer__contact
-          if settingGeneral.phone
-            - const footerPhoneHref = String(settingGeneral.phone).replace(/[^\d+]/g, "")
-            a.site-footer__contact-item(href=`tel:${footerPhoneHref}`)
-              span.site-footer__contact-icon(aria-hidden="true")
-                svg(viewBox="0 0 24 24")
-                  path(d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z")
+      .site-footer__details
+        .site-footer__identity
+          a.site-footer__brand(href="/" aria-label=(settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Trang chủ"))
+            if settingGeneral && settingGeneral.logo
+              img(src=settingGeneral.logo alt=(settingGeneral.websiteName || "Logo website"))
+            strong #{settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Shop Online"}
+          .site-footer__socials(aria-label="Mạng xã hội")
+            a.site-footer__social.site-footer__social--facebook(href="https://www.facebook.com/nek.phung.180" target="_blank" rel="noopener noreferrer" aria-label="Facebook của Nèk Phùng")
+              span.site-footer__social-icon(aria-hidden="true") f
               span
-                small Hotline
-                strong #{settingGeneral.phone}
-          if settingGeneral.email
-            a.site-footer__contact-item(href=`mailto:${settingGeneral.email}`)
-              span.site-footer__contact-icon(aria-hidden="true")
+                small Facebook
+                strong Nèk Phùng
+            a.site-footer__social.site-footer__social--tiktok(href="https://www.tiktok.com/@nekphung2k6?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok")
+              span.site-footer__social-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
-                  path(d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z")
-                  path(d="m22 6-10 7L2 6")
+                  path(d="M15 4v10.2a4.2 4.2 0 1 1-3.3-4.1")
+                  path(d="M15 4c.5 2.5 2.1 4 4.5 4.4")
               span
-                small Email hỗ trợ
-                strong #{settingGeneral.email}
+                small TikTok
+                strong @nekphung2k6
 
-      a.site-footer__link(href="/products")
-        span
-          small Mua sắm ngay
-          strong Khám phá sản phẩm
-        span.site-footer__link-arrow(aria-hidden="true") →
+        if settingGeneral && (settingGeneral.phone || settingGeneral.email)
+          .site-footer__support
+            strong.site-footer__support-title Hỗ trợ
+            address.site-footer__contact
+              if settingGeneral.phone
+                - const footerPhoneHref = String(settingGeneral.phone).replace(/[^\d+]/g, "")
+                a.site-footer__contact-item(href=`tel:${footerPhoneHref}`)
+                  span.site-footer__contact-icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z")
+                  span
+                    small Hotline
+                    strong #{settingGeneral.phone}
+              if settingGeneral.email
+                a.site-footer__contact-item(href=`mailto:${settingGeneral.email}`)
+                  span.site-footer__contact-icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z")
+                      path(d="m22 6-10 7L2 6")
+                  span
+                    small Email
+                    strong #{settingGeneral.email}
 
-    .site-footer__bottom
-      p.site-footer__copyright #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : ""}
-      span.site-footer__note Thông tin liên hệ được cập nhật từ hệ thống cửa hàng
+        a.site-footer__cta(href="/products")
+          span Khám phá sản phẩm
+          span.site-footer__cta-arrow(aria-hidden="true") →
+
+    p.site-footer__copyright #{settingGeneral && settingGeneral.copyright ? settingGeneral.copyright : ""}

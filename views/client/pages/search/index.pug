@@ -4,6 +4,10 @@ include ../../mixins/product-layout.pug
 block main
   main.search-page
     .container.py-4.py-md-5
+      button.search-page__back(type="button" button-go-back data-clear-search-on-back aria-label="Quay lại trang trước")
+        span.search-page__back-icon(aria-hidden="true") ←
+        span Quay lại
+
       .search-page__heading
         p.search-page__eyebrow Tìm kiếm trong cửa hàng
         h1 Kết quả tìm kiếm

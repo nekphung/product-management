@@ -20,10 +20,27 @@ const buttonGoBack = document.querySelectorAll("[button-go-back]");
 if (buttonGoBack.length > 0) {
     buttonGoBack.forEach(button => {
         button.addEventListener("click", () => {
-            history.back();
+            if (button.hasAttribute("data-clear-search-on-back")) {
+                sessionStorage.setItem("clearSiteSearch", "true");
+            }
+
+            const hasPreviousPage = document.referrer && document.referrer !== window.location.href;
+            if (hasPreviousPage) {
+                history.back();
+            } else {
+                window.location.href = button.dataset.backFallback || "/";
+            }
         })
     })
 }
+
+window.addEventListener("pageshow", () => {
+    if (sessionStorage.getItem("clearSiteSearch") !== "true") return;
+
+    const siteSearchInput = document.querySelector(".site-search input[name='keyword']");
+    if (siteSearchInput) siteSearchInput.value = "";
+    sessionStorage.removeItem("clearSiteSearch");
+});
 
 // End Button Go Back 
 
