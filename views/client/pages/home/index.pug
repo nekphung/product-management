@@ -44,16 +44,40 @@ block main
 
     section.home-benefits
       .container
-        .row
+        .home-benefits__brand(aria-label="Nék Phùng")
+          strong NP
+          span Nék Phùng
+        .row.home-benefits__row
           .col-12.col-md-4.mb-3.mb-md-0
             .home-benefit
+              .home-benefit__icon(aria-hidden="true")
+                svg(viewBox="0 0 64 64")
+                  path(d="M5 24h31v22H13a8 8 0 0 1-8-8V24Z")
+                  path(d="M36 30h12l9 9v7H36V30Z")
+                  circle(cx="18" cy="48" r="6")
+                  circle(cx="47" cy="48" r="6")
+                  path(d="M2 16h25M8 10h25M1 31h12")
               strong Giao hàng linh hoạt
               span Hỗ trợ giao hàng nhanh chóng và thuận tiện.
           .col-12.col-md-4.mb-3.mb-md-0
             .home-benefit
+              .home-benefit__icon(aria-hidden="true")
+                svg(viewBox="0 0 64 64")
+                  path(d="M8 10h19v38H8zM27 14h11v38H18")
+                  path(d="M13 17h9M13 24h9M13 31h9")
+                  circle(cx="45" cy="36" r="11")
+                  path(d="m53 44 8 8M41 36l3 3 6-7")
               strong Sản phẩm rõ ràng
               span Thông tin giá và ưu đãi được hiển thị minh bạch.
           .col-12.col-md-4
             .home-benefit
+              .home-benefit__icon(aria-hidden="true")
+                svg(viewBox="0 0 64 64")
+                  rect(x="9" y="25" width="38" height="28" rx="4")
+                  path(d="M17 25v-8a11 11 0 0 1 22 0v8")
+                  circle(cx="28" cy="38" r="3")
+                  path(d="M28 41v5")
+                  circle(cx="49" cy="45" r="11")
+                  path(d="m44 45 4 4 7-9")
               strong Mua sắm an tâm
               span Dễ dàng xem, lựa chọn và đặt sản phẩm.
