@@ -705,6 +705,47 @@ header.header .inner-menu a:hover {
   -moz-appearance: textfield;
 }
 
+/* Responsive foundation: client */
+html, body { max-width: 100%; overflow-x: hidden; }
+.site-main, .site-main > *, .container, .row, [class*="col-"] { min-width: 0; }
+img, video, iframe { max-width: 100%; }
+.table-responsive { max-width: 100%; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 991.98px) {
+  .site-header .navbar-collapse { max-height: calc(100vh - 78px); overflow-y: auto; }
+  .site-nav { width: 100%; }
+  .site-user-menu { width: min(276px, calc(100vw - 30px)); }
+  .product-detail-layout, .cart-layout, .user-order-detail__body { min-width: 0; }
+  .checkout-modal .modal-dialog { width: auto; margin-right: 18px; margin-left: 18px; }
+}
+
+@media (max-width: 767.98px) {
+  .container { padding-right: 16px; padding-left: 16px; }
+  h1 { overflow-wrap: anywhere; }
+  .search-empty__form { width: 100%; }
+  .order-success-card, .user-order-detail, .account-profile__card, .account-edit__card { width: 100%; }
+  .order-success-product, .user-order-detail__product { min-width: 0; }
+  .order-success-product__info, .user-order-detail__product-info { min-width: 0; }
+  .order-success-product__info strong, .user-order-detail__product-info strong { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 575.98px) {
+  .container { padding-right: 13px; padding-left: 13px; }
+  .site-main { min-height: 50vh; }
+  .site-user-menu { right: 0; left: auto; }
+  .search-empty__form { align-items: stretch; flex-direction: column; }
+  .search-empty__form .btn, .error-page__actions .btn { width: 100%; }
+  .error-page__card { padding: 34px 18px; border-radius: 18px; }
+  .cart-line-item__content, .cart-line-item__info { min-width: 0; }
+  .cart-line-item__title, .user-orders-heading h1, .profile-page__heading h1 { overflow-wrap: anywhere; }
+  .checkout-modal .modal-dialog { margin: 8px; }
+  .checkout-modal .modal-content, .checkout-modal .modal-content > form { max-height: calc(100dvh - 16px); }
+  .home-hero h1 { font-size: clamp(30px, 10vw, 36px); }
+  .home-hero__floating-badge { max-width: calc(100% - 12px); }
+  .product-detail-benefits { grid-template-columns: 1fr; }
+  .order-success-actions .btn, .account-profile__actions .btn, .account-edit__actions .btn { max-width: 100%; }
+}
+
 /* Customer support chatbox */
 .customer-chat { position: fixed; right: 24px; bottom: 24px; z-index: 1090; font-family: "Segoe UI", Arial, sans-serif; }
 .customer-chat__launcher { position: relative; display: flex; width: 58px; height: 58px; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: linear-gradient(135deg, #0b325b, #17639f); box-shadow: 0 9px 25px rgba(11,50,91,.3); color: #fff; cursor: pointer; animation: chatLauncherFloat 3s ease-in-out infinite; transition: transform .18s ease, box-shadow .18s ease; }

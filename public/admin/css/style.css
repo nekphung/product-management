@@ -297,6 +297,49 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .admin-empty-state__icon { display: flex; width: 54px; height: 54px; align-items: center; justify-content: center; margin: 0 auto 14px; border-radius: 14px; background: #eaf4ff; box-shadow: inset 0 0 0 1px #d5e8fa; color: #17639f; }
 .admin-empty-state strong { display: block; margin-bottom: 7px; color: #263b50; font-size: 17px; font-weight: 750; }
 .admin-empty-state small { display: block; max-width: 430px; margin: 0 auto; color: #718096; font-size: 13px; line-height: 1.55; }
+
+/* Responsive foundation: admin */
+html, body { max-width: 100%; overflow-x: hidden; }
+.admin-shell, .main, .main > *, .main .card, .main .card-body { min-width: 0; }
+.main img { max-width: 100%; }
+.main .table-responsive { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.main .admin-permissions-table { display: table; max-width: 100%; }
+
+@media (max-width: 991.98px) {
+  .main { padding: 24px 20px; }
+  .main .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .main .admin-permissions-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  .main > form, .main .card-body > form, .main > .container form, .main > .container-fluid form { width: 100%; max-width: 100%; }
+}
+
+@media (max-width: 767.98px) {
+  .admin-header { padding: 0 16px; }
+  .admin-header__account-name { display: none; }
+  .admin-header__account { display: flex; }
+  .admin-header__actions { gap: 8px; }
+  .main { padding: 20px 16px; }
+  .main > .container, .main > .container-fluid { padding-right: 0; padding-left: 0; }
+  .main > form, .main .card-body > form, .main > .container form, .main > .container-fluid form { padding: 20px; }
+  .main .admin-form-actions { align-items: stretch; flex-direction: column; margin: 24px -20px -20px; padding: 16px 20px; }
+  .main .admin-form-actions .btn { width: 100%; }
+  .dashboard-profile-card { align-items: flex-start; }
+  .dashboard-profile-card__avatar { width: 62px; height: 62px; flex-basis: 62px; }
+}
+
+@media (max-width: 575.98px) {
+  .admin-header__brand a { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-header__avatar { width: 32px; height: 32px; flex-basis: 32px; }
+  .admin-header__logout { font-size: 11px; }
+  .main { padding: 16px 12px; }
+  .main .card { border-radius: 10px; }
+  .main .card-body, .main .card-header { padding: 14px; }
+  .main > form, .main .card-body > form, .main > .container form, .main > .container-fluid form { padding: 16px; border-radius: 11px; }
+  .admin-page-heading h1, .main > h1, .main > .container > h1, .main > .container-fluid > h1 { overflow-wrap: anywhere; font-size: 23px; }
+  .dashboard-profile-card { gap: 13px; padding: 16px; }
+  .dashboard-profile-card__content { min-width: 0; }
+  .dashboard-profile-card__content h2, .dashboard-profile-card__meta span { overflow-wrap: anywhere; }
+  [show-alert] { top: 70px; right: 10px; left: 10px; width: auto; max-width: none; }
+}
 .admin-empty-state__action { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 7px; margin-top: 18px; padding: 9px 16px; border-radius: 9px; background: #0b325b; box-shadow: 0 5px 13px rgba(11,50,91,.18); color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; }
 .admin-empty-state__action span { font-size: 19px; font-weight: 400; line-height: 1; }
 .admin-empty-state__action:hover { background: #17639f; color: #fff; text-decoration: none; transform: translateY(-1px); }
