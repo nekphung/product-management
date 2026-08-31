@@ -1,31 +1,62 @@
 extends ../../layouts/default.pug
+
 include ../../mixins/alert.pug
 
 block main
   +alert-success(3000)
   +alert-error(3000)
+
   main.user-orders-page
     .container.py-4.py-md-5
       .user-orders-heading
         div
           p Tài khoản của bạn
           h1 Đơn hàng của tôi
-        a.btn.btn-outline-primary(href="/products") Tiếp tục mua sắm
+          span Theo dõi và xem lại những đơn hàng bạn đã đặt.
+        a.user-orders-heading__shop(href="/products")
+          span Tiếp tục mua sắm
+          span(aria-hidden="true") →
+
       if (orders && orders.length > 0)
         .user-orders-list
           each order in orders
+            - const orderCode = order._id.toString().slice(-10).toUpperCase()
+            - const paymentName = order.userInfo && order.userInfo.paymentMethod === "banking" ? "Chuyển khoản" : "Thanh toán khi nhận hàng"
             article.user-order-card
-              .user-order-card__main
-                span.user-order-card__code ##{order._id.toString().slice(-10).toUpperCase()}
-                strong #{order.products.length} sản phẩm
-                span #{new Date(order.createdAt).toLocaleString("vi-VN")}
-              .user-order-card__payment
-                span Tổng thanh toán
-                strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
-              a.btn.btn-primary(href=`/user/orders/${order._id}`) Xem chi tiết
+              .user-order-card__top
+                div
+                  span.user-order-card__label Mã đơn hàng
+                  strong.user-order-card__code ##{orderCode}
+                span.user-order-card__status
+                  i(aria-hidden="true")
+                  | Đã tiếp nhận
+
+              .user-order-card__body
+                .user-order-card__previews(aria-label="Sản phẩm trong đơn hàng")
+                  each preview in order.productPreviews
+                    if preview.productInfo
+                      a.user-order-card__image(href=`/products/detail/${preview.productInfo.slug}` title=preview.productInfo.title)
+                        img(src=preview.productInfo.thumbnail alt=preview.productInfo.title loading="lazy")
+                        if preview.quantity > 1
+                          span ×#{preview.quantity}
+                  if order.products.length > 4
+                    span.user-order-card__more +#{order.products.length - 4}
+
+                .user-order-card__summary
+                  strong #{order.products.length} sản phẩm
+                  span #{paymentName}
+                  time(datetime=new Date(order.createdAt).toISOString()) #{new Date(order.createdAt).toLocaleString("vi-VN")}
+
+              .user-order-card__footer
+                .user-order-card__payment
+                  span Tổng thanh toán
+                  strong #{parseInt(order.totalPrice || 0).toLocaleString("vi-VN")} đ
+                a.user-order-card__detail(href=`/user/orders/${order._id}`)
+                  span Xem chi tiết
+                  span(aria-hidden="true") →
       else
         .user-orders-empty
-          span 📦
+          span(aria-hidden="true") 📦
           h2 Bạn chưa có đơn hàng nào
           p Các đơn hàng sau khi đặt thành công sẽ xuất hiện tại đây.
           a.btn.btn-primary(href="/products") Khám phá sản phẩm

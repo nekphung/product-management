@@ -5,7 +5,7 @@ header.site-header
     nav.navbar.navbar-expand-lg.p-0
       a.site-brand(href="/")
         img(src=settingGeneral.logo, alt="Trang chủ")
-        span.site-brand__name Cửa hàng
+        span.site-brand__name #{settingGeneral.websiteName}
       button.navbar-toggler.site-nav-toggle(type="button" data-toggle="collapse" data-target="#siteNavigation" aria-controls="siteNavigation" aria-expanded="false" aria-label="Mở menu") Menu
       #siteNavigation.collapse.navbar-collapse
         form.site-search(action="/search" method="GET")
@@ -34,24 +34,52 @@ header.site-header
           if (user)
             li.nav-item.dropdown
               a.nav-link.dropdown-toggle.site-account(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-                span.site-account__avatar(aria-hidden="true") #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
+                span.site-account__avatar(aria-hidden="true")
+                  if (user.avatar)
+                    img(src=user.avatar alt="")
+                  else
+                    | #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
                 span.site-account__name #{user.fullName}
               .dropdown-menu.dropdown-menu-right.site-user-menu
+                .site-user-menu__header
+                  span.site-user-menu__avatar
+                    if (user.avatar)
+                      img(src=user.avatar alt="")
+                    else
+                      | #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
+                  div
+                    strong #{user.fullName}
+                    small Tài khoản khách hàng
                 a.dropdown-item(href="/user/info")
-                  i.fas.fa-user-circle.mr-2.text-primary
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      circle(cx="12" cy="8" r="4")
+                      path(d="M4 21a8 8 0 0 1 16 0")
                   | Thông tin tài khoản
                 a.dropdown-item(href="/user/info/edit")
-                  i.fas.fa-user-edit.mr-2.text-info.fa-fw
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      path(d="M12 20h9")
+                      path(d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z")
                   | Chỉnh sửa tài khoản
                 a.dropdown-item(href="/user/orders")
-                  i.fas.fa-shopping-bag.mr-2.text-success
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      path(d="M6 8h12l-1 12H7L6 8Z")
+                      path(d="M9 8V6a3 3 0 0 1 6 0v2")
                   | Đơn hàng của tôi
-                a.dropdown-item(href="/user/password/change")
-                  i.fas.fa-key.mr-2.text-warning
+                a.dropdown-item(href="/user/password/reset")
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      circle(cx="8" cy="15" r="4")
+                      path(d="m11 12 9-9M17 6l3 3M14 9l3 3")
                   | Đổi mật khẩu
                 .dropdown-divider
                 a.dropdown-item.text-danger(href="/user/logout")
-                  i.fas.fa-sign-out-alt.mr-2
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      path(d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5")
+                      path(d="m15 8 4 4-4 4M19 12H9")
                   | Đăng xuất
           else
             li.nav-item

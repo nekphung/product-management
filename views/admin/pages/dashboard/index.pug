@@ -8,7 +8,11 @@ block main
       p Theo dõi nhanh tình trạng dữ liệu và tài khoản trong hệ thống.
 
   .dashboard-profile-card
-    .dashboard-profile-card__avatar #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"}
+    if user.avatar
+      img.dashboard-profile-card__avatar.dashboard-profile-card__avatar--image(src=user.avatar alt=`Ảnh đại diện của ${user.fullName || "quản trị viên"}` onerror="this.hidden=true;this.nextElementSibling.hidden=false")
+      .dashboard-profile-card__avatar(hidden) #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"}
+    else
+      .dashboard-profile-card__avatar #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"}
     .dashboard-profile-card__content
       span Tài khoản đang đăng nhập
       h2 #{user.fullName || "Quản trị viên"}

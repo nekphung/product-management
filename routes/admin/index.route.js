@@ -1,6 +1,7 @@
 const systemConfig = require("../../config/system");
 
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
+const settingMiddleware = require("../../middlewares/client/setting.middleware");
 
 const authRoutes = require("./auth.route");
 const dashboardRoutes = require("./dashboard.route");
@@ -13,6 +14,8 @@ const settingRoutes = require("./setting.route");
 
 module.exports = (app) => {
     const PATH_ADMIN = systemConfig.prefixAdmin;
+
+    app.use(PATH_ADMIN, settingMiddleware.settingGeneral);
 
     app.use(PATH_ADMIN + "/auth", authRoutes);
 
@@ -50,4 +53,11 @@ module.exports = (app) => {
         authMiddleware.requireAuth, 
         settingRoutes
     );
+
+    // Admin-only fallback: keep unknown admin URLs inside the admin shell.
+    app.use(PATH_ADMIN, authMiddleware.requireAuth, (req, res) => {
+        res.status(404).render("admin/pages/errors/404", {
+            pageTitle: "Không tìm thấy trang quản trị"
+        });
+    });
 }

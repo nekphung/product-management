@@ -1,0 +1,13 @@
+extends ../../layouts/default.pug
+
+block main
+  main.admin-error-page
+    .admin-error-card
+      .admin-error-card__visual(aria-hidden="true")
+        span 404
+      p.admin-error-card__eyebrow Không tìm thấy nội dung
+      h1 Trang quản trị không tồn tại
+      p.admin-error-card__description Đường dẫn bạn vừa mở không hợp lệ, đã được di chuyển hoặc bạn không còn quyền truy cập nội dung này.
+      .admin-error-card__actions
+        a.btn.btn-primary(href=`${prefixAdmin}/dashboard`) Quay về trang tổng quan
+        button.btn.btn-outline-secondary(type="button" onclick="history.back()") Quay lại trang trước

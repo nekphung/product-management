@@ -5,16 +5,16 @@ block main
   +alert-error(5000)
   +alert-success(5000)
 
-  .container.my-5
+  .client-create-page.container.my-5
     .row.justify-content-center
       .col-12.col-md-8.col-lg-5
-        .card.shadow-lg.border-0.rounded-lg
-          .card-header.bg-primary.text-white.text-center.py-4
+        .card.client-create-card
+          .card-header.client-create-card__header.text-center
             h3.font-weight-bold.mb-0 Đăng Nhập
             small.text-white-50 Vui lòng đăng nhập để tiếp tục
 
-          .card-body.p-4.p-md-5
-            form(
+          .card-body.client-create-card__body
+            form.client-create-form(
               action="/user/login"
               method="POST"
             )
@@ -42,15 +42,15 @@ block main
                     placeholder="••••••••"
                   )
 
-              .d-flex.justify-content-between.align-items-center.mb-4
+              .client-login-options.d-flex.justify-content-between.align-items-center.mb-4
                 .form-check
                   input#remember.form-check-input(type="checkbox" name="remember")
                   label.form-check-label.small(for="remember") Ghi nhớ đăng nhập
                 a.small.text-primary(href="/user/password/forgot") Quên mật khẩu?
 
-              button.btn.btn-primary.btn-block.w-100.py-2.font-weight-bold.text-uppercase(type="submit")
+              button.btn.btn-primary.btn-block.client-create-submit(type="submit")
                 | Đăng nhập
 
-          .card-footer.text-center.bg-light.py-3
+          .card-footer.client-create-card__footer.text-center
             span.text-muted Chưa có tài khoản? 
             a.font-weight-bold.text-primary(href="/user/register") Đăng ký ngay

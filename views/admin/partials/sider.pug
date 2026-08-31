@@ -1,40 +1,93 @@
 aside.sider
   .admin-sidebar__brand
-    a(href=`${prefixAdmin}/dashboard` aria-label="Trang quản trị Nèk Phùng")
-      strong NP
-      span Nèk Phùng
+    a(href=`${prefixAdmin}/dashboard` aria-label=`Trang quản trị ${settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Nèk Phùng"}`)
+      if settingGeneral && settingGeneral.logo
+        img.admin-sidebar__logo(src=settingGeneral.logo alt=settingGeneral.websiteName || "Logo website" onerror="this.hidden=true;this.nextElementSibling.hidden=false")
+        strong.admin-sidebar__logo-fallback(hidden) NP
+      else
+        strong.admin-sidebar__logo-fallback NP
+      span #{settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Nèk Phùng"}
   nav.inner-menu(aria-label="Điều hướng quản trị")
     ul
+      //- Tổng quan
       li
         a(href=`${prefixAdmin}/dashboard` data-admin-nav)
           span.admin-nav-icon(aria-hidden="true") ◴
           span Tổng quan
+
+      //- Bán hàng & Khách hàng
+      if (role.permissions.includes("orders_view"))
+        li
+          a(href=`${prefixAdmin}/orders` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") ▤
+            span Quản lý đơn hàng
+
+      if (role.permissions.includes("customers_view"))
+        li
+          a(href=`${prefixAdmin}/customers` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") 👤
+            span Quản lý khách hàng
+
+      if (role.permissions.includes("coupons_view"))
+        li
+          a(href=`${prefixAdmin}/coupons` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") 🎟
+            span Mã giảm giá
+
+      //- Quản lý Sản phẩm
       if (role.permissions.includes("products-category_view"))
         li
           a(href=`${prefixAdmin}/products-category` data-admin-nav)
             span.admin-nav-icon(aria-hidden="true") ▤
             span Danh mục sản phẩm
+
       if (role.permissions.includes("products_view"))
         li
           a(href=`${prefixAdmin}/products` data-admin-nav)
             span.admin-nav-icon(aria-hidden="true") ◇
             span Sản phẩm
+
+      if (role.permissions.includes("reviews_view"))
+        li
+          a(href=`${prefixAdmin}/reviews` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") ★
+            span Đánh giá sản phẩm
+
+      //- Nội dung & Giao diện (CMS)
+      if (role.permissions.includes("blogs_view"))
+        li
+          a(href=`${prefixAdmin}/blogs` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") ✎
+            span Bài viết / Tin tức
+
+      if (role.permissions.includes("banners_view"))
+        li
+          a(href=`${prefixAdmin}/banners` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") 🖼
+            span Quản lý Banner
+
+      //- Phân quyền & Tài khoản Admin
       if (role.permissions.includes("roles_view"))
         li
           a(href=`${prefixAdmin}/roles` data-admin-nav)
             span.admin-nav-icon(aria-hidden="true") ♧
             span Nhóm quyền
+
       if (role.permissions.includes("roles_permissions"))
         li
           a(href=`${prefixAdmin}/roles/permissions` data-admin-nav)
             span.admin-nav-icon(aria-hidden="true") ⎇
             span Phân quyền
+
       if (role.permissions.includes("accounts_view"))
         li
           a(href=`${prefixAdmin}/accounts` data-admin-nav)
             span.admin-nav-icon(aria-hidden="true") ♙
-            span Tài khoản
-      li
-        a(href=`${prefixAdmin}/settings/general` data-admin-nav)
-          span.admin-nav-icon(aria-hidden="true") ⚙
-          span Cài đặt chung
+            span Tài khoản admin
+
+      //- Hệ thống
+      if (role.permissions.includes("settings_view"))
+        li
+          a(href=`${prefixAdmin}/settings/general` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") ⚙
+            span Cài đặt chung

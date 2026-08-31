@@ -262,6 +262,16 @@ module.exports.orders = async (req, res) => {
         order.totalPrice = order.products.reduce((sum, item) => {
             return sum + productsHelper.priceNewProduct(item) * item.quantity;
         }, 0);
+
+        const productIds = order.products.map(item => item.product_id);
+        const productRecords = await Product.find({
+            _id: { $in: productIds }
+        }).select("title thumbnail slug").lean();
+
+        order.productPreviews = order.products.slice(0, 4).map(item => ({
+            quantity: item.quantity,
+            productInfo: productRecords.find(product => product._id.toString() === item.product_id.toString())
+        }));
     }
 
     res.render("client/pages/user/orders", {

@@ -1,23 +1,29 @@
 mixin pagination(pagination)
-    nav.admin-pagination(aria-label="Phân trang")
-            ul(class="pagination")
-                if (pagination.currentPage > 1)
-                    li(class="page-item") 
-                        button(
-                            class="page-link"
-                            button-pagination=pagination.currentPage - 1
-                            ) Trang trước
-
-                - for (var i = 1; i <= pagination.totalPage; i++) 
-                    li(class=`page-item ${pagination.currentPage == i ? "active" : ""}`)
-                        button(
-                            class="page-link"
-                            button-pagination=i
-                        ) #{i}
-
-                if (pagination.currentPage < pagination.totalPage)
-                    li(class="page-item") 
-                        button(
-                            class="page-link"
-                            button-pagination=pagination.currentPage + 1
-                            ) Kế tiếp
+    if pagination && pagination.totalPage > 1
+        nav.admin-pagination(aria-label="Phân trang")
+            .admin-pagination__meta
+                span Trang hiện tại
+                strong #{pagination.currentPage}
+                span trên #{pagination.totalPage}
+            ul.pagination
+                li(class=`page-item page-item--direction ${pagination.currentPage <= 1 ? "disabled" : ""}`)
+                    button.page-link(type="button" button-pagination=pagination.currentPage - 1 disabled=pagination.currentPage <= 1 aria-label="Trang trước")
+                        svg(viewBox="0 0 24 24" aria-hidden="true")
+                            path(d="m15 18-6-6 6-6")
+                        span Trước
+                - const totalPage = pagination.totalPage
+                - const currentPage = pagination.currentPage
+                - let lastRenderedPage = 0
+                - for (let i = 1; i <= totalPage; i++)
+                    - const shouldRender = totalPage <= 7 || i === 1 || i === totalPage || Math.abs(i - currentPage) <= 1
+                    if shouldRender
+                        if lastRenderedPage && i - lastRenderedPage > 1
+                            li.page-item.page-item--ellipsis(aria-hidden="true") …
+                        li(class=`page-item ${currentPage == i ? "active" : ""}`)
+                            button.page-link(type="button" button-pagination=i aria-label=`Trang ${i}` aria-current=currentPage == i ? "page" : null) #{i}
+                        - lastRenderedPage = i
+                li(class=`page-item page-item--direction ${pagination.currentPage >= pagination.totalPage ? "disabled" : ""}`)
+                    button.page-link(type="button" button-pagination=pagination.currentPage + 1 disabled=pagination.currentPage >= pagination.totalPage aria-label="Trang kế tiếp")
+                        span Tiếp
+                        svg(viewBox="0 0 24 24" aria-hidden="true")
+                            path(d="m9 18 6-6-6-6")

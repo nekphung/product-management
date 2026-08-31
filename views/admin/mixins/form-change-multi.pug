@@ -5,18 +5,24 @@ mixin form-change-multi(path)
         form-change-multi
     )
         .admin-bulk-actions
-            .form-group
-                select(name="type" class="form-control")
-                    option(disabled selected) -- Chọn hành động --
-                    option(value="active") Hoạt động 
-                    option(value="inactive") Dừng hoạt động 
-                    option(value="delete-all") Xóa tất cả
-                    option(value="change-position") Thay đổi vị trí
-            .form-group
-                input(
-                    type="text"
-                    name="ids"
-                    value=""
-                    class="form-control d-none"
-                )
-            button.admin-bulk-actions__submit(type="submit" class="btn btn-primary") Áp dụng
+            .admin-bulk-actions__label
+                span.admin-bulk-actions__label-icon(aria-hidden="true") ✓
+                span
+                    strong Thao tác hàng loạt
+                    small Áp dụng cho các mục đã chọn
+            .admin-bulk-actions__controls
+                .form-group
+                    select(name="type" class="form-control" aria-label="Chọn thao tác hàng loạt")
+                        option(value="" disabled selected) Chọn hành động
+                        option(value="active") Hoạt động
+                        option(value="inactive") Dừng hoạt động
+                        option(value="delete-all") Xóa tất cả
+                        option(value="change-position") Thay đổi vị trí
+                button.admin-bulk-actions__submit(type="submit" class="btn btn-primary")
+                    span Áp dụng
+                    span(aria-hidden="true") →
+            input(
+                type="hidden"
+                name="ids"
+                value=""
+            )
