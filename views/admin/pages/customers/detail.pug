@@ -1,0 +1,79 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  if (role.permissions.includes("customers_view"))
+    +alert-success(4000)
+    +alert-error(4000)
+    .admin-page-heading
+      div
+        p.admin-page-eyebrow Hồ sơ khách hàng
+        h1 #{customer.fullName || "Chưa cập nhật tên"}
+        p Thành viên từ #{moment(customer.createdAt).format("DD/MM/YYYY")}
+
+    .row
+      .col-lg-4.mb-3
+        .card.h-100
+          .card-header Thông tin khách hàng
+          .card-body
+            .admin-customer-profile
+              if customer.avatar
+                img(src=customer.avatar alt=customer.fullName)
+              else
+                span.admin-customer-avatar.admin-customer-avatar--large #{(customer.fullName || "K").charAt(0).toUpperCase()}
+            dl.admin-customer-details
+              dt Email
+              dd #{customer.email || "Chưa cập nhật"}
+              dt Số điện thoại
+              dd #{customer.phone || "Chưa cập nhật"}
+              dt Địa chỉ
+              dd #{customer.address || "Chưa cập nhật"}
+              dt Trạng thái
+              dd: span(class=`admin-customer-status ${customer.status === "active" ? "admin-customer-status--active" : "admin-customer-status--inactive"}`)
+                i(aria-hidden="true")
+                | #{customer.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+            hr
+            p.mb-1 Tổng đơn hàng: #[strong #{orders.length}]
+            p Tổng chi tiêu: #[strong #{customer.totalSpent.toLocaleString("vi-VN")}đ]
+      .col-lg-8.mb-3
+        .card
+          .card-header Lịch sử đơn hàng
+          .card-body
+            .table-responsive
+              table.table.table-hover
+                thead
+                  tr
+                    th Mã đơn
+                    th Sản phẩm
+                    th Tổng tiền
+                    th Trạng thái
+                    th Ngày đặt
+                tbody
+                  if orders.length
+                    each order in orders
+                      tr
+                        td: a(href=`${prefixAdmin}/orders/detail/${order._id}`) ##{order.code}
+                        td #{order.totalQuantity}
+                        td #{order.totalPrice.toLocaleString("vi-VN")}đ
+                        td #{order.status}
+                        td #{moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
+                  else
+                    tr: td.text-center.text-muted(colspan="5") Khách hàng chưa có đơn hàng.
+    .admin-customer-detail__actions
+      a.btn.btn-outline-secondary.admin-customer-detail__back(href=`${prefixAdmin}/customers`)
+        | Quay lại danh sách
+      .admin-customer-detail__action-group
+        if (role.permissions.includes("customers_edit"))
+          a.btn.admin-customer-detail__edit(href=`${prefixAdmin}/customers/edit/${customer._id}`)
+            | Chỉnh sửa
+        if (role.permissions.includes("customers_delete"))
+          form(
+            action=`${prefixAdmin}/customers/delete/${customer._id}?_method=DELETE`
+            method="POST"
+            data-confirm-submit
+            data-confirm-title="Xóa khách hàng"
+            data-confirm-message="Bạn có chắc muốn xóa khách hàng này? Khách hàng sẽ bị ẩn khỏi hệ thống."
+            data-confirm-text="Xóa khách hàng"
+          )
+            button.btn.admin-customer-detail__delete(type="submit")
+              | Xóa

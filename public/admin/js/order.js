@@ -16,8 +16,13 @@ const orderDeleteForm = document.querySelector("#form-order-delete");
 
 if (orderDeleteButtons.length > 0 && orderDeleteForm) {
   orderDeleteButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      if (!confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) return;
+    button.addEventListener("click", async () => {
+      const accepted = await window.adminConfirm({
+        title: "Xóa đơn hàng",
+        message: "Bạn có chắc muốn xóa đơn hàng này? Đơn hàng sẽ không còn xuất hiện trong danh sách.",
+        confirmText: "Xóa đơn hàng"
+      });
+      if (!accepted) return;
       orderDeleteForm.action = `${orderDeleteForm.dataset.path}/${button.dataset.id}?_method=DELETE`;
       orderDeleteForm.submit();
     });

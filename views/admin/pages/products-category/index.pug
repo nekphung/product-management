@@ -2,9 +2,12 @@ extends ../../layouts/default.pug
 include ../../mixins/table-tree.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/form-change-multi.pug
+include ../../mixins/alert.pug
 
 block main 
     if (role.permissions.includes("products-category_view"))
+        +alert-success(4000)
+        +alert-error(4000)
         h1 Danh mục sản phẩm 
 
         .card.mb-3.admin-product-controls.admin-category-controls
@@ -20,7 +23,7 @@ block main
             .card-header.admin-list-header
                 span.admin-list-header__title Danh sách
                 if (records && records.length > 0)
-                    +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
+                    +form-change-multi(`${prefixAdmin}/products-category/change-multi?_method=PATCH`)
                 if (role.permissions.includes("products-category_create"))
                     a.admin-create-button(href=`${prefixAdmin}/products-category/create`)
                         span.admin-create-button__icon(aria-hidden="true") +
@@ -57,3 +60,6 @@ block main
                                                 a.admin-empty-state__action(href=`${prefixAdmin}/products-category/create`)
                                                     span(aria-hidden="true") +
                                                     | Thêm danh mục đầu tiên
+
+        form#form-delete-item(method="POST" hidden data-path=`${prefixAdmin}/products-category/delete` data-delete-label="danh mục sản phẩm")
+        script(src="/admin/js/soft-delete.js")

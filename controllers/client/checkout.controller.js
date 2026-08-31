@@ -39,15 +39,36 @@ module.exports.index = async (req, res) => {
 // [POST] /checkout/order
 module.exports.order = async (req, res) => {
     const cartId = req.cookies.cartId;
-    const userInfo = req.body;
+    const selectedProductIds = String(req.body.selectedProductIds || "")
+        .split(",")
+        .map(id => id.trim())
+        .filter(Boolean);
+    const userInfo = {
+        fullName: req.body.fullName,
+        phone: req.body.phone,
+        address: req.body.address,
+        paymentMethod: req.body.paymentMethod
+    };
 
     const cart = await Cart.findOne({
         _id: cartId
     })
 
+    if (!cart || selectedProductIds.length === 0) {
+        req.flash("error", "Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+        return res.redirect("/cart");
+    }
+
+    const selectedIdSet = new Set(selectedProductIds);
+    const selectedCartProducts = cart.products.filter(product => selectedIdSet.has(product.product_id));
+    if (selectedCartProducts.length === 0) {
+        req.flash("error", "Các sản phẩm đã chọn không còn trong giỏ hàng.");
+        return res.redirect("/cart");
+    }
+
     let products = [];
 
-    for (const product of cart.products) {
+    for (const product of selectedCartProducts) {
         const objectProduct = {
             product_id: product.product_id,
             price: 0,
@@ -58,6 +79,7 @@ module.exports.order = async (req, res) => {
             _id: product.product_id
         })
 
+        if (!productInfo) continue;
         objectProduct.price = productInfo.price;
         objectProduct.discountPercentage = productInfo.discountPercentage;
         
@@ -65,6 +87,11 @@ module.exports.order = async (req, res) => {
     }
 
     // console.log(products);
+
+    if (products.length === 0) {
+        req.flash("error", "Không thể đặt các sản phẩm đã chọn.");
+        return res.redirect("/cart");
+    }
 
     const objectOrder = {
         cart_id: cartId,
@@ -81,11 +108,9 @@ module.exports.order = async (req, res) => {
     const order = new Order(objectOrder);
     await order.save();
 
-    await Cart.updateOne({
-        _id: cartId
-    }, {
-        products: []
-    })
+    await Cart.updateOne({ _id: cartId }, {
+        $pull: { products: { product_id: { $in: products.map(product => product.product_id) } } }
+    });
 
     res.redirect(`/checkout/success/${order.id}`);
 }

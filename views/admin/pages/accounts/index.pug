@@ -1,7 +1,10 @@
 extends ../../layouts/default.pug
+include ../../mixins/alert.pug
 
 block main 
   if (role.permissions.includes("accounts_view"))
+    +alert-success(4000)
+    +alert-error(4000)
     h1(class="mb-4") Danh sách tài khoản 
 
     .card.mb-3 
@@ -73,6 +76,7 @@ block main
                     if (role.permissions.includes("accounts_delete"))
                       button(
                         class="btn btn-danger btn-sm"
+                        button-delete
                         data-id=item._id
                       ) Xóa
             else
@@ -82,3 +86,6 @@ block main
                   span.admin-empty-state__icon(aria-hidden="true") ∅
                   strong Chưa có tài khoản
                   small Tài khoản mới sẽ hiển thị tại đây sau khi được tạo.
+
+    form#form-delete-item(method="POST" hidden data-path=`${prefixAdmin}/accounts/delete` data-delete-label="tài khoản admin")
+    script(src="/admin/js/soft-delete.js")

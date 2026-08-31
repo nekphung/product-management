@@ -1,0 +1,126 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/pagination.pug
+
+block main
+  if (role.permissions.includes("customers_view"))
+    +alert-success(4000)
+    +alert-error(4000)
+
+    .admin-page-heading
+      div
+        p.admin-page-eyebrow Bán hàng và vận hành
+        h1 Quản lý khách hàng
+        p Theo dõi tài khoản, lịch sử mua hàng và trạng thái hoạt động.
+
+    .card.mb-3.admin-customer-controls
+      .card-header
+        div
+          strong Bộ lọc và tìm kiếm
+          small   Tìm nhanh khách hàng theo thông tin tài khoản
+      .card-body
+        .admin-customer-toolbar
+          .admin-customer-toolbar__status
+            label Trạng thái
+            .admin-status-buttons
+              button.btn(type="button" button-status="" class=(!currentStatus ? "btn-primary" : "btn-outline-primary")) Tất cả
+              button.btn(type="button" button-status="active" class=(currentStatus === "active" ? "btn-primary" : "btn-outline-primary")) Hoạt động
+              button.btn(type="button" button-status="inactive" class=(currentStatus === "inactive" ? "btn-primary" : "btn-outline-primary")) Dừng hoạt động
+          .admin-customer-toolbar__search
+            label Tìm khách hàng
+            form#form-search
+              .input-group
+                input.form-control(type="text" name="keyword" value=keyword placeholder="Họ tên, email, số điện thoại...")
+                .input-group-append
+                  button.btn.btn-primary(type="submit") Tìm kiếm
+          .admin-customer-toolbar__sort
+            label Sắp xếp
+            select.form-control(data-customer-sort)
+              option(value="newest" selected=(currentSort === "newest")) Mới nhất trước
+              option(value="oldest" selected=(currentSort === "oldest")) Cũ nhất trước
+
+    .card.admin-customer-list
+      .card-header.admin-list-header
+        span Danh sách khách hàng
+        span #{customers.length} khách hàng trên trang này
+      .card-body
+        if (customers.length && role.permissions.includes("customers_edit"))
+          form.admin-customer-bulk(action=`${prefixAdmin}/customers/change-multi?_method=PATCH` method="POST" form-change-multi data-entity-label="khách hàng")
+            .admin-customer-bulk__caption
+              span ✓
+              div
+                strong Thao tác hàng loạt
+                small Áp dụng cho các khách hàng đã chọn
+            .admin-customer-bulk__controls
+              select.form-control(name="type" required)
+                option(value="" disabled selected) Chọn thao tác
+                option(value="active") Chuyển sang hoạt động
+                option(value="inactive") Chuyển sang dừng hoạt động
+                if (role.permissions.includes("customers_delete"))
+                  option(value="delete-all") Xóa khách hàng đã chọn
+              button.btn.btn-primary(type="submit") Áp dụng
+            input(type="hidden" name="ids")
+
+        .table-responsive.admin-customer-table-wrap
+          table.table.table-hover.admin-customer-table(checkbox-multi)
+            thead
+              tr
+                th: input(type="checkbox" name="checkall" aria-label="Chọn tất cả")
+                th Khách hàng
+                th Liên hệ
+                th Đơn hàng
+                th Đã chi tiêu
+                th Trạng thái
+                th Ngày tham gia
+                th Hành động
+            tbody
+              if customers.length
+                each customer in customers
+                  tr
+                    td: input(type="checkbox" name="id" value=customer._id aria-label=`Chọn ${customer.fullName}`)
+                    td
+                      .admin-customer-identity
+                        if customer.avatar
+                          img(src=customer.avatar alt=customer.fullName)
+                        else
+                          span.admin-customer-avatar(aria-hidden="true") #{(customer.fullName || "K").charAt(0).toUpperCase()}
+                        div
+                          strong #{customer.fullName || "Chưa cập nhật"}
+                          small #{customer.email}
+                    td
+                      div #{customer.phone || "Chưa có SĐT"}
+                      small.text-muted #{customer.address || "Chưa có địa chỉ"}
+                    td #{customer.orderCount}
+                    td: strong #{customer.totalSpent.toLocaleString("vi-VN")}đ
+                    td
+                      if (role.permissions.includes("customers_edit"))
+                        a(
+                          href="javascript:;"
+                          class=`badge ${customer.status === "active" ? "badge-success" : "badge-danger"}`
+                          button-change-status
+                          data-status=customer.status
+                          data-id=customer._id
+                        ) #{customer.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+                      else
+                        span(class=`badge ${customer.status === "active" ? "badge-success" : "badge-danger"}`) #{customer.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+                    td #{moment(customer.createdAt).format("DD/MM/YYYY")}
+                    td
+                      a.btn.btn-secondary.btn-sm.mr-1(href=`${prefixAdmin}/customers/detail/${customer._id}`) Chi tiết
+                      if (role.permissions.includes("customers_edit"))
+                        a.btn.btn-warning.btn-sm.mr-1(href=`${prefixAdmin}/customers/edit/${customer._id}`) Sửa
+                      if (role.permissions.includes("customers_delete"))
+                        button.btn.btn-danger.btn-sm(
+                          type="button"
+                          button-delete
+                          data-id=customer._id
+                        ) Xóa
+              else
+                tr
+                  td.admin-empty-state(colspan="8")
+                    strong Chưa có khách hàng phù hợp
+                    small Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.
+
+    +pagination(pagination)
+    form#form-change-status(method="POST" hidden data-path=`${prefixAdmin}/customers/change-status`)
+    form#form-delete-item(method="POST" hidden data-path=`${prefixAdmin}/customers/delete`)
+    script(src="/admin/js/customer.js")

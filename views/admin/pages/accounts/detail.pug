@@ -1,0 +1,68 @@
+extends ../../layouts/default.pug
+
+block main
+  .admin-record-detail
+    .admin-record-detail__heading
+      div
+        p.admin-page-eyebrow Tài khoản quản trị
+        h1 #{account.fullName || "Chưa cập nhật tên"}
+        p Thông tin hồ sơ, vai trò và quyền truy cập hệ thống.
+      span(class=`admin-record-status ${account.status === "active" ? "admin-record-status--active" : "admin-record-status--inactive"}`)
+        i
+        | #{account.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+
+    .admin-account-detail
+      aside.admin-record-card.admin-account-profile
+        .admin-account-profile__avatar
+          if account.avatar
+            img(src=account.avatar alt=account.fullName)
+          else
+            span #{(account.fullName || "A").charAt(0).toUpperCase()}
+        h2 #{account.fullName || "Chưa cập nhật"}
+        p #{account.email}
+        if accountRole
+          span.admin-account-profile__role #{accountRole.title}
+
+      .admin-record-card
+        .admin-record-section-heading
+          div
+            p Hồ sơ
+            h2 Thông tin tài khoản
+        dl.admin-record-meta.admin-record-meta--two-columns
+          div
+            dt Họ và tên
+            dd #{account.fullName || "Chưa cập nhật"}
+          div
+            dt Email
+            dd #{account.email || "Chưa cập nhật"}
+          div
+            dt Số điện thoại
+            dd #{account.phone || "Chưa cập nhật"}
+          div
+            dt Nhóm quyền
+            dd #{accountRole ? accountRole.title : "Chưa phân quyền"}
+          div
+            dt Ngày tạo
+            dd #{moment(account.createdAt).format("DD/MM/YYYY HH:mm")}
+          div
+            dt Cập nhật gần nhất
+            dd #{moment(account.updatedAt).format("DD/MM/YYYY HH:mm")}
+
+        if accountRole
+          .admin-account-permissions
+            .admin-record-section-heading
+              div
+                p Quyền truy cập
+                h2 Các quyền được cấp
+              span #{accountRole.permissions.length}
+            if accountRole.permissions.length
+              .admin-record-tags
+                each permission in accountRole.permissions
+                  span #{permission}
+            else
+              p.admin-record-empty Nhóm quyền này chưa được cấp quyền nào.
+
+    .admin-record-detail__actions
+      a.btn.btn-outline-secondary(href=`${prefixAdmin}/accounts`) Quay lại danh sách
+      if (role.permissions.includes("accounts_edit"))
+        a.btn.btn-primary(href=`${prefixAdmin}/accounts/edit/${account._id}`) Chỉnh sửa tài khoản

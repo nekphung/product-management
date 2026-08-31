@@ -1,6 +1,7 @@
 const Account = require("../../models/account.model");
 const md5 = require('md5');
 const Role = require("../../models/role.model");
+const mongoose = require("mongoose");
 
 const systemConfig = require("../../config/system");
 
@@ -118,3 +119,45 @@ module.exports.editPatch = async (req, res) => {
         req.flash("error", "Cập nhật tài khoản thất bại!");
     }
 }
+
+// [DELETE] /admin/accounts/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    const redirectPath = `${systemConfig.prefixAdmin}/accounts`;
+    if (!res.locals.role.permissions.includes("accounts_delete") || !mongoose.isValidObjectId(req.params.id)) {
+        req.flash("error", "Bạn không có quyền xóa tài khoản admin.");
+        return res.redirect(req.get("Referrer") || redirectPath);
+    }
+    if (req.params.id === res.locals.user.id.toString()) {
+        req.flash("error", "Bạn không thể xóa tài khoản đang đăng nhập.");
+        return res.redirect(req.get("Referrer") || redirectPath);
+    }
+
+    await Account.updateOne(
+        { _id: req.params.id, deleted: false },
+        { deleted: true, deletedAt: new Date() }
+    );
+    req.flash("success", "Đã xóa tài khoản admin.");
+    res.redirect(redirectPath);
+};
+
+// [GET] /admin/accounts/detail/:id
+module.exports.detail = async (req, res) => {
+    if (!res.locals.role.permissions.includes("accounts_view") || !mongoose.isValidObjectId(req.params.id)) {
+        return res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+    }
+
+    const account = await Account.findOne({ _id: req.params.id, deleted: false })
+        .select("-password -token")
+        .lean();
+    if (!account) return res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+
+    const accountRole = account.role_id && mongoose.isValidObjectId(account.role_id)
+        ? await Role.findOne({ _id: account.role_id, deleted: false }).lean()
+        : null;
+
+    res.render("admin/pages/accounts/detail", {
+        pageTitle: account.fullName || "Chi tiết tài khoản admin",
+        account,
+        accountRole
+    });
+};

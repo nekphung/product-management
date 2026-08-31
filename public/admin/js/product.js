@@ -34,9 +34,13 @@ if (buttonDelete.length > 0) {
     const path = formDeleteItem.getAttribute("data-path");
 
     buttonDelete.forEach(button => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
             // console.log(button);
-            const isConfirm = confirm("Bạn có chắc muốn xóa sản phẩm này?");
+            const isConfirm = await window.adminConfirm({
+                title: "Xóa sản phẩm",
+                message: "Bạn có chắc muốn xóa sản phẩm này? Sản phẩm sẽ bị ẩn khỏi cửa hàng.",
+                confirmText: "Xóa sản phẩm"
+            });
 
             if (isConfirm) {
                 const id = button.getAttribute("data-id");

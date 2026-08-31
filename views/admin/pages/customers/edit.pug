@@ -1,0 +1,51 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  if (role.permissions.includes("customers_edit"))
+    +alert-error(4000)
+    .admin-page-heading
+      div
+        p.admin-page-eyebrow Hồ sơ khách hàng
+        h1 Chỉnh sửa khách hàng
+    .card.admin-customer-edit
+      .card-header
+        strong Thông tin tài khoản
+        small Cập nhật hồ sơ và trạng thái sử dụng của khách hàng
+      .card-body
+        form.admin-customer-edit__form(action=`${prefixAdmin}/customers/edit/${customer._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+          .form-row
+            .form-group.col-md-6
+              label(for="fullName") Họ và tên
+              input#fullName.form-control(type="text" name="fullName" value=customer.fullName required maxlength="100")
+            .form-group.col-md-6
+              label(for="email") Email
+              input#email.form-control(type="email" name="email" value=customer.email required)
+          .form-row
+            .form-group.col-md-6
+              label(for="phone") Số điện thoại
+              input#phone.form-control(type="tel" name="phone" value=customer.phone maxlength="20")
+            .form-group.col-md-6
+              label Trạng thái tài khoản
+              .admin-customer-status-switch(role="group" aria-label="Trạng thái tài khoản")
+                input#status-active(type="radio" name="status" value="active" checked=(customer.status === "active"))
+                label(for="status-active")
+                  i
+                  span
+                    strong Hoạt động
+                    small Khách hàng có thể đăng nhập
+                input#status-inactive(type="radio" name="status" value="inactive" checked=(customer.status === "inactive"))
+                label(for="status-inactive")
+                  i
+                  span
+                    strong Dừng hoạt động
+                    small Tạm khóa quyền đăng nhập
+          .form-group
+            label(for="address") Địa chỉ
+            textarea#address.form-control(name="address" rows="3" maxlength="300") #{customer.address}
+          .form-group(upload-image)
+            label(for="avatar") Ảnh đại diện
+            input#avatar.form-control-file(type="file" name="avatar" accept="image/*" upload-image-input)
+            img.mt-2(src=customer.avatar || "" alt="Xem trước ảnh đại diện" width="100" height="100" style="object-fit: cover; border-radius: 50%;" upload-image-preview)
+          button.btn.btn-primary.mr-2(type="submit") Lưu thay đổi
+          a.btn.btn-outline-secondary(href=`${prefixAdmin}/customers/detail/${customer._id}`) Hủy

@@ -155,7 +155,7 @@ if (checkboxMulti) {
 const formChangeMulti = document.querySelector("[form-change-multi]");
 if (formChangeMulti) {
     // console.log(formChangeMulti);
-    formChangeMulti.addEventListener("submit", (e) => {
+    formChangeMulti.addEventListener("submit", async (e) => {
         e.preventDefault(); // ngăn chặn load lại trang web
         // console.log(e);
 
@@ -168,7 +168,11 @@ if (formChangeMulti) {
         
         if (typeChange == "delete-all") {
             const entityLabel = formChangeMulti.dataset.entityLabel || "bản ghi";
-            const isConfirm = confirm(`Bạn có chắc chắn muốn xóa những ${entityLabel} đã chọn?`);
+            const isConfirm = await window.adminConfirm({
+                title: "Xác nhận xóa hàng loạt",
+                message: `Bạn có chắc muốn xóa những ${entityLabel} đã chọn?`,
+                confirmText: "Xóa đã chọn"
+            });
 
             if (!isConfirm) {
                 return;

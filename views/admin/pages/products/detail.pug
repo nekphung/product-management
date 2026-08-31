@@ -7,7 +7,11 @@ block main
     - const formattedOldPrice = Math.round(product.price || 0).toLocaleString("vi-VN")
 
     .admin-product-detail-page
-      .admin-product-detail__topbar
+      .admin-product-detail__heading
+        div
+          p.admin-page-eyebrow Thông tin sản phẩm
+          h1 #{product.title}
+          p Xem nhanh hình ảnh, giá bán, tồn kho và nội dung mô tả sản phẩm.
         if product.status === "active"
           span.admin-product-detail__status.admin-product-detail__status--active
             i(aria-hidden="true")
@@ -16,15 +20,6 @@ block main
           span.admin-product-detail__status.admin-product-detail__status--inactive
             i(aria-hidden="true")
             | Đã dừng hoạt động
-
-      .admin-product-detail__heading
-        div
-          p.admin-page-eyebrow Thông tin sản phẩm
-          h1 #{product.title}
-          p Xem nhanh hình ảnh, giá bán, tồn kho và nội dung mô tả sản phẩm.
-        a.admin-product-detail__edit.admin-product-detail__edit--top(href=`${prefixAdmin}/products/edit/${product.id}`)
-          span(aria-hidden="true") ✎
-          span Chỉnh sửa sản phẩm
 
       article.admin-product-detail
         .admin-product-detail__main

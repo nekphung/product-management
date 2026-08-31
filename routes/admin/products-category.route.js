@@ -9,6 +9,8 @@ const validate = require("../../validates/admin/products-category.validate");
 
 router.get("/", controller.index);
 
+router.get("/detail/:id", controller.detail);
+
 router.get("/create", controller.create);
 
 router.post(
@@ -28,5 +30,9 @@ router.patch(
     validate.createPost,
     controller.editPatch
 );
+
+router.patch("/change-multi", controller.changeMulti);
+
+router.delete("/delete/:id", controller.deleteItem);
 
 module.exports = router;

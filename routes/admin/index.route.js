@@ -12,6 +12,7 @@ const accountRoutes = require("./account.route");
 const myAccountRoutes = require("./my-account.route");
 const settingRoutes = require("./setting.route");
 const orderRoutes = require("./order.route");
+const customerRoutes = require("./customer.route");
 
 module.exports = (app) => {
     const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -58,6 +59,11 @@ module.exports = (app) => {
     app.use(PATH_ADMIN + "/orders", 
         authMiddleware.requireAuth,
         orderRoutes
+    );
+
+    app.use(PATH_ADMIN + "/customers",
+        authMiddleware.requireAuth,
+        customerRoutes
     );
 
     // Admin-only fallback: keep unknown admin URLs inside the admin shell.

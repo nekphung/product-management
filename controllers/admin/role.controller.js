@@ -1,7 +1,8 @@
 const Role = require("../../models/role.model");
+const Account = require("../../models/account.model");
+const mongoose = require("mongoose");
 
 const systemConfig = require("../../config/system");
-const { removeAllListeners } = require("../../models/products-category.model");
 
 // [GET] /admin/roles 
 module.exports.index = async (req, res) => {
@@ -110,3 +111,25 @@ module.exports.permissionsPatch = async (req, res) => {
         req.flash("error", "Cập nhật phân quyền thất bại!");
     }
 }
+
+// [DELETE] /admin/roles/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    const redirectPath = `${systemConfig.prefixAdmin}/roles`;
+    if (!res.locals.role.permissions.includes("roles_delete") || !mongoose.isValidObjectId(req.params.id)) {
+        req.flash("error", "Bạn không có quyền xóa nhóm quyền.");
+        return res.redirect(req.get("Referrer") || redirectPath);
+    }
+
+    const accountUsingRole = await Account.exists({ role_id: req.params.id, deleted: false });
+    if (accountUsingRole) {
+        req.flash("error", "Không thể xóa nhóm quyền đang được tài khoản admin sử dụng.");
+        return res.redirect(req.get("Referrer") || redirectPath);
+    }
+
+    await Role.updateOne(
+        { _id: req.params.id, deleted: false },
+        { deleted: true, deletedAt: new Date() }
+    );
+    req.flash("success", "Đã xóa nhóm quyền.");
+    res.redirect(redirectPath);
+};

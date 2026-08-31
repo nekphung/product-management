@@ -3,6 +3,7 @@ include ../../mixins/alert.pug
 
 block main
   +alert-success(2000)
+  +alert-error(3000)
 
   main.cart-page
     .container.py-4.py-md-5
@@ -33,12 +34,19 @@ block main
                   svg(viewBox="0 0 24 24")
                     path(d="M6 8h12l-1 12H7L6 8Z")
                     path(d="M9 8V6a3 3 0 0 1 6 0v2")
-                h2 Sản phẩm đã chọn
-              span.cart-items-card__count #{cart.products.length} sản phẩm
+                div
+                  h2 Sản phẩm trong giỏ
+                  label.cart-select-all
+                    input(type="checkbox" data-cart-select-all checked)
+                    span Chọn tất cả
+              span.cart-items-card__count(data-cart-header-count) #{cart.products.length} sản phẩm đã chọn
 
             .cart-item-list
               each item in cart.products
-                article.cart-line-item
+                article.cart-line-item(data-cart-item data-unit-price=item.productInfo.priceNew)
+                  label.cart-line-item__selector(title=`Chọn ${item.productInfo.title}`)
+                    input(type="checkbox" data-cart-select value=item.product_id checked aria-label=`Chọn ${item.productInfo.title} để thanh toán`)
+                    span(aria-hidden="true")
                   a.cart-line-item__image(href=`/products/detail/${item.productInfo.slug}`)
                     img(src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/chat-support-avatar.png') alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm'))
                   .cart-line-item__content
@@ -71,18 +79,18 @@ block main
             .cart-summary-card
               .cart-summary-card__heading
                 h2 Tóm tắt đơn hàng
-                span #{cart.products.length} mặt hàng
+                span(data-cart-selected-count) #{cart.products.length} mặt hàng đã chọn
               .cart-summary-card__lines
                 .cart-summary-card__line
                   span Tạm tính
-                  strong #{cart.totalPrice.toLocaleString('vi-VN')}đ
+                  strong(data-cart-subtotal) #{cart.totalPrice.toLocaleString('vi-VN')}đ
                 .cart-summary-card__line
                   span Phí giao hàng
                   strong.cart-summary-card__free Miễn phí
               .cart-summary-card__total
                 span Tổng thanh toán
-                strong #{cart.totalPrice.toLocaleString('vi-VN')}đ
-              button.btn.cart-summary-card__checkout(type="button" data-toggle="modal" data-target="#checkoutModal")
+                strong(data-cart-total) #{cart.totalPrice.toLocaleString('vi-VN')}đ
+              button.btn.cart-summary-card__checkout(type="button" data-cart-checkout data-toggle="modal" data-target="#checkoutModal")
                 span Tiến hành đặt hàng
                 strong →
               p.cart-summary-card__note Bạn có thể kiểm tra lại địa chỉ và phương thức thanh toán ở bước tiếp theo.
@@ -118,6 +126,7 @@ block main
           .modal-dialog.modal-dialog-centered.modal-xl(role="document")
             .modal-content
               form(action="/checkout/order" method="POST")
+                input(type="hidden" name="selectedProductIds" data-selected-product-ids)
                 header.checkout-modal__header
                   div
                     p Thủ tục đặt mua nhanh
@@ -161,19 +170,19 @@ block main
                   section.checkout-modal__summary
                     .checkout-modal__summary-line
                       span Số lượng sản phẩm
-                      strong #{cart.products.length} mặt hàng
+                      strong(data-modal-selected-count) #{cart.products.length} mặt hàng
                     .checkout-modal__summary-line
                       span Phí vận chuyển
                       strong.checkout-modal__free Miễn phí
                     .checkout-modal__summary-total
                       span Tổng số tiền thanh toán
-                      strong #{cart.totalPrice.toLocaleString('vi-VN')}đ
+                      strong(data-modal-total) #{cart.totalPrice.toLocaleString('vi-VN')}đ
 
                 footer.checkout-modal__footer
                   button.btn.checkout-modal__back(type="button" data-dismiss="modal") Quay lại giỏ
                   button.btn.checkout-modal__submit(type="submit")
                     span Đặt mua ngay
-                    strong #{cart.totalPrice.toLocaleString('vi-VN')}đ
+                    strong(data-modal-submit-total) #{cart.totalPrice.toLocaleString('vi-VN')}đ
       else
         .cart-empty-state
           .cart-empty-state__icon(aria-hidden="true")

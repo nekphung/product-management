@@ -1,0 +1,85 @@
+extends ../../layouts/default.pug
+
+block main
+  .admin-record-detail
+    .admin-record-detail__heading
+      div
+        p.admin-page-eyebrow Chi tiết danh mục
+        h1 #{category.title}
+        p Thông tin cấu trúc, trạng thái và sản phẩm thuộc danh mục.
+      span(class=`admin-record-status ${category.status === "active" ? "admin-record-status--active" : "admin-record-status--inactive"}`)
+        i
+        | #{category.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+
+    .admin-record-detail__grid
+      aside.admin-record-card
+        .admin-record-card__media
+          if category.thumbnail
+            img(src=category.thumbnail alt=category.title)
+          else
+            span(aria-hidden="true") ◇
+        dl.admin-record-meta
+          div
+            dt Danh mục cha
+            dd #{parent ? parent.title : "Danh mục gốc"}
+          div
+            dt Vị trí hiển thị
+            dd #{category.position || "—"}
+          div
+            dt Đường dẫn
+            dd /products/#{category.slug}
+          div
+            dt Ngày tạo
+            dd #{moment(category.createdAt).format("DD/MM/YYYY HH:mm")}
+          div
+            dt Cập nhật gần nhất
+            dd #{moment(category.updatedAt).format("DD/MM/YYYY HH:mm")}
+
+      .admin-record-detail__content
+        section.admin-record-card
+          .admin-record-section-heading
+            div
+              p Nội dung
+              h2 Mô tả danh mục
+          if category.description
+            .admin-record-description !{category.description}
+          else
+            p.admin-record-empty Danh mục này chưa có mô tả.
+
+        section.admin-record-card
+          .admin-record-section-heading
+            div
+              p Cấu trúc
+              h2 Danh mục con
+            span #{children.length}
+          if children.length
+            .admin-record-tags
+              each child in children
+                a(href=`${prefixAdmin}/products-category/detail/${child._id}`) #{child.title}
+          else
+            p.admin-record-empty Không có danh mục con.
+
+        section.admin-record-card
+          .admin-record-section-heading
+            div
+              p Sản phẩm
+              h2 Sản phẩm trong danh mục
+            span #{productCount}
+          if products.length
+            .admin-record-products
+              each product in products
+                a.admin-record-product(href=`${prefixAdmin}/products/detail/${product._id}`)
+                  if product.thumbnail
+                    img(src=product.thumbnail alt=product.title)
+                  else
+                    span ◇
+                  div
+                    strong #{product.title}
+                    small #{Number(product.price || 0).toLocaleString("vi-VN")}đ · Tồn #{product.stock || 0}
+          else
+            p.admin-record-empty Chưa có sản phẩm trong danh mục này.
+
+    .admin-record-detail__actions
+      a.btn.btn-outline-secondary(href=`${prefixAdmin}/products-category`) Quay lại danh sách
+      if (role.permissions.includes("products-category_edit"))
+        a.btn.btn-primary(href=`${prefixAdmin}/products-category/edit/${category._id}`) Chỉnh sửa danh mục

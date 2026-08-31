@@ -1,7 +1,10 @@
 extends ../../layouts/default.pug
+include ../../mixins/alert.pug
 
 block main 
   if (role.permissions.includes("roles_view"))
+    +alert-success(4000)
+    +alert-error(4000)
     h1(class="mb-4") Nhóm quyền
 
     .card.mb-3 
@@ -50,3 +53,6 @@ block main
                   span.admin-empty-state__icon(aria-hidden="true") ∅
                   strong Chưa có nhóm quyền
                   small Nhóm quyền mới sẽ hiển thị tại đây sau khi được tạo.
+
+    form#form-delete-item(method="POST" hidden data-path=`${prefixAdmin}/roles/delete` data-delete-label="nhóm quyền")
+    script(src="/admin/js/soft-delete.js")

@@ -8,7 +8,11 @@ module.exports.requireAuth = async (req, res, next) => {
         res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
     } else {
         // console.log(req.cookies.token);
-        const user = await Account.findOne({token: req.cookies.token}).select("-password");
+        const user = await Account.findOne({
+            token: req.cookies.token,
+            deleted: false,
+            status: "active"
+        }).select("-password");
         
         if (!user) {
             res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
