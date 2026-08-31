@@ -1,0 +1,124 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/pagination.pug
+
+block main
+  if (role.permissions.includes("orders_view"))
+    +alert-success(4000)
+    +alert-error(4000)
+
+    .admin-page-heading.admin-order-heading
+      div
+        p.admin-page-eyebrow Bán hàng và vận hành
+        h1 Quản lý đơn hàng
+        p Theo dõi, xác nhận và cập nhật tiến độ giao hàng.
+
+    .card.mb-3.admin-order-controls
+      .card-header Bộ lọc, tìm kiếm và sắp xếp
+      .card-body
+        .admin-order-toolbar
+          .admin-order-toolbar__status
+            label Trạng thái
+            .admin-status-buttons
+              each item in statusFilters
+                button.btn(type="button" button-status=item.value class=(item.active ? "btn-primary" : "btn-outline-primary")) #{item.label}
+          .admin-order-toolbar__search
+            label Tìm đơn hàng
+            form#form-search
+              .input-group
+                input.form-control(type="text" name="keyword" value=keyword placeholder="Tên khách hàng, số điện thoại, địa chỉ...")
+                .input-group-append
+                  button.btn.btn-primary(type="submit") Tìm kiếm
+          .admin-order-toolbar__sort
+            label Sắp xếp
+            select.form-control(data-order-sort aria-label="Sắp xếp đơn hàng")
+              option(value="newest" selected=(currentSort === "newest")) Mới nhất trước
+              option(value="oldest" selected=(currentSort === "oldest")) Cũ nhất trước
+
+    .card.admin-order-list
+      .card-header.admin-list-header
+        span Danh sách đơn hàng
+        span.admin-order-count #{orders.length} đơn trên trang này
+      .card-body
+        if (orders.length > 0 && role.permissions.includes("orders_edit"))
+          form.admin-order-bulk(action=`${prefixAdmin}/orders/change-multi?_method=PATCH` method="POST" form-change-multi data-entity-label="đơn hàng")
+            .admin-bulk-actions
+              .admin-bulk-actions__label
+                span.admin-bulk-actions__label-icon(aria-hidden="true") ✓
+                span
+                  strong Thao tác hàng loạt
+                  small Áp dụng cho các đơn đã chọn
+              .admin-bulk-actions__controls
+                .form-group
+                  select.form-control(name="type" required aria-label="Chọn trạng thái mới")
+                    option(value="" disabled selected) Chọn hành động
+                    each status in orderStatuses
+                      option(value=status.value) Chuyển sang: #{status.label}
+                    if (role.permissions.includes("orders_delete"))
+                      option(value="delete-all") Xóa các đơn đã chọn
+                button.btn.btn-primary.admin-bulk-actions__submit(type="submit")
+                  span Áp dụng
+                  span(aria-hidden="true") →
+              input(type="hidden" name="ids" value="")
+
+        .table-responsive.admin-order-table-wrap
+          table.table.table-hover.admin-order-table(checkbox-multi)
+            thead
+              tr
+                th.admin-order-table__check
+                  input(type="checkbox" name="checkall" aria-label="Chọn tất cả đơn hàng")
+                th Mã đơn
+                th Khách hàng
+                th Sản phẩm
+                th Tổng tiền
+                th Thanh toán
+                th Trạng thái
+                th Ngày đặt
+                th Hành động
+            tbody
+              if orders.length > 0
+                each order in orders
+                  tr
+                    td
+                      input(type="checkbox" name="id" value=order._id aria-label=`Chọn đơn hàng ${order.code}`)
+                    td
+                      a.admin-order-code(href=`${prefixAdmin}/orders/detail/${order._id}`) ##{order.code}
+                    td
+                      .admin-order-customer
+                        strong #{order.userInfo.fullName || "Chưa cập nhật"}
+                        span #{order.userInfo.phone || "Không có SĐT"}
+                    td
+                      strong #{order.totalQuantity}
+                      span.admin-order-muted  sản phẩm
+                    td.admin-order-total #{order.totalPrice.toLocaleString("vi-VN")}đ
+                    td
+                      span.admin-order-payment #{order.userInfo.paymentMethod === "banking" ? "Chuyển khoản" : "COD"}
+                    td
+                      if (role.permissions.includes("orders_edit"))
+                        select.form-control.admin-order-status(data-order-status data-id=order._id aria-label=`Trạng thái đơn ${order.code}`)
+                          each status in orderStatuses
+                            option(value=status.value selected=(order.status === status.value)) #{status.label}
+                      else
+                        span(class=`admin-order-status-badge admin-order-status-badge--${order.status}`) #{orderStatuses.find(item => item.value === order.status).label}
+                    td.admin-order-date
+                      strong #{moment(order.createdAt).format("DD/MM/YYYY")}
+                      span #{moment(order.createdAt).format("HH:mm")}
+                    td.admin-order-actions
+                      a.btn.btn-secondary.btn-sm(href=`${prefixAdmin}/orders/detail/${order._id}`) Chi tiết
+                      if (role.permissions.includes("orders_delete"))
+                        button.btn.admin-order-list__delete.btn-sm(type="button" data-order-delete data-id=order._id)
+                          span Xóa
+              else
+                tr
+                  td.admin-empty-state(colspan="9")
+                    .admin-empty-state__content
+                      span.admin-empty-state__icon(aria-hidden="true") ▤
+                      strong Chưa có đơn hàng phù hợp
+                      small Thử thay đổi trạng thái hoặc từ khóa tìm kiếm để xem các đơn hàng khác.
+
+    +pagination(pagination)
+
+    form#form-order-status(action="" method="POST" data-path=`${prefixAdmin}/orders/change-status` hidden)
+    form#form-order-delete(action="" method="POST" data-path=`${prefixAdmin}/orders/delete` hidden)
+
+    script(src="/admin/js/order.js")

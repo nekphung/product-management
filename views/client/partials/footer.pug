@@ -1,43 +1,14 @@
 footer.site-footer
-  .site-footer__decoration.site-footer__decoration--left(aria-hidden="true")
-    svg(viewBox="0 0 64 64")
-      path(d="M5 24h31v22H13a8 8 0 0 1-8-8V24Z")
-      path(d="M36 30h12l9 9v7H36V30Z")
-      circle(cx="18" cy="48" r="6")
-      circle(cx="47" cy="48" r="6")
-  .site-footer__decoration.site-footer__decoration--right(aria-hidden="true")
-    svg(viewBox="0 0 64 64")
-      rect(x="10" y="25" width="38" height="28" rx="4")
-      path(d="M18 25v-8a11 11 0 0 1 22 0v8M23 39l5 5 9-11")
   .container
     .site-footer__panel
-      .site-footer__benefits(aria-label="Cam kết mua sắm")
-        .site-footer__benefit
-          span.site-footer__benefit-icon(aria-hidden="true")
-            svg(viewBox="0 0 24 24")
-              path(d="M3 6h11v10H3z")
-              path(d="M14 9h4l3 3v4h-7zM5 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z")
-          strong Giao hàng linh hoạt.
-        .site-footer__benefit
-          span.site-footer__benefit-icon(aria-hidden="true")
-            svg(viewBox="0 0 24 24")
-              path(d="M4 3h11v18H4zM8 7h3M8 11h3M8 15h3")
-              circle(cx="18" cy="15" r="4")
-              path(d="m15 18 6-6")
-          strong Sản phẩm rõ ràng.
-        .site-footer__benefit
-          span.site-footer__benefit-icon(aria-hidden="true")
-            svg(viewBox="0 0 24 24")
-              path(d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14l1 11H4z")
-              path(d="m9 15 2 2 4-4")
-          strong Mua sắm an tâm.
-
       .site-footer__details
         .site-footer__identity
           a.site-footer__brand(href="/" aria-label=(settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Trang chủ"))
             if settingGeneral && settingGeneral.logo
               img(src=settingGeneral.logo alt=(settingGeneral.websiteName || "Logo website"))
             strong #{settingGeneral && settingGeneral.websiteName ? settingGeneral.websiteName : "Shop Online"}
+
+        .site-footer__contact-hub(aria-label="Thông tin liên hệ và mạng xã hội")
           .site-footer__socials(aria-label="Mạng xã hội")
             a.site-footer__social.site-footer__social--facebook(href="https://www.facebook.com/nek.phung.180" target="_blank" rel="noopener noreferrer" aria-label="Facebook của Nèk Phùng")
               span.site-footer__social-icon(aria-hidden="true") f
@@ -53,9 +24,7 @@ footer.site-footer
                 small TikTok
                 strong @nekphung2k6
 
-        if settingGeneral && (settingGeneral.phone || settingGeneral.email)
-          .site-footer__support
-            strong.site-footer__support-title Hỗ trợ
+          if settingGeneral && (settingGeneral.phone || settingGeneral.email)
             address.site-footer__contact
               if settingGeneral.phone
                 - const footerPhoneHref = String(settingGeneral.phone).replace(/[^\d+]/g, "")

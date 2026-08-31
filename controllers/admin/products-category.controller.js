@@ -9,8 +9,14 @@ const systemConfig = require("../../config/system");
 
 // [GET] /admin/product-category
 module.exports.index = async (req, res) => {
+    const filterStatus = filterStatusHelper(req.query);
+
     const find = {
         deleted: false,
+    }
+
+    if (req.query.status) {
+        find.status = req.query.status;
     }
 
     const records = await ProductCategory.find(find);
@@ -19,7 +25,8 @@ module.exports.index = async (req, res) => {
 
     res.render("admin/pages/products-category/index", {
         pageTitle: "Danh mục sản phẩm",
-        records: newRecords
+        records: newRecords,
+        filterStatus: filterStatus
     });
 }
 

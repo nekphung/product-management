@@ -42,6 +42,8 @@ router.get("/info", authMiddleware.requireAuth, controller.info);
 
 router.get("/orders", authMiddleware.requireAuth, controller.orders);
 
+router.patch("/orders/:orderId/cancel", authMiddleware.requireAuth, controller.cancelOrder);
+
 router.get("/orders/:orderId", authMiddleware.requireAuth, controller.orderDetail);
 
 router.get("/password/reset", controller.resetPassword);

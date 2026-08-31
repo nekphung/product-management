@@ -1,45 +1,59 @@
 extends ../../layouts/default.pug
-include ../../mixins/table-tree.pug 
+include ../../mixins/table-tree.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/form-change-multi.pug
 
 block main 
     if (role.permissions.includes("products-category_view"))
         h1 Danh mục sản phẩm 
 
-        .card.mb-3 
+        .card.mb-3.admin-product-controls.admin-category-controls
+            .card-header Bộ lọc
+            .card-body
+                .admin-product-toolbar
+                    .admin-product-toolbar__item.admin-product-toolbar__filter
+                        label Trạng thái
+                        .admin-status-buttons
+                            +filter-status(filterStatus)
+
+        .card.mb-3.admin-category-list
             .card-header.admin-list-header
-                span Danh sách
+                span.admin-list-header__title Danh sách
+                if (records && records.length > 0)
+                    +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
                 if (role.permissions.includes("products-category_create"))
                     a.admin-create-button(href=`${prefixAdmin}/products-category/create`)
                         span.admin-create-button__icon(aria-hidden="true") +
                         | Thêm mới
-            .card-body 
-                table(
-                    class="table table-hover table-sm"
-                    checkbox-multi
-                )
-                    thead
-                        tr
-                            th STT
-                            th Hình ảnh
-                            th Tiêu đề
-                            th Vị trí
-                            th Trạng thái
-                            th Hành động
 
-                    tbody
-                        if(records && records.length > 0)
-                            +table-tree(records)
-                        else
+            .card-body
+                .table-responsive.admin-category-table-wrap
+                    table.table.table-hover.table-sm.admin-category-table(checkbox-multi)
+                        thead
                             tr
-                                td.admin-empty-state(colspan="6")
-                                    .admin-empty-state__content
-                                        span.admin-empty-state__icon(aria-hidden="true")
-                                            svg(viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round")
-                                                path(d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z")
-                                                path(d="M3 7.5V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2.5")
-                                        strong Chưa có danh mục sản phẩm
-                                        small Tạo danh mục đầu tiên để sắp xếp và quản lý sản phẩm dễ dàng hơn.
-                                        if (role.permissions.includes("products-category_create"))
-                                            a.admin-empty-state__action(href=`${prefixAdmin}/products-category/create`)
-                                                span(aria-hidden="true") +
-                                                | Thêm danh mục đầu tiên
+                                th.admin-category-table__check
+                                    input(type="checkbox" name="checkall" aria-label="Chọn tất cả danh mục")
+                                th STT
+                                th Hình ảnh
+                                th Tiêu đề
+                                th Vị trí
+                                th Trạng thái
+                                th Hành động
+
+                        tbody
+                            if(records && records.length > 0)
+                                +table-tree(records)
+                            else
+                                tr
+                                    td.admin-empty-state(colspan="7")
+                                        .admin-empty-state__content
+                                            span.admin-empty-state__icon(aria-hidden="true")
+                                                svg(viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round")
+                                                    path(d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z")
+                                                    path(d="M3 7.5V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2.5")
+                                            strong Chưa có danh mục sản phẩm
+                                            small Tạo danh mục đầu tiên để sắp xếp và quản lý sản phẩm dễ dàng hơn.
+                                            if (role.permissions.includes("products-category_create"))
+                                                a.admin-empty-state__action(href=`${prefixAdmin}/products-category/create`)
+                                                    span(aria-hidden="true") +
+                                                    | Thêm danh mục đầu tiên

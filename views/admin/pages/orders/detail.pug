@@ -1,0 +1,93 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  if (role.permissions.includes("orders_view"))
+    +alert-success(4000)
+    +alert-error(4000)
+
+    .admin-order-detail-page
+      .admin-order-detail__heading
+        div
+          p.admin-page-eyebrow Chi tiết đơn hàng
+          h1 Đơn hàng ##{order.code}
+          p Đặt lúc #{moment(order.createdAt).format("HH:mm, DD/MM/YYYY")}
+        if (role.permissions.includes("orders_edit"))
+          select.form-control.admin-order-status(data-order-status data-id=order._id aria-label=`Trạng thái đơn ${order.code}`)
+            each status in orderStatuses
+              option(value=status.value selected=(order.status === status.value)) #{status.label}
+
+      .admin-order-detail__grid
+        section.admin-order-detail__main
+          .admin-order-detail__section
+            .admin-order-detail__section-heading
+              div
+                p Sản phẩm
+                h2 #{order.totalQuantity} sản phẩm trong đơn
+              strong.admin-order-detail__total #{order.totalPrice.toLocaleString("vi-VN")}đ
+
+            .admin-order-products
+              each item in order.products
+                .admin-order-product
+                  .admin-order-product__image
+                    if item.thumbnail
+                      img(src=item.thumbnail alt=item.title)
+                    else
+                      span(aria-hidden="true") ◇
+                  .admin-order-product__info
+                    strong #{item.title}
+                    span #{item.priceNew.toLocaleString("vi-VN")}đ × #{item.quantity}
+                    if item.discountPercentage > 0
+                      small Giảm #{item.discountPercentage}% từ #{Number(item.price).toLocaleString("vi-VN")}đ
+                  strong.admin-order-product__subtotal #{item.totalPrice.toLocaleString("vi-VN")}đ
+
+          .admin-order-detail__summary
+            span Tổng thanh toán
+            strong #{order.totalPrice.toLocaleString("vi-VN")}đ
+
+        aside.admin-order-detail__aside
+          section.admin-order-info-card
+            p.admin-order-info-card__eyebrow Người nhận
+            h2 #{order.userInfo.fullName || "Chưa cập nhật"}
+            dl
+              div
+                dt Số điện thoại
+                dd #{order.userInfo.phone || "Chưa cập nhật"}
+              div
+                dt Địa chỉ
+                dd #{order.userInfo.address || "Chưa cập nhật"}
+              div
+                dt Thanh toán
+                dd #{order.userInfo.paymentMethod === "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}
+
+          section.admin-order-info-card
+            p.admin-order-info-card__eyebrow Thông tin hệ thống
+            h2 Dữ liệu đơn hàng
+            dl
+              div
+                dt Mã đơn
+                dd ##{order.code}
+              div
+                dt Mã giỏ hàng
+                dd #{order.cart_id || "Không có"}
+              div
+                dt Cập nhật lần cuối
+                dd #{moment(order.updatedAt).format("HH:mm, DD/MM/YYYY")}
+
+          if (order.status === "cancelled")
+            section.admin-order-info-card.admin-order-cancellation-card
+              p.admin-order-info-card__eyebrow Đơn hàng đã hủy
+              h2 Lý do hủy đơn
+              p.admin-order-cancellation-card__reason #{order.cancellation && order.cancellation.reason ? order.cancellation.reason : "Không có lý do được ghi nhận."}
+              if (order.cancellation && order.cancellation.cancelledAt)
+                small Hủy lúc #{moment(order.cancellation.cancelledAt).format("HH:mm, DD/MM/YYYY")}
+
+      .admin-order-detail__actions
+        a.btn.btn-outline-secondary(href=`${prefixAdmin}/orders`) Quay lại danh sách
+        if (role.permissions.includes("orders_delete"))
+          button.btn.admin-order-detail__delete(type="button" data-order-delete data-id=order._id)
+            span Xóa đơn hàng
+
+    form#form-order-status(action="" method="POST" data-path=`${prefixAdmin}/orders/change-status` hidden)
+    form#form-order-delete(action="" method="POST" data-path=`${prefixAdmin}/orders/delete` hidden)
+    script(src="/admin/js/order.js")

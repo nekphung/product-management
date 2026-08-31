@@ -5,6 +5,22 @@ if (sidebarToggle && adminSidebar) {
   sidebarToggle.addEventListener("click", () => adminSidebar.classList.toggle("is-open"));
 }
 
+const adminBackButton = document.querySelector("[data-admin-back]");
+if (adminBackButton) {
+  adminBackButton.addEventListener("click", () => {
+    const referrer = document.referrer ? new URL(document.referrer) : null;
+    const isPreviousAdminPage = referrer
+      && referrer.origin === window.location.origin
+      && referrer.pathname !== window.location.pathname;
+
+    if (isPreviousAdminPage) {
+      history.back();
+    } else {
+      window.location.href = adminBackButton.dataset.backFallback;
+    }
+  });
+}
+
 // Highlight the current admin section in the sidebar.
 const adminNavLinks = document.querySelectorAll("[data-admin-nav]");
 if (adminNavLinks.length > 0) {
@@ -151,7 +167,8 @@ if (formChangeMulti) {
         const typeChange = e.target.elements.type.value;
         
         if (typeChange == "delete-all") {
-            const isConfirm = confirm("Bạn có chắc chắn muốn xóa những sản phẩm này?");
+            const entityLabel = formChangeMulti.dataset.entityLabel || "bản ghi";
+            const isConfirm = confirm(`Bạn có chắc chắn muốn xóa những ${entityLabel} đã chọn?`);
 
             if (!isConfirm) {
                 return;

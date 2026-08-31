@@ -27,9 +27,9 @@ block main
                 div
                   span.user-order-card__label Mã đơn hàng
                   strong.user-order-card__code ##{orderCode}
-                span.user-order-card__status
+                span(class=`user-order-card__status user-order-status--${order.status}`)
                   i(aria-hidden="true")
-                  | Đã tiếp nhận
+                  | #{order.statusMeta.shortLabel}
 
               .user-order-card__body
                 .user-order-card__previews(aria-label="Sản phẩm trong đơn hàng")

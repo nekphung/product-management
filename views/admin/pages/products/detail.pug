@@ -8,9 +8,6 @@ block main
 
     .admin-product-detail-page
       .admin-product-detail__topbar
-        a.admin-product-detail__back(href=`${prefixAdmin}/products`)
-          span(aria-hidden="true") ←
-          span Danh sách sản phẩm
         if product.status === "active"
           span.admin-product-detail__status.admin-product-detail__status--active
             i(aria-hidden="true")

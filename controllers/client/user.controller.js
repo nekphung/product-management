@@ -1,10 +1,12 @@
 const md5 = require("md5");
+const mongoose = require("mongoose");
 const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
 const Cart = require("../../models/cart.model");
 const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
 const productsHelper = require("../../helpers/products");
+const { ORDER_STATUSES, getOrderStatus } = require("../../helpers/orderStatus");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -259,6 +261,8 @@ module.exports.orders = async (req, res) => {
     }).sort({ createdAt: "desc" }).lean();
 
     for (const order of orders) {
+        order.status = order.status || "pending";
+        order.statusMeta = getOrderStatus(order.status);
         order.totalPrice = order.products.reduce((sum, item) => {
             return sum + productsHelper.priceNewProduct(item) * item.quantity;
         }, 0);
@@ -278,6 +282,67 @@ module.exports.orders = async (req, res) => {
         pageTitle: "Đơn hàng của tôi",
         orders
     });
+}
+
+// [PATCH] /user/orders/:orderId/cancel
+module.exports.cancelOrder = async (req, res) => {
+    const orderId = req.params.orderId;
+    const redirectPath = mongoose.isValidObjectId(orderId)
+        ? `/user/orders/${orderId}`
+        : "/user/orders";
+
+    if (!mongoose.isValidObjectId(orderId)) {
+        req.flash("error", "Đơn hàng không hợp lệ.");
+        return res.redirect(redirectPath);
+    }
+
+    const predefinedReasons = [
+        "Tôi muốn thay đổi sản phẩm trong đơn",
+        "Tôi muốn thay đổi địa chỉ hoặc thông tin nhận hàng",
+        "Tôi tìm được mức giá tốt hơn",
+        "Thời gian giao hàng không còn phù hợp"
+    ];
+    const selectedReason = String(req.body.cancelReason || "").trim();
+    const otherReason = String(req.body.otherReason || "").trim();
+    const reason = selectedReason === "other" ? otherReason : selectedReason;
+
+    if (!reason || (selectedReason !== "other" && !predefinedReasons.includes(reason))) {
+        req.flash("error", "Vui lòng chọn hoặc nhập lý do hủy đơn hàng.");
+        return res.redirect(redirectPath);
+    }
+
+    if (reason.length > 500) {
+        req.flash("error", "Lý do hủy không được vượt quá 500 ký tự.");
+        return res.redirect(redirectPath);
+    }
+
+    const order = await Order.findOneAndUpdate({
+        _id: orderId,
+        user_id: res.locals.user.id,
+        deleted: { $ne: true },
+        $or: [
+            { status: "pending" },
+            { status: null },
+            { status: { $exists: false } }
+        ]
+    }, {
+        $set: {
+            status: "cancelled",
+            cancellation: {
+                reason,
+                source: "client",
+                cancelledAt: new Date()
+            }
+        }
+    });
+
+    if (!order) {
+        req.flash("error", "Chỉ có thể hủy đơn hàng đang chờ xác nhận.");
+        return res.redirect(redirectPath);
+    }
+
+    req.flash("success", "Đơn hàng đã được hủy thành công.");
+    return res.redirect(redirectPath);
 }
 
 // [GET] /user/orders/:orderId
@@ -301,9 +366,12 @@ module.exports.orderDetail = async (req, res) => {
     }
 
     order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    order.status = order.status || "pending";
+    order.statusMeta = getOrderStatus(order.status);
 
     res.render("client/pages/user/order-detail", {
         pageTitle: "Chi tiết đơn hàng",
-        order
+        order,
+        orderProgress: ORDER_STATUSES.filter(item => item.step > 0)
     });
 }

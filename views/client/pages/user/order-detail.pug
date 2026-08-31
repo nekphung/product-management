@@ -2,6 +2,7 @@ extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 
 block main
+  +alert-success(3000)
   +alert-error(3000)
   main.user-order-detail-page
     .container.py-4.py-md-5
@@ -13,7 +14,34 @@ block main
           div
             p Chi tiết đơn hàng
             h1 ##{order._id.toString().slice(-10).toUpperCase()}
-          span.user-order-detail__badge Đã tiếp nhận
+          .user-order-detail__header-actions
+            span(class=`user-order-detail__badge user-order-status--${order.status}`)
+              i(aria-hidden="true")
+              | #{order.statusMeta.label}
+            if order.status === "pending"
+              button.user-order-detail__cancel-button(type="button" data-toggle="modal" data-target="#cancelOrderModal") Hủy đơn hàng
+
+        if order.status === "cancelled"
+          .user-order-progress__cancelled
+            span(aria-hidden="true") ×
+            div
+              strong Đơn hàng đã được hủy
+              p Đơn hàng này không tiếp tục được xử lý hoặc giao đến người nhận.
+              if order.cancellation && order.cancellation.reason
+                p.user-order-progress__cancel-reason Lý do: #{order.cancellation.reason}
+        else
+          .user-order-progress(aria-label="Tiến trình đơn hàng")
+            each status in orderProgress
+              - const isDone = order.statusMeta.step >= status.step
+              - const isCurrent = order.statusMeta.step === status.step
+              - const isPassed = order.statusMeta.step > status.step
+              .user-order-progress__step(class=(isDone ? "is-done" : "") + (isCurrent ? " is-current" : "") + (isPassed ? " is-passed" : ""))
+                span.user-order-progress__marker(aria-hidden="true")
+                  if order.statusMeta.step > status.step
+                    | ✓
+                  else
+                    | #{status.step}
+                strong #{status.shortLabel}
         .user-order-detail__body
           section.user-order-detail__receiver
             h2 Thông tin nhận hàng
@@ -44,3 +72,35 @@ block main
         footer.user-order-detail__footer
           span Tổng thanh toán
           strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
+
+      if order.status === "pending"
+        .modal.fade#cancelOrderModal(tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalTitle" aria-hidden="true")
+          .modal-dialog.modal-dialog-centered(role="document")
+            .modal-content.user-order-cancel-modal
+              form(action=`/user/orders/${order._id}/cancel?_method=PATCH` method="POST" data-cancel-order-form)
+                .modal-header
+                  div
+                    p.user-order-cancel-modal__eyebrow Hủy đơn hàng
+                    h2.modal-title#cancelOrderModalTitle Chọn lý do hủy
+                  button.close(type="button" data-dismiss="modal" aria-label="Đóng")
+                    span(aria-hidden="true") ×
+                .modal-body
+                  p.user-order-cancel-modal__description Đơn hàng chỉ có thể hủy khi cửa hàng chưa xác nhận. Vui lòng cho chúng tôi biết lý do.
+                  .user-order-cancel-reasons
+                    - const cancelReasons = ["Tôi muốn thay đổi sản phẩm trong đơn", "Tôi muốn thay đổi địa chỉ hoặc thông tin nhận hàng", "Tôi tìm được mức giá tốt hơn", "Thời gian giao hàng không còn phù hợp"]
+                    each reason, index in cancelReasons
+                      label.user-order-cancel-reason
+                        input(type="radio" name="cancelReason" value=reason required=(index === 0))
+                        span #{reason}
+                    label.user-order-cancel-reason
+                      input(type="radio" name="cancelReason" value="other" data-cancel-reason-other)
+                      span Lý do khác
+                  .user-order-cancel-other(hidden data-cancel-other-field)
+                    label(for="otherCancelReason") Nhập lý do khác
+                    textarea#otherCancelReason.form-control(name="otherReason" rows="3" maxlength="500" placeholder="Nhập lý do bạn muốn hủy đơn...")
+                    small Tối đa 500 ký tự
+                .modal-footer
+                  button.btn.user-order-cancel-modal__back(type="button" data-dismiss="modal") Giữ lại đơn hàng
+                  button.btn.user-order-cancel-modal__submit(type="submit") Xác nhận hủy
+
+      script(src="/js/order-cancel.js")

@@ -22,7 +22,38 @@ const orderSchema = new mongoose.Schema(
                 discountPercentage: Number,
                 quantity: Number
             }
-        ]
+        ],
+        status: {
+            type: String,
+            enum: ["pending", "confirmed", "shipping", "completed", "cancelled"],
+            default: "pending"
+        },
+        cancellation: {
+            reason: {
+                type: String,
+                trim: true,
+                maxlength: 500
+            },
+            source: {
+                type: String,
+                enum: ["client", "admin"]
+            },
+            cancelledAt: Date
+        },
+        deleted: {
+            type: Boolean,
+            default: false
+        },
+        updatedBy: [
+            {
+                account_id: String,
+                updatedAt: Date
+            }
+        ],
+        deletedBy: {
+            account_id: String,
+            deletedAt: Date
+        }
     }, {
         timestamps: true 
     }

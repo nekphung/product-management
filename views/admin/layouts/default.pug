@@ -17,6 +17,9 @@ html
                 include ../partials/sider.pug
 
                 main.main
+                    button.admin-page-back(type="button" data-admin-back data-back-fallback=`${prefixAdmin}/dashboard` aria-label="Quay lại trang trước")
+                        span.admin-page-back__icon(aria-hidden="true") ←
+                        span Quay lại
                     block main 
 
             script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")

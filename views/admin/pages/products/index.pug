@@ -27,26 +27,35 @@ block main
                     .admin-product-toolbar__item.admin-product-toolbar__search
                         label Tìm sản phẩm
                         +search(keyword)
-        .card.mb-3 
+        .card.mb-3.admin-product-list
             .card-header.admin-list-header
-                span Danh sách
+                span.admin-list-header__title Danh sách
+                if (products && products.length > 0)
+                    +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
                 if (role.permissions.includes("products_create"))
                     a.admin-create-button(href=`${prefixAdmin}/products/create`)
                         span.admin-create-button__icon(aria-hidden="true") +
                         | Thêm mới
             .card-body 
-                if (products && products.length > 0)
-                    .row 
-                        .col-12
-                            +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
-        
-                table(
-                    class="table table-hover table-sm"
+                .table-responsive.admin-product-table-wrap
+                  table(
+                    class="table table-hover table-sm admin-product-table"
                     checkbox-multi
-                ) 
+                  )
+                    colgroup
+                        col.admin-product-col--check
+                        col.admin-product-col--index
+                        col.admin-product-col--image
+                        col.admin-product-col--title
+                        col.admin-product-col--price
+                        col.admin-product-col--position
+                        col.admin-product-col--status
+                        col.admin-product-col--creator
+                        col.admin-product-col--updated
+                        col.admin-product-col--actions
                     thead 
                         tr 
-                            th 
+                            th.admin-product-table__check
                                 input(type="checkbox" name="checkall")
                             th STT 
                             th Hình ảnh
@@ -62,30 +71,28 @@ block main
                         if (products && products.length > 0)
                           each item, index in products
                             tr 
-                                td 
+                                td.admin-product-table__check
                                     input(
                                         type="checkbox"
                                         name="id"
                                         value=item.id
                                     )
                                 td #{pagination.limitItem*(pagination.currentPage - 1) + (index + 1)}
-                                td 
+                                td.admin-product-table__image-cell
                                     img(src=item.thumbnail
                                         alt=item.title
-                                        width="100px"
-                                        height="auto"
+                                        class="admin-product-table__image"
                                     )
-                                td #{item.title}
-                                td #{item.price.toLocaleString('vi-VN')}đ
-                                td 
+                                td.admin-product-table__title #{item.title}
+                                td.admin-product-table__price #{item.price.toLocaleString('vi-VN')}đ
+                                td.admin-product-table__position
                                     input(
                                         type="number"
                                         value=item.position
-                                        style="width: 60px"
                                         min="1"
                                         name="position"
                                     )
-                                td 
+                                td.admin-product-table__status
                                     if (role.permissions.includes("products_edit"))
                                         if (item.status == "active")
                                             //- a(href=`/admin/products/change-status/inactive/${item.id}` 
@@ -104,32 +111,33 @@ block main
                                             button-change-status
                                             class="badge badge-danger"
                                             ) Dừng hoạt động
-                                td 
+                                td.admin-product-table__audit
                                     p #{item.accountFullName}
                                     p 
                                         +formatDate(item.createdBy.createdAt)
-                                td  
+                                td.admin-product-table__audit
                                     - const updatedBy = item.updatedBy.slice(-1)[0];
                                     if (updatedBy)
                                         p #{updatedBy.accountFullName}
                                         p 
                                             +formatDate(updatedBy.updatedAt) 
-                                td  
-                                    a(
-                                        href=`${prefixAdmin}/products/detail/${item.id}`
-                                        class="btn btn-secondary btn-sm"
-                                    ) Chi tiết
-                                    if (role.permissions.includes("products_edit"))
+                                td.admin-product-table__actions
+                                    .admin-product-table__action-list
                                         a(
-                                            href=`${prefixAdmin}/products/edit/${item.id}`
-                                            class="btn btn-warning btn-sm"
-                                        ) Sửa
-                                    if (role.permissions.includes("products_delete"))
-                                        button(
-                                            class="btn btn-danger btn-sm ml-1"
-                                            button-delete
-                                            data-id=item.id
-                                        ) Xóa
+                                            href=`${prefixAdmin}/products/detail/${item.id}`
+                                            class="btn btn-secondary btn-sm"
+                                        ) Chi tiết
+                                        if (role.permissions.includes("products_edit"))
+                                            a(
+                                                href=`${prefixAdmin}/products/edit/${item.id}`
+                                                class="btn btn-warning btn-sm"
+                                            ) Sửa
+                                        if (role.permissions.includes("products_delete"))
+                                            button(
+                                                class="btn btn-danger btn-sm"
+                                                button-delete
+                                                data-id=item.id
+                                            ) Xóa
                         else
                           tr
                             td.admin-empty-state(colspan="10")
