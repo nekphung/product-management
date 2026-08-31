@@ -1,202 +1,99 @@
-extends ../../layouts/default.pug 
+extends ../../layouts/default.pug
 
-block main 
-    //- Thêm phần CSS trực tiếp vào trang chi tiết
-    style.
-        .product-detail-container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 30px;
-        }
-        .product-header {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        @media (max-width: 768px) {
-            .product-header {
-                grid-template-columns: 1fr;
-            }
-        }
-        .product-image-wrapper {
-            width: 100%;
-            height: 300px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #eee;
-            background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+block main
+  if product
+    - const finalPrice = product.discountPercentage ? product.price * (1 - product.discountPercentage / 100) : product.price
+    - const formattedPrice = Math.round(finalPrice || 0).toLocaleString("vi-VN")
+    - const formattedOldPrice = Math.round(product.price || 0).toLocaleString("vi-VN")
 
-        /* --- KHU VỰC PRICE BOX ĐƯỢC LÀM ĐẸP --- */
-        .price-container {
-            background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%);
-            padding: 16px 24px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            border-left: 4px solid #ff4d4f;
-        }
-        .price-row {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .price-new {
-            font-size: 32px;
-            font-weight: 800;
-            color: #ff4d4f;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-        .price-old {
-            font-size: 16px;
-            color: #8c8c8c;
-            text-decoration: line-through;
-            margin-left: 4px;
-        }
-        .discount-tag {
-            background: #ff4d4f;
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            position: relative;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(255, 77, 79, 0.2);
-            align-self: center;
-        }
-        /* -------------------------------------- */
+    .admin-product-detail-page
+      .admin-product-detail__topbar
+        a.admin-product-detail__back(href=`${prefixAdmin}/products`)
+          span(aria-hidden="true") ←
+          span Danh sách sản phẩm
+        if product.status === "active"
+          span.admin-product-detail__status.admin-product-detail__status--active
+            i(aria-hidden="true")
+            | Đang hoạt động
+        else
+          span.admin-product-detail__status.admin-product-detail__status--inactive
+            i(aria-hidden="true")
+            | Đã dừng hoạt động
 
-        .info-row {
-            margin-bottom: 12px;
-            font-size: 16px;
-            color: #4a5568;
-        }
-        .info-label {
-            font-weight: 600;
-            color: #718096;
-            display: inline-block;
-            width: 100px;
-        }
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .status-active {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        .status-inactive {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-        .product-description {
-            border-top: 1px solid #e2e8f0;
-            padding-top: 25px;
-            margin-bottom: 25px;
-        }
-        .product-description h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 15px;
-        }
-        .description-content {
-            color: #4a5568;
-            line-height: 1.7;
-            white-space: pre-line;
-        }
-        .action-box {
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-        }
+      .admin-product-detail__heading
+        div
+          p.admin-page-eyebrow Thông tin sản phẩm
+          h1 #{product.title}
+          p Xem nhanh hình ảnh, giá bán, tồn kho và nội dung mô tả sản phẩm.
+        a.admin-product-detail__edit.admin-product-detail__edit--top(href=`${prefixAdmin}/products/edit/${product.id}`)
+          span(aria-hidden="true") ✎
+          span Chỉnh sửa sản phẩm
 
-    if (product)
-        //- Tiêu đề h1 động hiển thị tên sản phẩm
-        h1(class="mb-4 text-center" style="font-weight: 700; color: #1a202c;") #{product.title}
+      article.admin-product-detail
+        .admin-product-detail__main
+          section.admin-product-detail__gallery(aria-label="Hình ảnh sản phẩm")
+            .admin-product-detail__image
+              if product.thumbnail
+                img(src=product.thumbnail alt=product.title)
+              else
+                .admin-product-detail__image-empty
+                  span(aria-hidden="true") ◇
+                  strong Chưa có hình ảnh
+            span.admin-product-detail__image-label Ảnh đại diện sản phẩm
 
-        div(class="product-detail-container")
-            div(class="product-header")
-                //- Khối ảnh bên trái
-                div(class="product-image-section")
-                    if (product.thumbnail)
-                        div(class="product-image-wrapper")
-                            img(
-                                src=product.thumbnail
-                                alt=product.title
-                                class="product-image"
-                            )
-                    else
-                        div(class="product-image-wrapper")
-                            span(style="color: #a0aec0;") Không có ảnh
+          section.admin-product-detail__overview
+            .admin-product-detail__price-card
+              span Giá bán hiện tại
+              .admin-product-detail__price-row
+                strong #{formattedPrice} đ
+                if product.discountPercentage
+                  del #{formattedOldPrice} đ
+                  span.admin-product-detail__discount -#{product.discountPercentage}%
+              if product.discountPercentage
+                small Sản phẩm đang được áp dụng chương trình giảm giá.
+              else
+                small Giá niêm yết hiện tại của sản phẩm.
 
-                //- Khối thông tin nhanh bên phải
-                div(class="product-info")
-                    
-                    //- KHỐI GIÁ VÀ GIẢM GIÁ MỚI (Đã được làm đẹp chuyên nghiệp)
-                    div(class="price-container")
-                        div(class="price-row")
-                            if (product.discountPercentage)
-                                //- Nếu có giảm giá: tính toán hiển thị giá mới và giá gốc gạch đi
-                                - const priceNew = (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
-                                span(class="price-new") #{priceNew}$
-                                span(class="price-old") #{product.price}$
-                                span(class="discount-tag") GIẢM #{product.discountPercentage}%
-                            else if (product.price)
-                                //- Nếu không giảm giá: chỉ hiển thị giá gốc bình thường nhưng layout vẫn đẹp
-                                span(class="price-new") #{product.price}$
+            .admin-product-detail__stats
+              .admin-product-detail__stat
+                span Tồn kho
+                strong #{product.stock !== undefined ? product.stock : 0}
+                small sản phẩm
+              .admin-product-detail__stat
+                span Vị trí hiển thị
+                strong #{product.position !== undefined ? product.position : "—"}
+                small thứ tự
+              .admin-product-detail__stat
+                span Giảm giá
+                strong #{product.discountPercentage || 0}%
+                small khuyến mãi
 
-                    //- Các thông tin chi tiết khác
-                    if (product.stock !== undefined)
-                        div(class="info-row")
-                            span(class="info-label") Kho hàng:
-                            b #{product.stock} sản phẩm
+            .admin-product-detail__note
+              span(aria-hidden="true") i
+              p Thông tin này đang được sử dụng trên trang sản phẩm phía khách hàng.
 
-                    if (product.position !== undefined)
-                        div(class="info-row")
-                            span(class="info-label") Vị trí:
-                            b #{product.position}
+        section.admin-product-detail__description
+          .admin-product-detail__section-heading
+            div
+              span Nội dung hiển thị
+              h2 Mô tả sản phẩm
+            span.admin-product-detail__section-mark(aria-hidden="true") ≡
+          if product.description
+            .admin-product-detail__description-content !{product.description}
+          else
+            .admin-product-detail__description-empty Sản phẩm này chưa có nội dung mô tả.
 
-                    if (product.status)
-                        div(class="info-row")
-                            span(class="info-label") Trạng thái:
-                            if (product.status === "active")
-                                span(class="status-badge status-active") Hoạt động
-                            else
-                                span(class="status-badge status-inactive") Dừng hoạt động
+        footer.admin-product-detail__actions
+          a.admin-product-detail__back-button(href=`${prefixAdmin}/products`) Quay lại danh sách
+          a.admin-product-detail__edit(href=`${prefixAdmin}/products/edit/${product.id}`)
+            span(aria-hidden="true") ✎
+            span Chỉnh sửa sản phẩm
+  else
+    .admin-empty-state
+      .admin-empty-state__content
+        span.admin-empty-state__icon(aria-hidden="true") ◇
+        h1 Không tìm thấy sản phẩm
+        p Thông tin sản phẩm không tồn tại hoặc đã được xóa khỏi hệ thống.
+        a.btn.btn-primary(href=`${prefixAdmin}/products`) Quay lại danh sách
 
-            //- Khối mô tả sản phẩm
-            if (product.description)
-                div(class="product-description")
-                    h3 Mô tả sản phẩm
-                    div(class="description-content") !{product.description}
-            
-            //- Nút Chỉnh sửa sản phẩm
-            div(class="action-box")
-                a(
-                    href=`${prefixAdmin}/products/edit/${product.id}`
-                    class="btn btn-warning"
-                    style="font-weight: 600; padding: 8px 24px;"
-                ) Chỉnh sửa
-    else 
-        h1(class="mb-4 text-center" style="font-weight: 700; color: #1a202c;") Chi tiết sản phẩm
-        div(class="alert alert-danger text-center" style="max-width: 600px; margin: 20px auto;") 
-            | Không tìm thấy thông tin sản phẩm.
-
-    script(src="/admin/js/product.js")
+  script(src="/admin/js/product.js")
