@@ -1,7 +1,12 @@
 header.admin-header
   .admin-header__brand
-    button.admin-menu-toggle(type="button" data-sidebar-toggle aria-label="Mở menu quản trị") ☰
+    button.admin-menu-toggle(type="button" data-sidebar-toggle aria-label="Mở menu quản trị")
+      span
+      span
+      span
     a(href=`${prefixAdmin}/dashboard`) Admin Panel
   .admin-header__actions
-    a.admin-header__account(href=`${prefixAdmin}/my-account`) #{user.fullName}
-    a.btn.btn-outline-light.btn-sm(href=`${prefixAdmin}/auth/logout`) Đăng xuất
+    a.admin-header__account(href=`${prefixAdmin}/my-account`)
+      span.admin-header__avatar #{user.fullName ? user.fullName.charAt(0).toUpperCase() : "A"}
+      span #{user.fullName}
+    a.admin-header__logout(href=`${prefixAdmin}/auth/logout`) Đăng xuất

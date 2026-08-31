@@ -1,157 +1,79 @@
 extends ../../layouts/default.pug
-include ../../mixins/box-head.pug
-include ../../mixins/alert.pug
 
 block main
-  +alert-success(5000)
-  +alert-error(5000)
-
-  .container.my-4
-    .row.mb-3
-      .col-12
-        +box-head("Chi tiết Đơn hàng & Thanh toán")
-
+  main.order-success-page
     if (order)
-      .row.g-4
-        //- Thông tin người nhận
-        .col-lg-4.col-md-5
-          .card.border-0.shadow-sm.rounded-4.overflow-hidden
-            .card-body.p-4
-              h5.card-title.fw-bold.mb-4
-                i.fa-solid.fa-user.me-2.text-primary
-                | Thông tin nhận hàng
+      article.order-success-card
+        header.order-success-card__header
+          div
+            p Đơn hàng đã được tiếp nhận
+            h1 Đặt hàng thành công!
+          a.order-success-card__close(href="/" aria-label="Về trang chủ") ×
 
-              .text-center.my-3
-                //- Thay đoạn img avatar cũ bằng đoạn này:
-                .avatar-wrapper.mx-auto.mb-3
-                    img.rounded-circle.object-fit-cover(
-                        src=(order.userInfo && order.userInfo.avatar ? order.userInfo.avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(order.userInfo.fullName)}&background=random`)
-                        alt=order.userInfo.fullName
-                        width="80"
-                        height="80"
-                    )
-                h5.fw-bold.mb-1 #{order.userInfo.fullName}
-                span.badge.bg-light.text-dark.border Đơn hàng ID: #{order._id}
+        .order-success-card__body
+          .order-success-icon(aria-hidden="true")
+            svg(viewBox="0 0 64 64")
+              circle(cx="32" cy="32" r="24")
+              path(d="m21 32 7 7 15-16")
 
-              hr.my-4.text-muted
+          h2 Chúc mừng bạn đã đặt hàng thành công!
+          p.order-success-code Mã đơn hàng: #[strong ##{order._id.toString().slice(-10).toUpperCase()}]
+          p.order-success-message
+            | Cửa hàng đã tiếp nhận đơn hàng và sẽ liên hệ số điện thoại
+            strong #{order.userInfo.phone}
+            |  để xác nhận thông tin giao hàng.
 
-              .info-group.space-y-3
-                .d-flex.align-items-center.gap-2.mb-2
-                  i.fa-solid.fa-phone.text-muted
-                  strong.me-1 Điện thoại: 
-                  span #{order.userInfo.phone}
-                
-                .d-flex.align-items-start.gap-2.mb-2
-                  i.fa-solid.fa-location-dot.text-muted.mt-1
-                  div
-                    strong.d-block Địa chỉ nhận hàng:
-                    span.text-secondary #{order.userInfo.address}
+          section#order-details.order-success-summary
+            .order-success-summary__total
+              span Tổng giá trị đơn hàng
+              strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
+            .order-success-summary__line
+              span Người nhận
+              strong #{order.userInfo.fullName} (#{order.userInfo.phone})
+            .order-success-summary__line
+              span Địa chỉ nhận
+              strong #{order.userInfo.address}
+            .order-success-summary__line
+              span Thanh toán
+              strong.order-success-summary__status #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
+            .order-success-summary__line
+              span Ngày đặt hàng
+              strong #{new Date(order.createdAt).toLocaleString("vi-VN")}
 
-        //- Danh sách sản phẩm & Thanh toán
-        .col-lg-8.col-md-7
-          .card.border-0.shadow-sm.rounded-4.overflow-hidden
-            .card-body.p-4
-              h5.card-title.fw-bold.mb-4
-                i.fa-solid.fa-bag-shopping.me-2.text-primary
-                | Danh sách sản phẩm
+          if (order.products && order.products.length > 0)
+            section.order-success-products
+              .order-success-products__heading
+                div
+                  p Chi tiết đơn hàng
+                  h3 Sản phẩm đã đặt
+                span #{order.products.length} sản phẩm
+              .order-success-products__list
+                each item in order.products
+                  .order-success-product
+                    .order-success-product__image
+                      if (item.productInfo && item.productInfo.thumbnail)
+                        img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                      else
+                        span 📦
+                    .order-success-product__info
+                      strong #{item.productInfo ? item.productInfo.title : "Sản phẩm"}
+                      .order-success-product__meta
+                        span Đơn giá: #{parseInt(item.priceNew || 0).toLocaleString('vi-VN')}đ
+                        if (item.discountPercentage > 0)
+                          span Giảm #{item.discountPercentage}%
+                        span Số lượng: #{item.quantity}
+                    .order-success-product__subtotal
+                      span Thành tiền
+                      strong #{parseInt(item.totalPrice || 0).toLocaleString('vi-VN')}đ
 
-              .table-responsive
-                table.table.align-middle.table-hover.border-bottom
-                  thead.table-light
-                    tr
-                      th.text-center(style="width: 50px;") STT
-                      th Sản phẩm
-                      th.text-end Don giá
-                      th.text-center Giảm
-                      th.text-center SL
-                      th.text-end Tạm tính
-                  tbody
-                    - var totalBill = 0
-                    if (order.products && order.products.length > 0)
-                      each item, index in order.products
-                        - var priceNew = item.price * (1 - (item.discountPercentage || 0) / 100)
-                        - var totalPrice = priceNew * item.quantity
-                        - totalBill += totalPrice
-                        tr
-                          td.text-center.fw-bold.text-muted #{index + 1}
-                          td
-                            .d-flex.align-items-center.gap-3
-                              //- Khối hiển thị ảnh sản phẩm
-                              .product-thumb-box
-                                if (item.productInfo && item.productInfo.thumbnail)
-                                  img.product-thumb-img(
-                                    src=item.productInfo.thumbnail
-                                    alt=item.productInfo.title
-                                  )
-                                else
-                                  .product-thumb-placeholder
-                                    i.fa-solid.fa-image.text-muted
+          .order-success-actions
+            if (user)
+              a.btn.order-success-actions__detail(href=`/user/orders/${order._id}`) Xem chi tiết đơn hàng
+            else
+              a.btn.order-success-actions__detail(href="#order-details") Xem chi tiết đơn hàng
+            a.btn.order-success-actions__primary(href="/") Hoàn tất &amp; tiếp tục trải nghiệm
+            a.btn.order-success-actions__secondary(href="/products") Tiếp tục mua sắm
 
-                              //- Tên sản phẩm
-                              .product-info
-                                if (item.productInfo && item.productInfo.title)
-                                  a.fw-semibold.text-dark.text-decoration-none(href=`/products/detail/${item.productInfo.slug || ''}`) #{item.productInfo.title}
-                                else
-                                  span.text-muted Sản phẩm ID: 
-                                  small.text-break #{item.product_id}
-
-                          td.text-end #{parseInt(item.price).toLocaleString('vi-VN')} đ
-                          td.text-center
-                            if (item.discountPercentage > 0)
-                              span.badge.bg-danger-subtle.text-danger -#{item.discountPercentage}%
-                            else
-                              span.text-muted 0%
-                          td.text-center.fw-bold #{item.quantity}
-                          td.text-end.fw-bold.text-primary #{parseInt(totalPrice).toLocaleString('vi-VN')} đ
-
-              //- Khối tổng tiền & Thanh toán
-              .mt-4.p-3.bg-light.rounded-3
-                .d-flex.justify-content-between.align-items-center.mb-2
-                  span.text-muted Hình thức thanh toán:
-                  span.badge.bg-success-subtle.text-success.px-3.py-2
-                    i.fa-solid.fa-wallet.me-1
-                    | Ví điện tử / Online
-                
-                .d-flex.justify-content-between.align-items-center.pt-2.border-top
-                  span.fw-bold.fs-5 Tổng chi phí đơn hàng:
-                  span.fw-bold.fs-4.text-danger #{parseInt(totalBill).toLocaleString('vi-VN')} đ
-
-              //- Ngày tháng
-              .row.text-muted.small.mt-3.px-1
-                .col-6
-                  i.fa-regular.fa-clock.me-1
-                  | Ngày tạo: #{new Date(order.createdAt).toLocaleDateString("vi-VN")}
-                .col-6.text-end
-                  i.fa-solid.fa-rotate.me-1
-                  | Cập nhật: #{new Date(order.updatedAt).toLocaleDateString("vi-VN")}
-
-  style.
-    /* Styling khung ảnh sản phẩm */
-    .product-thumb-box {
-      width: 64px;
-      height: 64px;
-      min-width: 64px;
-      border-radius: 10px;
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .product-thumb-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.2s ease;
-    }
-    .product-thumb-box:hover .product-thumb-img {
-      transform: scale(1.08);
-    }
-    .product-thumb-placeholder {
-      font-size: 20px;
-    }
-    .avatar-wrapper img {
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      border: 2px solid #fff;
-    }
+          .order-success-assurance
+            span ✓ Đơn hàng đã được ghi nhận
+            span ✓ Thông tin được bảo mật

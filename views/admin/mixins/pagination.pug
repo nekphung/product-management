@@ -1,6 +1,6 @@
 mixin pagination(pagination)
-    nav 
-            ul(class="pagination") 
+    nav.admin-pagination(aria-label="Phân trang")
+            ul(class="pagination")
                 if (pagination.currentPage > 1)
                     li(class="page-item") 
                         button(

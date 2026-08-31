@@ -1,0 +1,31 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(3000)
+  +alert-error(3000)
+  main.user-orders-page
+    .container.py-4.py-md-5
+      .user-orders-heading
+        div
+          p Tài khoản của bạn
+          h1 Đơn hàng của tôi
+        a.btn.btn-outline-primary(href="/products") Tiếp tục mua sắm
+      if (orders && orders.length > 0)
+        .user-orders-list
+          each order in orders
+            article.user-order-card
+              .user-order-card__main
+                span.user-order-card__code ##{order._id.toString().slice(-10).toUpperCase()}
+                strong #{order.products.length} sản phẩm
+                span #{new Date(order.createdAt).toLocaleString("vi-VN")}
+              .user-order-card__payment
+                span Tổng thanh toán
+                strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
+              a.btn.btn-primary(href=`/user/orders/${order._id}`) Xem chi tiết
+      else
+        .user-orders-empty
+          span 📦
+          h2 Bạn chưa có đơn hàng nào
+          p Các đơn hàng sau khi đặt thành công sẽ xuất hiện tại đây.
+          a.btn.btn-primary(href="/products") Khám phá sản phẩm

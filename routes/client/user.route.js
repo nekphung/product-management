@@ -40,6 +40,10 @@ router.patch("/info/edit",
 
 router.get("/info", authMiddleware.requireAuth, controller.info);
 
+router.get("/orders", authMiddleware.requireAuth, controller.orders);
+
+router.get("/orders/:orderId", authMiddleware.requireAuth, controller.orderDetail);
+
 router.get("/password/reset", controller.resetPassword);
 
 router.post("/password/reset", validate.resetPasswordPost, controller.resetPasswordPost);

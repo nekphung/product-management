@@ -5,102 +5,82 @@ block main
   +alert-success(5000)
   +alert-error(5000)
 
-  .container.my-5
-    .row.justify-content-center
-      .col-12.col-md-8
-        .card.shadow-lg.border-0.rounded-lg
-          .card-header.bg-primary.text-white.text-center.py-3
-            h4.font-weight-bold.mb-0 Chỉnh Sửa Thông Tin Cá Nhân
+  main.account-edit
+    .container
+      .account-edit__card
+        header.account-edit__header
+          p.account-edit__eyebrow Hồ sơ cá nhân
+          h1 Chỉnh sửa thông tin
+          p Cập nhật thông tin để tài khoản của bạn luôn chính xác.
 
-          .card-body.p-4.p-md-5
-            form(
-              action="/user/info/edit?_method=PATCH"
-              method="POST"
-              enctype="multipart/form-data"
-            )
-              //- Khối Avatar Căn Giữa
-              .form-group.text-center.mb-4(upload-image)
-                .mb-3
-                  img.rounded-circle.border.shadow-sm(
-                    src=(user && user.avatar ? user.avatar : "/images/avatar-default.png")
-                    upload-image-preview
-                    alt="Avatar Preview"
-                    style="width: 140px; height: 140px; object-fit: cover;"
-                  )
+        form.account-edit__form(action="/user/info/edit?_method=PATCH" method="POST" enctype="multipart/form-data")
+          section.account-edit__avatar-section(upload-image)
+            .account-edit__avatar-wrap
+              img.account-edit__avatar(src=(user && user.avatar ? user.avatar : "/images/chat-support-avatar.png") upload-image-preview alt="Xem trước ảnh đại diện")
+              span.account-edit__avatar-status(aria-hidden="true")
+            label.account-edit__upload(for="avatarInput")
+              svg(viewBox="0 0 24 24" aria-hidden="true")
+                path(d="M14.5 5 13 3h-2L9.5 5H6a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3Z")
+                circle(cx="12" cy="13" r="4")
+              span Thay đổi ảnh
+            input#avatarInput.d-none(type="file" accept="image/*" upload-image-input)
+            input#croppedAvatarFile.d-none(type="file" name="avatar")
+            p JPG, PNG hoặc WEBP
 
-                div
-                  label.btn.btn-outline-primary.btn-sm.mb-0(for="avatarInput")
-                    i.fas.fa-camera.mr-1
-                    span Thay đổi ảnh
+          section.account-edit__fields
+            .account-edit__field
+              label(for="fullName")
+                span Họ và tên
+                small Bắt buộc
+              .account-edit__control
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M4 21a8 8 0 0 1 16 0")
+                input#fullName.form-control(type="text" name="fullName" value=(user ? user.fullName : "") required)
+            .account-edit__field
+              label(for="email")
+                span Email
+                small Không thể thay đổi
+              .account-edit__control
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  rect(x="3" y="5" width="18" height="14" rx="2")
+                  path(d="m3 7 9 6 9-6")
+                input#email.form-control(type="email" name="email" value=(user ? user.email : "") readonly)
+            .account-edit__field
+              label(for="phone")
+                span Số điện thoại
+                small Tùy chọn
+              .account-edit__control
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M7 3h4l2 5-3 2a15 15 0 0 0 4 4l2-3 5 2v4a4 4 0 0 1-4 4C9 21 3 15 3 7a4 4 0 0 1 4-4Z")
+                input#phone.form-control(type="text" name="phone" value=(user ? user.phone : ""))
+            .account-edit__field
+              label(for="address")
+                span Địa chỉ
+                small Tùy chọn
+              .account-edit__control
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z")
+                  circle(cx="12" cy="10" r="2.5")
+                input#address.form-control(type="text" name="address" value=(user ? user.address : ""))
 
-                  //- Input chọn file ẩn (kích hoạt Popup)
-                  input#avatarInput.d-none(
-                    type="file"
-                    accept="image/*"
-                    upload-image-input
-                  )
+          footer.account-edit__actions
+            a.btn.account-edit__cancel(href="/user/info") Hủy bỏ
+            button.btn.account-edit__save(type="submit")
+              span Lưu thay đổi
+              svg(viewBox="0 0 24 24" aria-hidden="true")
+                path(d="m5 12 4 4L19 6")
 
-                  //- Input ẩn gửi file đã crop lên Server
-                  input#croppedAvatarFile.d-none(
-                    type="file"
-                    name="avatar"
-                  )
-
-              .row
-                .col-md-6
-                  .form-group.mb-3
-                    label.form-label.font-weight-semibold(for="fullName") Họ và tên
-                    input#fullName.form-control(
-                      type="text"
-                      name="fullName"
-                      value=(user ? user.fullName : "")
-                      required
-                    )
-
-                .col-md-6
-                  .form-group.mb-3
-                    label.form-label.font-weight-semibold(for="email") Email
-                    input#email.form-control.bg-light(
-                      type="email"
-                      name="email"
-                      value=(user ? user.email : "")
-                      readonly
-                    )
-
-              .row
-                .col-md-6
-                  .form-group.mb-3
-                    label.form-label.font-weight-semibold(for="phone") Số điện thoại
-                    input#phone.form-control(
-                      type="text"
-                      name="phone"
-                      value=(user ? user.phone : "")
-                    )
-
-                .col-md-6
-                  .form-group.mb-3
-                    label.form-label.font-weight-semibold(for="address") Địa chỉ
-                    input#address.form-control(
-                      type="text"
-                      name="address"
-                      value=(user ? user.address : "")
-                    )
-
-              .d-flex.justify-content-between.align-items-center.mt-4
-                a.btn.btn-secondary.px-4(href="/user/info") Hủy bỏ
-                button.btn.btn-primary.px-4.font-weight-bold(type="submit") Lưu thay đổi
-
-  //- Pop-up Modal Cắt/Chỉnh Ảnh (Đã sửa lại chuẩn thụt lùi)
   #cropImageModal.modal.fade(tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-bs-backdrop="static")
     .modal-dialog.modal-dialog-centered(role="document")
-      .modal-content
+      .modal-content.account-edit__modal
         .modal-header
           h5.modal-title Chỉnh sửa ảnh đại diện
-          button.close.btn-close(type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close")
+          button.close.btn-close(type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Đóng")
             span(aria-hidden="true") &times;
         .modal-body.text-center
           .img-container(style="max-height: 400px; overflow: hidden;")
             img#imageToCrop(src="" style="max-width: 100%; display: block;")
         .modal-footer
-          button.btn.btn-secondary(type="button" data-dismiss="modal" data-bs-dismiss="modal") Hủy
-          button#cropAndSaveBtn.btn.btn-primary(type="button") Áp dụng & Lưu
+          button.btn.btn-outline-secondary(type="button" data-dismiss="modal" data-bs-dismiss="modal") Hủy
+          button#cropAndSaveBtn.btn.btn-primary(type="button") Áp dụng ảnh

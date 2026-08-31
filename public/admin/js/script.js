@@ -5,6 +5,22 @@ if (sidebarToggle && adminSidebar) {
   sidebarToggle.addEventListener("click", () => adminSidebar.classList.toggle("is-open"));
 }
 
+// Highlight the current admin section in the sidebar.
+const adminNavLinks = document.querySelectorAll("[data-admin-nav]");
+if (adminNavLinks.length > 0) {
+  const currentPath = window.location.pathname.replace(/\/$/, "");
+  let activeLink = null;
+
+  adminNavLinks.forEach((link) => {
+    const linkPath = new URL(link.href).pathname.replace(/\/$/, "");
+    if (currentPath === linkPath || currentPath.startsWith(`${linkPath}/`)) {
+      if (!activeLink || linkPath.length > new URL(activeLink.href).pathname.replace(/\/$/, "").length) activeLink = link;
+    }
+  });
+
+  if (activeLink) activeLink.classList.add("is-active");
+}
+
 const buttonStatus = document.querySelectorAll("[button-status]");
 if (buttonStatus.length > 0) {
     // let url = window.location.href;

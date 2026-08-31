@@ -17,12 +17,22 @@ module.exports.index = async (req, res) => {
         })
         
         newProducts = productsHelper.priceNewProducts(products);
-        console.log(newProducts);
+    }
+
+    let suggestedProducts = [];
+    if (newProducts.length === 0) {
+        const products = await Product.find({
+            status: "active",
+            deleted: false
+        }).sort({ featured: "desc", position: "desc" }).limit(6);
+
+        suggestedProducts = productsHelper.priceNewProducts(products);
     }
 
     res.render("client/pages/search/index", {
         pageTitle: "Kết quả tìm kiếm",
         keyword: keyword,
-        products: newProducts
+        products: newProducts,
+        suggestedProducts
     });
 }

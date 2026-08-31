@@ -1,0 +1,46 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(3000)
+  main.user-order-detail-page
+    .container.py-4.py-md-5
+      .user-order-detail__top
+        a(href="/user/orders") ← Danh sách đơn hàng
+        span Đặt ngày #{new Date(order.createdAt).toLocaleString("vi-VN")}
+      article.user-order-detail
+        header.user-order-detail__header
+          div
+            p Chi tiết đơn hàng
+            h1 ##{order._id.toString().slice(-10).toUpperCase()}
+          span.user-order-detail__badge Đã tiếp nhận
+        .user-order-detail__body
+          section.user-order-detail__receiver
+            h2 Thông tin nhận hàng
+            dl
+              div
+                dt Người nhận
+                dd #{order.userInfo.fullName}
+              div
+                dt Điện thoại
+                dd #{order.userInfo.phone}
+              div
+                dt Địa chỉ
+                dd #{order.userInfo.address}
+              div
+                dt Thanh toán
+                dd #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
+          section.user-order-detail__products
+            h2 Sản phẩm trong đơn
+            each item in order.products
+              .user-order-detail__product
+                .user-order-detail__image
+                  if (item.productInfo && item.productInfo.thumbnail)
+                    img(src=item.productInfo.thumbnail alt=item.productInfo.title)
+                .user-order-detail__product-info
+                  strong #{item.productInfo ? item.productInfo.title : "Sản phẩm"}
+                  span #{parseInt(item.priceNew || 0).toLocaleString('vi-VN')}đ × #{item.quantity}
+                strong #{parseInt(item.totalPrice || 0).toLocaleString('vi-VN')}đ
+        footer.user-order-detail__footer
+          span Tổng thanh toán
+          strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ

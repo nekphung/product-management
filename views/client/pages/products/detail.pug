@@ -5,89 +5,115 @@ block main
   +alert-success(2000)
 
   main.product-detail-page
-    .container.py-4.py-md-5
-      nav.product-detail-breadcrumb(aria-label="breadcrumb")
-        ol.breadcrumb.mb-3
-          li.breadcrumb-item
-            a(href="/") Trang chủ
-          li.breadcrumb-item
-            a(href="/products") Sản phẩm
-          if (product)
-            li.breadcrumb-item.active(aria-current="page") #{product.title}
-
-      button.btn.btn-link.product-detail-back.px-0.mb-4(type="button" button-go-back)
-        span.product-detail-back__icon(aria-hidden="true") ←
-        | Quay lại
+    .container.py-4
+      .product-detail-topbar
+        button.product-detail-back(type="button" button-go-back)
+          span(aria-hidden="true") ←
+          | Quay lại
+        nav.product-detail-breadcrumb(aria-label="breadcrumb")
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href="/") Trang chủ
+            li.breadcrumb-item
+              a(href="/products") Sản phẩm
+            if (product && product.category)
+              li.breadcrumb-item
+                a(href=`/products/${product.category.slug}`) #{product.category.title}
+            if (product)
+              li.breadcrumb-item.active(aria-current="page") #{product.title}
 
       if (product)
         article.product-detail-card
-          .row.align-items-start
-            .col-12.col-lg-6.mb-4.mb-lg-0
+          .product-detail-layout
+            section.product-detail-gallery
               .product-detail-media
+                if (product.discountPercentage && product.discountPercentage > 0)
+                  span.product-detail-gallery__sale Giảm #{product.discountPercentage}% hôm nay
                 if (product.thumbnail)
                   img.product-detail-media__image(src=product.thumbnail alt=product.title)
                 else
                   .product-detail-media__empty Chưa có hình ảnh sản phẩm
+                span.product-detail-gallery__hint Nhấn vào ảnh để xem sản phẩm
+              .product-detail-gallery__note
+                span Sản phẩm chính hãng
+                span Hình ảnh thực tế có thể thay đổi
 
-            .col-12.col-lg-6
-              .product-detail-content
+            section.product-detail-content
+              .product-detail-meta
+                span.product-detail-official Chính hãng
                 if (product.category)
                   a.product-detail-category(href=`/products/${product.category.slug}`) #{product.category.title}
+                span.product-detail-code Mã: #{product.id.toString().slice(-8).toUpperCase()}
 
-                h1.product-detail-title #{product.title}
+              h1.product-detail-title #{product.title}
+              p.product-detail-subtitle Thông tin minh bạch · Đặt hàng nhanh · Hỗ trợ tận tâm
 
-                .product-detail-price
+              .product-detail-status-row
+                span.product-detail-rating ★★★★★
+                span 5.0
+                span.product-detail-status-separator
+                if (product.stock > 0)
+                  span.product-detail-stock.product-detail-stock--available
+                    span(aria-hidden="true") ✓
+                    | Còn #{product.stock} sản phẩm
+                else
+                  span.product-detail-stock.product-detail-stock--sold-out
+                    span(aria-hidden="true") ×
+                    | Tạm hết hàng
+
+              .product-detail-price
+                .product-detail-price__heading
+                  span Ưu đãi đặc biệt hôm nay
+                  if (product.discountPercentage && product.discountPercentage > 0)
+                    small Tiết kiệm #{product.discountPercentage}%
+                .product-detail-price__values
                   if (product.discountPercentage && product.discountPercentage > 0)
                     span.product-detail-price__current #{parseInt(product.priceNew).toLocaleString('vi-VN')}đ
                     span.product-detail-price__old #{parseInt(product.price).toLocaleString('vi-VN')}đ
                     span.product-detail-price__discount -#{product.discountPercentage}%
                   else if (product.price)
                     span.product-detail-price__current #{parseInt(product.price).toLocaleString('vi-VN')}đ
+                p Miễn phí tư vấn và hỗ trợ đặt hàng
 
-                if (product.stock > 0)
-                  p.product-detail-stock.product-detail-stock--available
-                    span(aria-hidden="true") ✓
-                    |  Còn #{product.stock} sản phẩm
-                else
-                  p.product-detail-stock.product-detail-stock--sold-out
-                    span(aria-hidden="true") ×
-                    |  Tạm hết hàng
-
+              .product-detail-purchase
+                h2 Đặt mua sản phẩm
                 if (product.stock > 0)
                   form.product-detail-actions(action=`/cart/add/${product.id}` method="POST")
-                    .product-detail-quantity.cart-quantity-box.d-inline-flex.align-items-center
-                      button.btn-qty.btn-minus(type="button" aria-label="Giảm số lượng") −
-                      input.cart-quantity-input(
-                        type="number"
-                        name="quantity"
-                        value="1"
-                        min="1"
-                        max=product.stock
-                        aria-label="Số lượng"
-                      )
-                      button.btn-qty.btn-plus(type="button" aria-label="Tăng số lượng") +
+                    .product-detail-quantity-row
+                      label(for="productQuantity") Số lượng
+                      .product-detail-quantity.cart-quantity-box
+                        button.btn-qty.btn-minus(type="button" aria-label="Giảm số lượng") −
+                        input#productQuantity.cart-quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock aria-label="Số lượng")
+                        button.btn-qty.btn-plus(type="button" aria-label="Tăng số lượng") +
+                      span.product-detail-ready ✓ Có sẵn, giao ngay
+                    .product-detail-action-buttons
+                      button.btn.product-detail-add(type="submit") Thêm vào giỏ hàng
+                      a.btn.product-detail-buy(href=`/checkout/instant/${product.id}`) Mua ngay
+                else
+                  .product-detail-sold-out Sản phẩm hiện đang tạm hết hàng
 
-                    button.btn.btn-outline-primary.product-detail-add(type="submit") Thêm vào giỏ
-                    a.btn.btn-primary.product-detail-buy(href=`/checkout/instant/${product.id}`) Mua ngay
-
-                .product-detail-benefits
-                  .row
-                    .col-12.col-sm-4.mb-3.mb-sm-0
-                      .product-detail-benefit
-                        strong Giao hàng nhanh
-                        span Hỗ trợ giao hàng 24h
-                    .col-12.col-sm-4.mb-3.mb-sm-0
-                      .product-detail-benefit
-                        strong Bảo hành chính hãng
-                        span Bảo hành đến 12 tháng
-                    .col-12.col-sm-4
-                      .product-detail-benefit
-                        strong Đổi trả dễ dàng
-                        span Hỗ trợ theo chính sách
+              .product-detail-benefits
+                .product-detail-benefit
+                  span.product-detail-benefit__icon 🚚
+                  strong Giao hàng nhanh
+                  span Hỗ trợ giao hàng 24h
+                .product-detail-benefit
+                  span.product-detail-benefit__icon ✓
+                  strong Chính hãng
+                  span Thông tin rõ ràng
+                .product-detail-benefit
+                  span.product-detail-benefit__icon ↻
+                  strong Đổi trả dễ dàng
+                  span Theo chính sách
+                .product-detail-benefit
+                  span.product-detail-benefit__icon ⚡
+                  strong Hỗ trợ tận tâm
+                  span Luôn sẵn sàng
 
           if (product.description)
             section.product-detail-description
-              h2.product-detail-description__title Mô tả sản phẩm
+              .product-detail-description__eyebrow Thông tin sản phẩm
+              h2.product-detail-description__title Đặc điểm nổi bật
               .product-detail-description__content !{product.description}
       else
         .product-detail-empty.alert.alert-warning.text-center.mx-auto.my-5

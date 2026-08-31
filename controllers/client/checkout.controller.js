@@ -95,13 +95,16 @@ module.exports.success = async (req, res) => {
     // console.log(req.params.orderId);
     const order = await Order.findOne({
         _id: req.params.orderId
-    })
+    }).lean()
 
-    // console.log(order);
+    if (!order) {
+        return res.redirect("/products");
+    }
+
     for (const product of order.products) {
         const productInfo = await Product.findOne({
             _id: product.product_id
-        }).select("title thumbnail");
+        }).select("title thumbnail slug");
 
         product.productInfo = productInfo;
 
@@ -110,7 +113,7 @@ module.exports.success = async (req, res) => {
         product.totalPrice = product.priceNew * product.quantity;
     }
 
-    order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPricem, 0);
+    order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
     
     res.render("client/pages/checkout/success", {
         pageTitle: "Đặt hàng thành công",

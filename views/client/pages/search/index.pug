@@ -1,11 +1,51 @@
 extends ../../layouts/default.pug
-include ../../mixins/box-head.pug 
-include ../../mixins/product-layout.pug 
+include ../../mixins/product-layout.pug
 
 block main
-  .container.my-3
-    .row
-      .col-12
-        +box-head(pageTitle)
+  main.search-page
+    .container.py-4.py-md-5
+      .search-page__heading
+        p.search-page__eyebrow Tìm kiếm trong cửa hàng
+        h1 Kết quả tìm kiếm
+        if (keyword)
+          p Kết quả cho từ khóa: #[strong “#{keyword}”]
+        else
+          p Nhập tên sản phẩm bạn muốn tìm kiếm.
 
-    +product-grid(products)
+      if (products && products.length > 0)
+        .search-page__summary
+          span Tìm thấy
+          strong #{products.length}
+          span sản phẩm phù hợp
+        +product-grid(products)
+      else
+        section.search-empty
+          .search-empty__visual(aria-hidden="true")
+            svg(viewBox="0 0 64 64")
+              circle(cx="27" cy="27" r="17")
+              path(d="m40 40 14 14")
+              path(d="M20 27h14")
+          .search-empty__content
+            if (keyword)
+              p.search-empty__eyebrow Không tìm thấy kết quả
+              h2 Chưa có sản phẩm phù hợp với “#{keyword}”
+              p Hãy thử tên ngắn hơn, kiểm tra chính tả hoặc tìm bằng một từ khóa khác.
+            else
+              p.search-empty__eyebrow Bắt đầu khám phá
+              h2 Bạn đang tìm sản phẩm nào?
+              p Nhập tên sản phẩm vào ô bên dưới để bắt đầu.
+            form.search-empty__form(action="/search" method="GET")
+              input.form-control(type="search" name="keyword" value=keyword placeholder="Ví dụ: điện thoại, tai nghe..." aria-label="Tìm lại sản phẩm")
+              button.btn.btn-primary(type="submit") Tìm kiếm
+            .search-empty__actions
+              a(href="/products") Xem tất cả sản phẩm
+              a(href="/") Về trang chủ
+
+        if (suggestedProducts && suggestedProducts.length > 0)
+          section.search-suggestions
+            .search-suggestions__heading
+              div
+                p Có thể bạn sẽ thích
+                h2 Sản phẩm nổi bật dành cho bạn
+              a(href="/products") Xem tất cả →
+            +product-grid(suggestedProducts)

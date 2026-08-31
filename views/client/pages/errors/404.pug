@@ -1,13 +1,13 @@
 extends ../../layouts/default.pug
 
 block main
-  .container.text-center.my-5
-    .row.justify-content-center
-      .col-12.col-md-6
-        h1.display-1.fw-bold.text-danger 404
-        h2.mb-3 Not Found
-        p.text-muted.mb-4 Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.
-        
-        button.btn.btn-primary.px-4.py-2(
-          onclick="history.back()"
-        ) Trở lại
+  main.error-page
+    .container
+      .error-page__card
+        .error-page__code 404
+        p.error-page__eyebrow Lạc đường một chút rồi
+        h1 Trang bạn tìm không tồn tại
+        p Liên kết có thể đã thay đổi hoặc nội dung đã được di chuyển. Hãy quay lại cửa hàng để tiếp tục khám phá.
+        .error-page__actions
+          a.btn.btn-primary(href="/") Về trang chủ
+          a.btn.btn-outline-primary(href="/products") Xem sản phẩm

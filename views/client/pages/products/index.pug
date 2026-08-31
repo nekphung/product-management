@@ -44,5 +44,10 @@ block main
                     a.btn.btn-outline-primary.btn-sm.product-listing-card__action(href=`/products/detail/${item.slug}`) Xem chi tiết
       else
         .product-listing-empty.text-center
+          .product-listing-empty__icon(aria-hidden="true")
+            span ✦
           h2 Chưa có sản phẩm
-          p.mb-0 Sản phẩm sẽ sớm được cập nhật. Vui lòng quay lại sau.
+          p Danh mục này đang được cập nhật. Trong lúc chờ đợi, bạn có thể xem các sản phẩm khác hoặc quay về trang chủ.
+          .product-listing-empty__actions
+            a.btn.btn-primary(href="/products") Xem tất cả sản phẩm
+            a.btn.btn-outline-primary(href="/") Về trang chủ

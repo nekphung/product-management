@@ -8,7 +8,12 @@ const orderSchema = new mongoose.Schema(
             fullName: String,
             phone: String,
             address: String,
-            avatar: String
+            avatar: String,
+            paymentMethod: {
+                type: String,
+                enum: ["cod", "banking"],
+                default: "cod"
+            }
         },
         products: [
             {

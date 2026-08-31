@@ -15,14 +15,35 @@ block main
               .home-hero__actions
                 a.btn.btn-primary.btn-lg(href="/products") Khám phá sản phẩm
                 a.btn.btn-outline-primary.btn-lg(href="#featured-products") Xem nổi bật
+              .home-hero__trust
+                span ✓ Sản phẩm rõ ràng
+                span ✓ Đặt hàng nhanh
+                span ✓ Hỗ trợ tận tâm
           .col-12.col-lg-5
-            .home-hero__visual(aria-hidden="true")
-              .home-orbit.home-orbit--one
-              .home-orbit.home-orbit--two
-              .home-hero__card.home-hero__card--main
-                span Sản phẩm mới mỗi ngày
-                strong Chọn đúng, mua dễ
-              .home-hero__card.home-hero__card--small Giao hàng nhanh
+            .home-hero__visual
+              .home-hero__glow(aria-hidden="true")
+              if (productsFeatued && productsFeatued.length > 0)
+                - const heroProduct = productsFeatued[0]
+                a.home-hero-product(href=`/products/detail/${heroProduct.slug}`)
+                  .home-hero-product__top
+                    span Sản phẩm nổi bật
+                    if (heroProduct.discountPercentage && heroProduct.discountPercentage > 0)
+                      strong -#{heroProduct.discountPercentage}%
+                  .home-hero-product__image
+                    img(src=heroProduct.thumbnail alt=heroProduct.title)
+                  h2 #{heroProduct.title}
+                  .home-hero-product__price
+                    strong #{parseInt(heroProduct.priceNew).toLocaleString('vi-VN')}đ
+                    span Xem chi tiết →
+              else
+                .home-hero-product.home-hero-product--empty
+                  span Sản phẩm mới mỗi ngày
+                  strong Chọn đúng, mua dễ
+              .home-hero__floating-badge
+                span.home-hero__floating-icon ✓
+                div
+                  strong Giao hàng nhanh
+                  small An tâm mua sắm
 
     section#featured-products.home-section
       .container
@@ -44,9 +65,9 @@ block main
 
     section.home-benefits
       .container
-        .home-benefits__brand(aria-label="Nék Phùng")
+        .home-benefits__brand(aria-label="Nèk Phùng")
           strong NP
-          span Nék Phùng
+          span Nèk Phùng
         .row.home-benefits__row
           .col-12.col-md-4.mb-3.mb-md-0
             .home-benefit

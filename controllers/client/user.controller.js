@@ -2,6 +2,9 @@ const md5 = require("md5");
 const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
 const Cart = require("../../models/cart.model");
+const Order = require("../../models/order.model");
+const Product = require("../../models/product.model");
+const productsHelper = require("../../helpers/products");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -247,4 +250,50 @@ module.exports.resetPasswordPost = async (req, res) => {
     req.flash("success", "Đổi mật khẩu thành công!");
     
     res.redirect("/");
+}
+
+// [GET] /user/orders
+module.exports.orders = async (req, res) => {
+    const orders = await Order.find({
+        user_id: res.locals.user.id
+    }).sort({ createdAt: "desc" }).lean();
+
+    for (const order of orders) {
+        order.totalPrice = order.products.reduce((sum, item) => {
+            return sum + productsHelper.priceNewProduct(item) * item.quantity;
+        }, 0);
+    }
+
+    res.render("client/pages/user/orders", {
+        pageTitle: "Đơn hàng của tôi",
+        orders
+    });
+}
+
+// [GET] /user/orders/:orderId
+module.exports.orderDetail = async (req, res) => {
+    const order = await Order.findOne({
+        _id: req.params.orderId,
+        user_id: res.locals.user.id
+    }).lean();
+
+    if (!order) {
+        req.flash("error", "Không tìm thấy đơn hàng của bạn.");
+        return res.redirect("/user/orders");
+    }
+
+    for (const item of order.products) {
+        item.productInfo = await Product.findOne({ _id: item.product_id })
+            .select("title thumbnail slug")
+            .lean();
+        item.priceNew = productsHelper.priceNewProduct(item);
+        item.totalPrice = item.priceNew * item.quantity;
+    }
+
+    order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+
+    res.render("client/pages/user/order-detail", {
+        pageTitle: "Chi tiết đơn hàng",
+        order
+    });
 }
