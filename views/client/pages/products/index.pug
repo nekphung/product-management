@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
 
 block main
   main.product-listing-page
@@ -16,7 +17,7 @@ block main
           p.product-listing-heading__description Chọn sản phẩm phù hợp với nhu cầu của bạn.
         p.product-listing-heading__count.mb-0
           span.sr-only Tổng số sản phẩm:
-          strong #{products ? products.length : 0}
+          strong #{totalProducts !== undefined ? totalProducts : (products ? products.length : 0)}
           |  sản phẩm
 
       if (products && products.length > 0)
@@ -24,8 +25,10 @@ block main
           each item in products
             .col-12.col-sm-6.col-lg-4.mb-4
               article.product-listing-card.h-100
-                a.product-listing-card__image(href=`/products/detail/${item.slug}` aria-label=`Xem chi tiết ${item.title}`)
-                  img(src=item.thumbnail alt=item.title)
+                - const cardImages = item.images && item.images.length ? item.images.slice(0, 3) : (item.thumbnail ? [item.thumbnail] : [])
+                a.product-listing-card__image(href=`/products/detail/${item.slug}` class=(cardImages.length > 1 ? `has-multiple-images image-count-${cardImages.length}` : "") aria-label=`Xem chi tiết ${item.title}`)
+                  each image, index in cardImages
+                    img.product-card-cycle-image(src=image alt=(index === 0 ? item.title : `${item.title} - ảnh ${index + 1}`) loading=(index === 0 ? "eager" : "lazy"))
                   if (item.featured == "1")
                     span.product-listing-card__badge Nổi bật
 
@@ -42,6 +45,7 @@ block main
                     if (item.discountPercentage)
                       span.product-listing-card__discount -#{item.discountPercentage}%
                     a.btn.btn-outline-primary.btn-sm.product-listing-card__action(href=`/products/detail/${item.slug}`) Xem chi tiết
+        +client-pagination(pagination)
       else
         .product-listing-empty.text-center
           .product-listing-empty__icon(aria-hidden="true")

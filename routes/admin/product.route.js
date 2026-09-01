@@ -22,8 +22,8 @@ router.get("/create", controller.create);
 
 router.post(
     "/create", 
-    upload.single("thumbnail"),
-    uploadCloud.upload,
+    upload.array("images", 10),
+    uploadCloud.uploadMultiple,
     validate.createPost,
     controller.createPost
 );
@@ -32,7 +32,8 @@ router.get("/edit/:id", controller.edit);
 
 router.patch(
     "/edit/:id", 
-    upload.single("thumbnail"),
+    upload.array("images", 10),
+    uploadCloud.uploadMultiple,
     validate.createPost,
     controller.editPatch
 );

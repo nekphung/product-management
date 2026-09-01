@@ -43,23 +43,12 @@ block main
                     | #{status.step}
                 strong #{status.shortLabel}
         .user-order-detail__body
-          section.user-order-detail__receiver
-            h2 Thông tin nhận hàng
-            dl
-              div
-                dt Người nhận
-                dd #{order.userInfo.fullName}
-              div
-                dt Điện thoại
-                dd #{order.userInfo.phone}
-              div
-                dt Địa chỉ
-                dd #{order.userInfo.address}
-              div
-                dt Thanh toán
-                dd #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
           section.user-order-detail__products
-            h2 Sản phẩm trong đơn
+            .user-order-detail__section-heading
+              div
+                p Chi tiết sản phẩm
+                h2 Sản phẩm trong đơn
+              span #{order.products.length} mặt hàng
             each item in order.products
               .user-order-detail__product
                 .user-order-detail__image
@@ -69,9 +58,25 @@ block main
                   strong #{item.productInfo ? item.productInfo.title : "Sản phẩm"}
                   span #{parseInt(item.priceNew || 0).toLocaleString('vi-VN')}đ × #{item.quantity}
                 strong #{parseInt(item.totalPrice || 0).toLocaleString('vi-VN')}đ
-        footer.user-order-detail__footer
-          span Tổng thanh toán
-          strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
+          aside.user-order-detail__sidebar
+            section.user-order-detail__receiver
+              h2 Thông tin nhận hàng
+              dl
+                div
+                  dt Người nhận
+                  dd #{order.userInfo.fullName}
+                div
+                  dt Điện thoại
+                  dd #{order.userInfo.phone}
+                div
+                  dt Địa chỉ
+                  dd #{order.userInfo.address}
+                div
+                  dt Thanh toán
+                  dd #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
+            footer.user-order-detail__footer
+              span Tổng thanh toán
+              strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
 
       if order.status === "pending"
         .modal.fade#cancelOrderModal(tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalTitle" aria-hidden="true")

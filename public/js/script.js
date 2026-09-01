@@ -34,6 +34,50 @@ if (buttonGoBack.length > 0) {
     })
 }
 
+const productThumbnails = Array.from(document.querySelectorAll("[data-product-thumbnail]"));
+const productMainImage = document.querySelector("[data-product-main-image]");
+let activeProductImage = 0;
+
+const showProductImage = (index) => {
+  if (!productMainImage || productThumbnails.length === 0) return;
+  activeProductImage = (index + productThumbnails.length) % productThumbnails.length;
+  productMainImage.src = productThumbnails[activeProductImage].dataset.image;
+  productThumbnails.forEach((item, itemIndex) => item.classList.toggle("is-active", itemIndex === activeProductImage));
+};
+
+productThumbnails.forEach((thumbnail, index) => {
+  thumbnail.addEventListener("click", () => showProductImage(index));
+});
+
+document.querySelectorAll("[data-product-gallery-arrow]").forEach((button) => {
+  button.addEventListener("click", () => {
+    showProductImage(activeProductImage + (button.dataset.productGalleryArrow === "next" ? 1 : -1));
+  });
+});
+
+const productZoomButton = document.querySelector("[data-product-zoom]");
+const productLightbox = document.querySelector("[data-product-lightbox]");
+if (productZoomButton && productLightbox) {
+  const mainImage = document.querySelector("[data-product-main-image]");
+  const lightboxImage = productLightbox.querySelector("[data-product-lightbox-image]");
+  const closeButton = productLightbox.querySelector("[data-product-lightbox-close]");
+
+  const closeLightbox = () => {
+    if (productLightbox.open) productLightbox.close();
+  };
+
+  productZoomButton.addEventListener("click", () => {
+    if (!mainImage || !lightboxImage) return;
+    lightboxImage.src = mainImage.src;
+    lightboxImage.alt = mainImage.alt;
+    productLightbox.showModal();
+  });
+  closeButton?.addEventListener("click", closeLightbox);
+  productLightbox.addEventListener("click", (event) => {
+    if (event.target === productLightbox) closeLightbox();
+  });
+}
+
 window.addEventListener("pageshow", () => {
     if (sessionStorage.getItem("clearSiteSearch") !== "true") return;
 

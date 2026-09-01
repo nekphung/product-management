@@ -50,7 +50,7 @@ block main
               .user-order-card__footer
                 .user-order-card__payment
                   span Tổng thanh toán
-                  strong #{parseInt(order.totalPrice || 0).toLocaleString("vi-VN")} đ
+                  strong #{parseInt(order.totalPrice || 0).toLocaleString("vi-VN")}đ
                 a.user-order-card__detail(href=`/user/orders/${order._id}`)
                   span Xem chi tiết
                   span(aria-hidden="true") →

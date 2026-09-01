@@ -28,6 +28,14 @@ const orderSchema = new mongoose.Schema(
             enum: ["pending", "confirmed", "shipping", "completed", "cancelled"],
             default: "pending"
         },
+        inventoryRestored: {
+            type: Boolean,
+            default: false
+        },
+        inventoryReserved: {
+            type: Boolean,
+            default: false
+        },
         cancellation: {
             reason: {
                 type: String,
@@ -62,5 +70,3 @@ const orderSchema = new mongoose.Schema(
 const Order = mongoose.model('Order', orderSchema, "orders");
 
 module.exports = Order;
-
-

@@ -326,6 +326,10 @@ body { min-height: 100vh; background: var(--admin-bg); color: var(--admin-text);
 .admin-logo-upload .image-preview { width: 92px; height: 72px; flex: 0 0 92px; margin: 0; background: #fff; object-fit: contain; }
 .admin-logo-upload .form-control-file { padding: 0; border: 0; background: transparent; }
 .admin-logo-upload small { display: block; margin-top: 7px; color: #64748b; line-height: 1.4; }
+.admin-product-images-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 14px; }
+.admin-product-image-preview { position: relative; overflow: hidden; margin: 0; border: 1px solid #dbe5ef; border-radius: 12px; background: #f8fafc; }
+.admin-product-image-preview img { display: block; width: 100%; height: 110px; padding: 8px; background: #fff; object-fit: contain; }
+.admin-product-image-preview figcaption { padding: 7px 8px; color: #52677c; font-size: 11px; font-weight: 700; text-align: center; }
 .admin-settings-actions { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 28px; background: #f8fafc; }
 .admin-settings-actions span { color: #64748b; font-size: 13px; }
 .admin-settings-actions .btn { min-width: 160px; min-height: 44px; margin: 0 !important; }
@@ -683,22 +687,62 @@ button.admin-customer-status:hover { transform: translateY(-1px); box-shadow: 0 
 @media (max-width: 991.98px) { .admin-record-detail__grid, .admin-account-detail { grid-template-columns: 1fr; } .admin-record-card__media { max-height: 340px; } }
 @media (max-width: 575.98px) { .admin-record-detail__heading { align-items: flex-start; flex-direction: column; } .admin-record-card { padding: 17px; } .admin-record-meta--two-columns, .admin-record-products { grid-template-columns: 1fr; } .admin-record-detail__actions { align-items: stretch; flex-direction: column-reverse; } .admin-record-detail__actions .btn { width: 100%; } }
 
+/* Stock waitlist management */
+.main .admin-waitlist-controls .card-body { padding: 12px 16px; }
+.main .admin-waitlist-controls .admin-waitlist-filter { padding: 14px 16px; border-radius: 10px; box-shadow: none; }
+.admin-waitlist-filter { display: grid; grid-template-columns: 190px minmax(260px, 1fr) auto auto; align-items: end; gap: 12px; }
+.admin-waitlist-filter .form-group { margin: 0; }
+.admin-waitlist-filter label { margin-bottom: 6px; color: #526174; font-size: 11px; font-weight: 700; }
+.admin-waitlist-filter__action { display: grid; grid-template-rows: auto 40px; gap: 6px; }
+.admin-waitlist-filter__spacer { visibility: hidden; color: #526174; font-size: 11px; font-weight: 700; line-height: 21px; }
+.admin-waitlist-filter .form-control, .admin-waitlist-filter .btn { height: 40px; min-height: 40px; margin: 0 !important; }
+.admin-waitlist-filter__action .btn { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+.admin-waitlist-card .card-body { padding: 0; }
+.admin-waitlist-table { margin: 0; }
+.admin-waitlist-table th { border-top: 0; background: #f8fafc; color: #64748b; font-size: 10px; text-transform: uppercase; white-space: nowrap; }
+.admin-waitlist-table td { vertical-align: middle; color: #526174; font-size: 12px; }
+.admin-waitlist-product { min-width: 250px; display: flex; align-items: center; gap: 11px; }
+.admin-waitlist-product img, .admin-waitlist-product__empty { width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid #e0e6ec; border-radius: 7px; background: #f8fafc; object-fit: contain; }
+.admin-waitlist-product__empty { display: grid; place-items: center; color: #91a0b0; font-size: 20px; }
+.admin-waitlist-product strong, .admin-waitlist-product small, .admin-waitlist-customer strong, .admin-waitlist-date strong, .admin-waitlist-date span { display: block; }
+.admin-waitlist-product strong { max-width: 260px; color: #293b50; font-size: 12px; }
+.admin-waitlist-product small { margin-top: 4px; color: #8492a3; }
+.admin-waitlist-customer { min-width: 170px; display: grid; gap: 3px; }
+.admin-waitlist-customer strong { color: #34475b; }
+.admin-waitlist-customer a { color: #416b90; font-size: 11px; overflow-wrap: anywhere; }
+.admin-waitlist-status { min-width: 205px; display: flex; align-items: center; gap: 6px; margin: 0; }
+.admin-waitlist-status .form-control { height: 34px; min-height: 34px; padding: 4px 8px; font-size: 11px; }
+.admin-waitlist-badge { display: inline-flex; padding: 5px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; }
+.admin-waitlist-badge--waiting { background: #fff4d8; color: #8a6215; }
+.admin-waitlist-badge--contacted { background: #e7eff6; color: #3f6f99; }
+.admin-waitlist-badge--fulfilled { background: #e5f5ed; color: #3e7959; }
+.admin-waitlist-badge--cancelled { background: #fbe7e9; color: #a23d4a; }
+.admin-waitlist-date span { margin-top: 2px; color: #8b98a7; font-size: 10px; }
+.admin-waitlist-actions { min-width: 150px; }
+.admin-waitlist-actions, .admin-waitlist-actions form { display: inline-flex; gap: 6px; margin: 0; }
+@media (max-width: 991.98px) { .admin-waitlist-filter { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 575.98px) { .main .admin-waitlist-controls .card-body { padding: 10px; } .main .admin-waitlist-controls .admin-waitlist-filter { padding: 12px; } .admin-waitlist-filter { grid-template-columns: 1fr; } .admin-waitlist-filter .btn { width: 100%; } }
+
 /* Custom confirmation popup */
 body.admin-confirm-open { overflow: hidden; }
 .admin-confirm { position: fixed; z-index: 10000; inset: 0; display: flex; visibility: hidden; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: visibility .18s ease, opacity .18s ease; }
 .admin-confirm.is-open { visibility: visible; opacity: 1; }
-.admin-confirm__backdrop { position: absolute; inset: 0; background: rgba(8,20,36,.58); backdrop-filter: blur(3px); }
-.admin-confirm__dialog { position: relative; display: grid; width: min(440px, 100%); grid-template-columns: 52px minmax(0, 1fr); gap: 16px; padding: 24px; border: 1px solid rgba(255,255,255,.75); border-radius: 18px; background: #fff; box-shadow: 0 28px 70px rgba(2,12,27,.28); transform: translateY(12px) scale(.98); transition: transform .2s ease; }
+.admin-confirm__backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.54); backdrop-filter: blur(2px); }
+.admin-confirm__dialog { position: relative; display: grid; width: min(410px, 100%); grid-template-columns: 46px minmax(0, 1fr); gap: 14px; padding: 22px; border: 1px solid #e5eaf0; border-radius: 15px; background: #fff; box-shadow: 0 24px 60px rgba(2,12,27,.24); transform: translateY(10px) scale(.98); transition: transform .2s ease; }
 .admin-confirm.is-open .admin-confirm__dialog { transform: translateY(0) scale(1); }
-.admin-confirm__icon { display: flex; width: 52px; height: 52px; align-items: center; justify-content: center; border-radius: 15px; background: #fff1f2; color: #d92d43; font-family: Georgia, serif; font-size: 25px; font-weight: 850; }
-.admin-confirm__content { min-width: 0; padding-top: 2px; }
-.admin-confirm__content h2 { margin: 0; color: #172033; font-size: 19px; font-weight: 850; }
-.admin-confirm__content p { margin: 8px 0 0; color: #64748b; font-size: 12px; line-height: 1.65; }
-.admin-confirm__actions { display: flex; grid-column: 1 / -1; justify-content: flex-end; gap: 9px; margin-top: 5px; padding-top: 17px; border-top: 1px solid #edf2f7; }
-.admin-confirm__actions button { min-width: 92px; min-height: 40px; padding: 8px 15px; border-radius: 9px; font-size: 11px; font-weight: 800; cursor: pointer; transition: .17s ease; }
+.admin-confirm__close { position: absolute; top: 11px; right: 12px; display: grid; width: 30px; height: 30px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #94a3b8; font-size: 22px; cursor: pointer; }
+.admin-confirm__close:hover { background: #f1f5f9; color: #475569; }
+.admin-confirm__icon { display: flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 50%; background: #fff0f1; color: #cf3347; }
+.admin-confirm__icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.admin-confirm__content { min-width: 0; padding: 1px 28px 0 0; }
+.admin-confirm__eyebrow { display: block; margin-bottom: 4px; color: #cf3347; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.admin-confirm__content h2 { margin: 0; color: #1e293b; font-size: 18px; font-weight: 800; }
+.admin-confirm__content p { margin: 7px 0 0; color: #64748b; font-size: 12px; line-height: 1.55; }
+.admin-confirm__actions { display: flex; grid-column: 1 / -1; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.admin-confirm__actions button { min-width: 90px; min-height: 38px; padding: 7px 14px; border-radius: 8px; font-size: 11px; font-weight: 750; cursor: pointer; transition: .17s ease; }
 .admin-confirm__cancel { border: 1px solid #cbd8e5; background: #fff; color: #52677d; }
 .admin-confirm__cancel:hover { border-color: #9db2c7; background: #f8fafc; color: #26384d; }
-.admin-confirm__accept { border: 1px solid #d92d43; background: #d92d43; color: #fff; box-shadow: 0 7px 16px rgba(217,45,67,.2); }
-.admin-confirm__accept:hover { border-color: #bd1f34; background: #bd1f34; transform: translateY(-1px); }
+.admin-confirm__accept { border: 1px solid #cf3347; background: #cf3347; color: #fff; box-shadow: 0 5px 12px rgba(207,51,71,.18); }
+.admin-confirm__accept:hover { border-color: #b9273a; background: #b9273a; transform: translateY(-1px); }
 .admin-confirm__actions button:focus { outline: none; box-shadow: 0 0 0 3px rgba(47,128,237,.18); }
-@media (max-width: 575.98px) { .admin-confirm { align-items: flex-end; padding: 12px; } .admin-confirm__dialog { grid-template-columns: 44px minmax(0, 1fr); gap: 13px; padding: 19px; border-radius: 17px; } .admin-confirm__icon { width: 44px; height: 44px; border-radius: 12px; } .admin-confirm__content h2 { font-size: 17px; } .admin-confirm__actions { display: grid; grid-template-columns: 1fr 1fr; } .admin-confirm__actions button { width: 100%; } }
+@media (max-width: 575.98px) { .admin-confirm { align-items: flex-end; padding: 10px; } .admin-confirm__dialog { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 18px; border-radius: 15px; } .admin-confirm__icon { width: 42px; height: 42px; } .admin-confirm__content h2 { font-size: 17px; } .admin-confirm__actions { display: grid; grid-template-columns: 1fr 1fr; } .admin-confirm__actions button { width: 100%; } }

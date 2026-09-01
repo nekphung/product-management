@@ -1,0 +1,107 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/pagination.pug
+
+block main
+  if role.permissions.includes("stock-waitlist_view") || role.permissions.includes("roles_permissions")
+    +alert-success(4000)
+    +alert-error(4000)
+
+    .admin-page-heading
+      div
+        p.admin-page-eyebrow Nhu cầu sản phẩm
+        h1 Khách đăng ký chờ hàng
+        p Theo dõi khách quan tâm đến sản phẩm hết hàng và cập nhật kết quả liên hệ.
+
+    .card.mb-3.admin-waitlist-controls
+      .card-body
+        form.admin-waitlist-filter(method="GET")
+          .form-group
+            label(for="waitlistStatus") Trạng thái
+            select#waitlistStatus.form-control(name="status")
+              option(value="" selected=!currentStatus) Tất cả trạng thái
+              each status in statuses
+                option(value=status.value selected=(currentStatus === status.value)) #{status.label}
+          .form-group.admin-waitlist-filter__search
+            label(for="waitlistKeyword") Tìm khách hàng
+            input#waitlistKeyword.form-control(type="search" name="keyword" value=keyword placeholder="Tên, số điện thoại hoặc email")
+          .form-group.admin-waitlist-filter__action
+            span.admin-waitlist-filter__spacer(aria-hidden="true") Thao tác
+            button.btn.btn-primary(type="submit") Lọc danh sách
+          if currentStatus || keyword
+            .form-group.admin-waitlist-filter__action
+              span.admin-waitlist-filter__spacer(aria-hidden="true") Thao tác
+              a.btn.btn-outline-secondary(href=`${prefixAdmin}/stock-waitlist`) Xóa bộ lọc
+
+    .card.admin-waitlist-card
+      .card-header.admin-list-header
+        span Danh sách yêu cầu
+        span #{registrations.length} yêu cầu trên trang
+      .card-body
+        .table-responsive
+          table.table.table-hover.admin-waitlist-table
+            thead
+              tr
+                th Sản phẩm
+                th Khách hàng
+                th Nhu cầu
+                th Trạng thái
+                th Đăng ký lúc
+                th Hành động
+            tbody
+              if registrations.length
+                each registration in registrations
+                  tr
+                    td
+                      .admin-waitlist-product
+                        if registration.product && registration.product.thumbnail
+                          img(src=registration.product.thumbnail alt=registration.product.title)
+                        else
+                          span.admin-waitlist-product__empty ◇
+                        div
+                          strong #{registration.product ? registration.product.title : "Sản phẩm không còn tồn tại"}
+                          if registration.product
+                            small Tồn kho hiện tại: #{registration.product.stock || 0}
+                    td
+                      .admin-waitlist-customer
+                        strong #{registration.fullName}
+                        a(href=`tel:${registration.phone}`) #{registration.phone}
+                        if registration.email
+                          a(href=`mailto:${registration.email}`) #{registration.email}
+                    td
+                      strong #{registration.quantity}
+                      span  sản phẩm
+                    td
+                      if role.permissions.includes("stock-waitlist_edit") || role.permissions.includes("roles_permissions")
+                        form.admin-waitlist-status(action=`${prefixAdmin}/stock-waitlist/${registration._id}/status?_method=PATCH` method="POST")
+                          select.form-control(name="status" aria-label=`Trạng thái yêu cầu của ${registration.fullName}`)
+                            each status in statuses
+                              option(value=status.value selected=(registration.status === status.value)) #{status.label}
+                          button.btn.btn-sm.btn-primary(type="submit") Lưu
+                      else
+                        - const statusMeta = statuses.find(item => item.value === registration.status)
+                        span(class=`admin-waitlist-badge admin-waitlist-badge--${registration.status}`) #{statusMeta ? statusMeta.label : registration.status}
+                    td.admin-waitlist-date
+                      strong #{moment(registration.createdAt).format("DD/MM/YYYY")}
+                      span #{moment(registration.createdAt).format("HH:mm")}
+                    td.admin-waitlist-actions
+                      if registration.product
+                        a.btn.btn-sm.btn-outline-secondary(href=`${prefixAdmin}/products/detail/${registration.product._id}`) Xem sản phẩm
+                      if role.permissions.includes("stock-waitlist_delete") || role.permissions.includes("roles_permissions")
+                        form(
+                          action=`${prefixAdmin}/stock-waitlist/${registration._id}?_method=DELETE`
+                          method="POST"
+                          data-confirm-title="Xóa yêu cầu chờ hàng"
+                          data-confirm-message=`Bạn có chắc muốn xóa yêu cầu của ${registration.fullName}? Dữ liệu liên hệ này sẽ không thể khôi phục.`
+                          data-confirm-text="Xóa yêu cầu"
+                        )
+                          button.btn.btn-sm.btn-outline-danger(type="submit") Xóa
+              else
+                tr
+                  td.admin-empty-state(colspan="6")
+                    .admin-empty-state__content
+                      span.admin-empty-state__icon(aria-hidden="true") ◷
+                      strong Chưa có yêu cầu chờ hàng phù hợp
+                      small Các đăng ký mới từ sản phẩm hết hàng sẽ xuất hiện tại đây.
+
+    +pagination(pagination)

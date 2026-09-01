@@ -12,8 +12,12 @@
     modal.innerHTML = `
       <div class="admin-confirm__backdrop" data-confirm-cancel></div>
       <section class="admin-confirm__dialog" role="alertdialog" aria-modal="true" aria-labelledby="adminConfirmTitle" aria-describedby="adminConfirmMessage">
-        <div class="admin-confirm__icon" aria-hidden="true">!</div>
+        <button class="admin-confirm__close" type="button" data-confirm-cancel aria-label="Đóng">&times;</button>
+        <div class="admin-confirm__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5"/></svg>
+        </div>
         <div class="admin-confirm__content">
+          <span class="admin-confirm__eyebrow">Hành động cần xác nhận</span>
           <h2 id="adminConfirmTitle">Xác nhận thao tác</h2>
           <p id="adminConfirmMessage"></p>
         </div>
@@ -59,21 +63,25 @@
     setTimeout(() => modal.querySelector("[data-confirm-accept]").focus(), 30);
   });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("form[data-confirm-submit]").forEach(form => {
-      form.addEventListener("submit", async event => {
-        if (form.dataset.confirmed === "true") return;
-        event.preventDefault();
-        const accepted = await window.adminConfirm({
-          title: form.dataset.confirmTitle || "Xác nhận xóa",
-          message: form.dataset.confirmMessage,
-          confirmText: form.dataset.confirmText || "Xóa"
-        });
-        if (accepted) {
-          form.dataset.confirmed = "true";
-          form.submit();
-        }
-      });
+  document.addEventListener("submit", async event => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || form.dataset.confirmed === "true") return;
+
+    const action = form.getAttribute("action") || "";
+    const isDeleteForm = form.hasAttribute("data-confirm-submit")
+      || /(?:\?|&)_method=DELETE(?:&|$)/i.test(action);
+    if (!isDeleteForm) return;
+
+    event.preventDefault();
+    const accepted = await window.adminConfirm({
+      title: form.dataset.confirmTitle || "Xác nhận xóa",
+      message: form.dataset.confirmMessage || "Bạn có chắc muốn xóa dữ liệu này? Thao tác này không thể hoàn tác.",
+      confirmText: form.dataset.confirmText || "Xóa",
+      cancelText: form.dataset.cancelText || "Hủy"
     });
+    if (accepted) {
+      form.dataset.confirmed = "true";
+      form.submit();
+    }
   });
 })();

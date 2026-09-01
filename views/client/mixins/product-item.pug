@@ -1,8 +1,10 @@
 mixin product-item(item)
     .col-12.col-sm-6.col-lg-4.mb-4
         article.product-item
-            a.product-item__image(href=`/products/detail/${item.slug}` aria-label=`Xem chi tiết ${item.title}`)
-                img(src=item.thumbnail, alt=item.title)
+            - const cardImages = item.images && item.images.length ? item.images.slice(0, 3) : (item.thumbnail ? [item.thumbnail] : [])
+            a.product-item__image(href=`/products/detail/${item.slug}` class=(cardImages.length > 1 ? `has-multiple-images image-count-${cardImages.length}` : "") aria-label=`Xem chi tiết ${item.title}`)
+                each image, index in cardImages
+                    img.product-card-cycle-image(src=image alt=(index === 0 ? item.title : `${item.title} - ảnh ${index + 1}`) loading=(index === 0 ? "eager" : "lazy"))
                 if(item.featured == "1")
                     span.product-item__badge Nổi bật
                 if(item.discountPercentage && item.discountPercentage > 0)

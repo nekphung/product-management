@@ -1,162 +1,103 @@
 extends ../../layouts/default.pug
-include ../../mixins/box-head.pug
 include ../../mixins/alert.pug
 
 block main
   +alert-success(5000)
   +alert-error(5000)
 
-  .container.my-4
-    .row.mb-3
-      .col-12
-        +box-head(pageTitle || "Thanh toán đơn hàng")
+  main.checkout-page
+    .container
+      header.checkout-page__heading
+        p Thanh toán
+        h1 #{pageTitle || "Thanh toán đơn hàng"}
+        span Kiểm tra sản phẩm và thông tin nhận hàng trước khi xác nhận.
 
-    if (cart && cart.products && cart.products.length > 0)
-      form(action="/checkout/order", method="POST")
-        .row.g-4
-          //- Cột trái: Bảng sản phẩm & Tổng tiền
-          .col-lg-7.col-12
-            .card.border-0.shadow-sm.rounded-4.mb-4
-              .card-header.bg-white.py-3.border-bottom-0
-                h5.mb-0.fw-bold.text-dark
-                  i.fa-solid.fa-cart-flatbed.me-2.text-primary
-                  | Sản phẩm thanh toán (#{cart.products.length})
-              .card-body.p-0
+      if (cart && cart.products && cart.products.length > 0)
+        form.checkout-form(action="/checkout/order" method="POST")
+          input(type="hidden" name="selectedProductIds" value=cart.products.map(item => item.product_id).join(','))
+          if checkoutMode === "instant"
+            input(type="hidden" name="checkoutMode" value="instant")
+            input(type="hidden" name="instantProductId" value=cart.products[0].product_id)
+            input(type="hidden" name="instantQuantity" value=cart.products[0].quantity)
+
+          .row.checkout-layout
+            .col-lg-7.col-12
+              section.checkout-card.checkout-products-card
+                header.checkout-card__header
+                  span.checkout-card__number 01
+                  div
+                    h2 Sản phẩm thanh toán
+                    p #{cart.products.length} sản phẩm trong đơn hàng
+
                 .table-responsive
-                  table.table.align-middle.table-hover.mb-0
-                    thead.table-light
+                  table.checkout-products-table
+                    thead
                       tr
-                        th.text-center(style="width: 50px;") STT
                         th Sản phẩm
-                        th.text-center Đơn giá
-                        th.text-center SL
-                        th.text-end Tạm tính
+                        th Đơn giá
+                        th Số lượng
+                        th Tạm tính
                     tbody
-                      each item, index in cart.products
+                      each item in cart.products
                         tr
-                          td.text-center.fw-bold.text-muted #{index + 1}
                           td
-                            .d-flex.align-items-center.gap-3
+                            .checkout-product
                               .checkout-thumb-box
-                                img.checkout-thumb-img(
-                                  src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/default.jpg')
-                                  alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm')
-                                )
+                                img.checkout-thumb-img(src=(item.productInfo && item.productInfo.thumbnail ? item.productInfo.thumbnail : '/images/default.jpg') alt=(item.productInfo && item.productInfo.title ? item.productInfo.title : 'Sản phẩm'))
                               .checkout-product-info
-                                if (item.productInfo && item.productInfo.title)
-                                  a.fw-semibold.text-dark.text-decoration-none(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
+                                if item.productInfo
+                                  a(href=`/products/detail/${item.productInfo.slug}`) #{item.productInfo.title}
+                                  small Chính hãng
                                 else
-                                  span.text-muted Sản phẩm không tồn tại
-                          td.text-center.text-nowrap #{item.productInfo && item.productInfo.priceNew ? item.productInfo.priceNew.toLocaleString('vi-VN') : 0}đ
-                          td.text-center.fw-bold #{item.quantity}
-                          td.text-end.fw-bold.text-primary.text-nowrap #{item.totalPrice ? item.totalPrice.toLocaleString('vi-VN') : 0}đ
+                                  span Sản phẩm không tồn tại
+                          td.checkout-products-table__price #{item.productInfo && item.productInfo.priceNew ? Number(item.productInfo.priceNew).toLocaleString('vi-VN') : 0}đ
+                          td
+                            span.checkout-quantity ×#{item.quantity}
+                          td.checkout-products-table__total #{Number(item.totalPrice || 0).toLocaleString('vi-VN')}đ
 
-            //- Khối tóm tắt chi phí
-            .card.border-0.shadow-sm.rounded-4.p-4.bg-white
-              .d-flex.justify-content-between.align-items-center.mb-2
-                span.text-muted Tạm tính:
-                span.fw-semibold #{cart.totalPrice ? cart.totalPrice.toLocaleString('vi-VN') : 0}đ
-              .d-flex.justify-content-between.align-items-center.mb-3
-                span.text-muted Phí vận chuyển:
-                span.text-success.fw-semibold Miễn phí
-              hr.my-2
-              .d-flex.justify-content-between.align-items-center.pt-2
-                span.fw-bold.fs-5 Tổng thanh toán:
-                span.fw-bold.fs-3.text-danger #{cart.totalPrice ? cart.totalPrice.toLocaleString('vi-VN') : 0}đ
+              section.checkout-card.checkout-summary-card
+                h2 Chi tiết thanh toán
+                .checkout-summary-card__line
+                  span Tạm tính
+                  strong #{Number(cart.totalPrice || 0).toLocaleString('vi-VN')}đ
+                .checkout-summary-card__line
+                  span Phí vận chuyển
+                  strong.checkout-summary-card__free Miễn phí
+                .checkout-summary-card__total
+                  span Tổng thanh toán
+                  strong #{Number(cart.totalPrice || 0).toLocaleString('vi-VN')}đ
 
-          //- Cột phải: Form thông tin người nhận (Sticky)
-          .col-lg-5.col-12
-            .card.border-0.shadow-sm.rounded-4.sticky-top(style="top: 20px; z-index: 10;")
-              .card-header.bg-primary.text-white.py-3.rounded-top-4
-                h5.mb-0.fw-bold
-                  i.fa-solid.fa-truck-ramp-box.me-2
-                  | Thông tin người nhận hàng
-              .card-body.p-4
-                .mb-3
-                  label.form-label.fw-semibold(for="fullName") Họ và tên <span class="text-danger">*</span>
-                  .input-group
-                    span.input-group-text.bg-light.border-end-0
-                      i.fa-solid.fa-user.text-muted
-                    input#fullName.form-control.border-start-0.bg-light(
-                      type="text"
-                      name="fullName"
-                      placeholder="Nguyễn Văn A"
-                      value=(user ? user.fullName : '')
-                      required
-                    )
-                
-                .mb-3
-                  label.form-label.fw-semibold(for="phone") Số điện thoại <span class="text-danger">*</span>
-                  .input-group
-                    span.input-group-text.bg-light.border-end-0
-                      i.fa-solid.fa-phone.text-muted
-                    input#phone.form-control.border-start-0.bg-light(
-                      type="text"
-                      name="phone"
-                      placeholder="0901234567"
-                      value=(user ? user.phone : '')
-                      required
-                    )
+            .col-lg-5.col-12
+              section.checkout-card.checkout-recipient-card
+                header.checkout-recipient-card__header
+                  span.checkout-card__number 02
+                  div
+                    h2 Thông tin nhận hàng
+                    p Vui lòng nhập đầy đủ thông tin liên hệ
 
-                .mb-4
-                  label.form-label.fw-semibold(for="address") Địa chỉ nhận hàng <span class="text-danger">*</span>
-                  .input-group
-                    span.input-group-text.bg-light.border-end-0
-                      i.fa-solid.fa-location-dot.text-muted
-                    input#address.form-control.border-start-0.bg-light(
-                      type="text"
-                      name="address"
-                      placeholder="Số nhà, đường, phường/xã, quận/huyện..."
-                      value=(user ? user.address : '')
-                      required
-                    )
+                .checkout-recipient-card__body
+                  .checkout-field
+                    label(for="fullName") Họ và tên #[span *]
+                    input#fullName(type="text" name="fullName" placeholder="Nguyễn Văn A" value=(user ? user.fullName : '') required autocomplete="name")
 
-                button.btn.btn-danger.w-100.py-3.fw-bold.rounded-3.shadow-sm.btn-submit-order(type="submit")
-                  i.fa-solid.fa-paper-plane.me-2
-                  | XÁC NHẬN ĐẶT HÀNG
-    else
-      .row.justify-content-center.my-5
-        .col-md-6.text-center
-          .p-5.bg-white.rounded-4.shadow-sm
-            i.fa-solid.fa-cart-flatbed-empty.fa-4x.text-muted.mb-3
-            h4.fw-bold Giỏ hàng trống
-            p.text-muted Bạn chưa có sản phẩm nào trong giỏ hàng để tiến hành thanh toán.
-            a.btn.btn-primary.px-4.py-2.rounded-3.mt-2(href="/products")
-              i.fa-solid.fa-arrow-left.me-2
-              | Tiếp tục mua sắm
+                  .checkout-field
+                    label(for="phone") Số điện thoại #[span *]
+                    input#phone(type="tel" name="phone" placeholder="0901234567" value=(user ? user.phone : '') required autocomplete="tel")
 
-  style.
-    .checkout-thumb-box {
-      width: 56px;
-      height: 56px;
-      min-width: 56px;
-      border-radius: 8px;
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .checkout-thumb-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .btn-submit-order {
-      font-size: 16px;
-      letter-spacing: 0.5px;
-      transition: all 0.2s ease;
-    }
-    .btn-submit-order:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3) !important;
-    }
-    .input-group-text {
-      border-color: #dee2e6;
-    }
-    .form-control:focus {
-      background-color: #fff !important;
-      box-shadow: none;
-      border-color: #86b7fe;
-    }
+                  .checkout-field
+                    label(for="address") Địa chỉ nhận hàng #[span *]
+                    textarea#address(name="address" rows="3" placeholder="Số nhà, đường, phường/xã, quận/huyện..." required autocomplete="street-address") #{user ? user.address : ''}
+
+                  .checkout-order-note
+                    span(aria-hidden="true") ✓
+                    p Thông tin của bạn chỉ được sử dụng để xử lý và giao đơn hàng này.
+
+                  button.btn-submit-order(type="submit")
+                    | Xác nhận đặt hàng
+                    span(aria-hidden="true") →
+      else
+        .checkout-empty
+          span(aria-hidden="true") ◇
+          h2 Chưa có sản phẩm để thanh toán
+          p Hãy chọn sản phẩm trước khi tiếp tục đặt hàng.
+          a(href="/products") Tiếp tục mua sắm

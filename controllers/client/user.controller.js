@@ -7,6 +7,7 @@ const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");
 const productsHelper = require("../../helpers/products");
 const { ORDER_STATUSES, getOrderStatus } = require("../../helpers/orderStatus");
+const inventoryHelper = require("../../helpers/inventory");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -257,7 +258,8 @@ module.exports.resetPasswordPost = async (req, res) => {
 // [GET] /user/orders
 module.exports.orders = async (req, res) => {
     const orders = await Order.find({
-        user_id: res.locals.user.id
+        user_id: res.locals.user.id,
+        deleted: false
     }).sort({ createdAt: "desc" }).lean();
 
     for (const order of orders) {
@@ -339,6 +341,11 @@ module.exports.cancelOrder = async (req, res) => {
     if (!order) {
         req.flash("error", "Chỉ có thể hủy đơn hàng đang chờ xác nhận.");
         return res.redirect(redirectPath);
+    }
+
+    if (order.inventoryReserved && !order.inventoryRestored) {
+        await inventoryHelper.restoreProducts(order.products);
+        await Order.updateOne({ _id: order._id }, { $set: { inventoryRestored: true } });
     }
 
     req.flash("success", "Đơn hàng đã được hủy thành công.");

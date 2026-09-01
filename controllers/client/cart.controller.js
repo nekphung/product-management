@@ -39,13 +39,29 @@ module.exports.index = async (req, res) => {
 module.exports.addPost = async (req, res) => {
     const cartId = req.cookies.cartId;
     const productId = req.params.productId;
-    const quantity = parseInt(req.body.quantity);
+    const quantity = Number(req.body.quantity);
+
+    const product = await Product.findOne({
+        _id: productId,
+        deleted: false,
+        status: "active"
+    }).select("stock title").lean().catch(() => null);
+
+    if (!product || !Number.isInteger(quantity) || quantity < 1) {
+        req.flash("error", "Sản phẩm hoặc số lượng không hợp lệ.");
+        return res.redirect(req.get("Referrer") || "/products");
+    }
 
     const cart = await Cart.findOne({
         _id: cartId
     });
 
     const existProductInCart = cart.products.find(item => item.product_id == productId);
+    const requestedQuantity = quantity + (existProductInCart ? Number(existProductInCart.quantity) : 0);
+    if (requestedQuantity > Math.max(Number(product.stock) || 0, 0)) {
+        req.flash("error", `${product.title} chỉ còn ${Math.max(Number(product.stock) || 0, 0)} sản phẩm trong kho.`);
+        return res.redirect(req.get("Referrer") || "/products");
+    }
 
     // console.log(existProductInCart);
 
@@ -101,7 +117,15 @@ module.exports.delete = async (req, res) => {
 module.exports.update = async (req, res) => {
     const cartId = req.cookies.cartId;
     const productId = req.params.productId;
-    const quantity = req.params.quantity;
+    const quantity = Number(req.params.quantity);
+    const product = await Product.findOne({ _id: productId, deleted: false, status: "active" })
+        .select("stock title").lean().catch(() => null);
+    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > (Number(product.stock) || 0)) {
+        req.flash("error", product
+            ? `${product.title} chỉ còn ${Math.max(Number(product.stock) || 0, 0)} sản phẩm trong kho.`
+            : "Sản phẩm không còn khả dụng.");
+        return res.redirect(req.get("Referrer") || "/cart");
+    }
 
     await Cart.updateOne({
         _id: cartId,

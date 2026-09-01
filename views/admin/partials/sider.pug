@@ -28,6 +28,12 @@ aside.sider
             span.admin-nav-icon(aria-hidden="true") 👤
             span Quản lý khách hàng
 
+      if (role.permissions.includes("stock-waitlist_view") || role.permissions.includes("roles_permissions"))
+        li
+          a(href=`${prefixAdmin}/stock-waitlist` data-admin-nav)
+            span.admin-nav-icon(aria-hidden="true") ◷
+            span Khách chờ hàng
+
       if (role.permissions.includes("coupons_view"))
         li
           a(href=`${prefixAdmin}/coupons` data-admin-nav)

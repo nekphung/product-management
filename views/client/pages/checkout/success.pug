@@ -2,6 +2,7 @@ extends ../../layouts/default.pug
 
 block main
   main.order-success-page
+    canvas#orderSuccessConfetti.order-success-confetti(aria-hidden="true")
     if (order)
       article.order-success-card
         header.order-success-card__header
@@ -77,3 +78,59 @@ block main
           .order-success-assurance
             span ✓ Đơn hàng đã được ghi nhận
             span ✓ Thông tin được bảo mật
+
+  script.
+    (() => {
+      const canvas = document.getElementById("orderSuccessConfetti");
+      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const context = canvas.getContext("2d");
+      const colors = ["#7da3c7", "#8fc8ad", "#e5bd72", "#d99aa5", "#a9b8cc"];
+      let pieces = [];
+      let animationFrame;
+      const resize = () => {
+        canvas.width = window.innerWidth * window.devicePixelRatio;
+        canvas.height = window.innerHeight * window.devicePixelRatio;
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        context.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      };
+      const createPiece = () => ({
+        x: window.innerWidth / 2 + (Math.random() - .5) * 180,
+        y: Math.min(190, window.innerHeight * .22),
+        width: 5 + Math.random() * 6,
+        height: 3 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        velocityX: (Math.random() - .5) * 9,
+        velocityY: -5 - Math.random() * 7,
+        gravity: .16 + Math.random() * .08,
+        rotation: Math.random() * Math.PI,
+        rotationSpeed: (Math.random() - .5) * .18,
+        opacity: 1
+      });
+      resize();
+      pieces = Array.from({ length: 95 }, createPiece);
+      const startedAt = performance.now();
+      const draw = now => {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        pieces.forEach(piece => {
+          piece.velocityY += piece.gravity;
+          piece.x += piece.velocityX;
+          piece.y += piece.velocityY;
+          piece.rotation += piece.rotationSpeed;
+          if (now - startedAt > 2100) piece.opacity -= .018;
+          context.save();
+          context.globalAlpha = Math.max(0, piece.opacity);
+          context.translate(piece.x, piece.y);
+          context.rotate(piece.rotation);
+          context.fillStyle = piece.color;
+          context.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+          context.restore();
+        });
+        pieces = pieces.filter(piece => piece.opacity > 0 && piece.y < window.innerHeight + 30);
+        if (pieces.length && now - startedAt < 3600) animationFrame = requestAnimationFrame(draw);
+        else context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener("resize", resize, { passive: true });
+      animationFrame = requestAnimationFrame(draw);
+      window.addEventListener("pagehide", () => cancelAnimationFrame(animationFrame), { once: true });
+    })();

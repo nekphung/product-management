@@ -6,6 +6,7 @@ const paginationHelper = require("../../helpers/pagination");
 const searchHelper = require("../../helpers/search");
 const { ORDER_STATUSES } = require("../../helpers/orderStatus");
 const systemConfig = require("../../config/system");
+const inventoryHelper = require("../../helpers/inventory");
 
 const validStatuses = ORDER_STATUSES.map(item => item.value);
 
@@ -83,13 +84,22 @@ module.exports.changeStatus = async (req, res) => {
         return res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/orders`);
     }
 
-    await Order.updateOne(
-        { _id: req.params.id, deleted: { $ne: true } },
-        {
-            status: req.params.status,
-            $push: { updatedBy: { account_id: res.locals.user.id, updatedAt: new Date() } }
-        }
-    );
+    const update = {
+        status: req.params.status,
+        $push: { updatedBy: { account_id: res.locals.user.id, updatedAt: new Date() } }
+    };
+    const find = { _id: req.params.id, deleted: { $ne: true } };
+    if (req.params.status !== "cancelled") find.status = { $ne: "cancelled" };
+
+    const previousOrder = await Order.findOneAndUpdate(find, update);
+    if (!previousOrder) {
+        req.flash("error", "Không thể đổi trạng thái của đơn đã hủy.");
+        return res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/orders`);
+    }
+    if (req.params.status === "cancelled" && previousOrder.status !== "cancelled" && previousOrder.inventoryReserved && !previousOrder.inventoryRestored) {
+        await inventoryHelper.restoreProducts(previousOrder.products);
+        await Order.updateOne({ _id: previousOrder._id }, { $set: { inventoryRestored: true } });
+    }
 
     req.flash("success", "Cập nhật trạng thái đơn hàng thành công.");
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/orders`);
@@ -109,13 +119,16 @@ module.exports.changeMulti = async (req, res) => {
     }
 
     if (validStatuses.includes(req.body.type)) {
-        await Order.updateMany(
-            { _id: { $in: ids }, deleted: { $ne: true } },
-            {
-                status: req.body.type,
-                $push: { updatedBy: { account_id: res.locals.user.id, updatedAt: new Date() } }
+        const orders = await Order.find({ _id: { $in: ids }, deleted: { $ne: true }, status: { $ne: "cancelled" } });
+        for (const order of orders) {
+            order.status = req.body.type;
+            order.updatedBy.push({ account_id: res.locals.user.id, updatedAt: new Date() });
+            if (req.body.type === "cancelled" && order.inventoryReserved && !order.inventoryRestored) {
+                await inventoryHelper.restoreProducts(order.products);
+                order.inventoryRestored = true;
             }
-        );
+            await order.save();
+        }
         req.flash("success", `Đã cập nhật ${ids.length} đơn hàng.`);
     } else if (req.body.type === "delete-all" && can(res, "orders_delete")) {
         await Order.updateMany(

@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/product-layout.pug
+include ../../mixins/pagination.pug
 
 block main
   main.search-page
@@ -19,9 +20,10 @@ block main
       if (products && products.length > 0)
         .search-page__summary
           span Tìm thấy
-          strong #{products.length}
+          strong #{totalProducts !== undefined ? totalProducts : products.length}
           span sản phẩm phù hợp
         +product-grid(products)
+        +client-pagination(pagination)
       else
         section.search-empty
           .search-empty__visual(aria-hidden="true")

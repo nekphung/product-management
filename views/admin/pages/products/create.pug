@@ -105,25 +105,20 @@ block main
                     value="0" 
                 ) 
 
-            // Ảnh 
-            div(
-                class="form-group"
-                upload-image
-            )
-                label(for="thumbnail") Ảnh (URL) 
+            // Ảnh
+            .form-group(upload-multiple-images)
+                label(for="images") Hình ảnh sản phẩm
                 input( 
                     type="file" 
                     class="form-control-file"
-                    id="thumbnail" 
-                    name="thumbnail" 
-                    accept="image/*" 
-                    upload-image-input
+                    id="images"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                    upload-multiple-input
                 )
-                img(
-                    src=""
-                    upload-image-preview
-                    class="image-preview"
-                )
+                small.form-text.text-muted Chọn tối đa 10 ảnh. Ảnh đầu tiên sẽ là ảnh đại diện.
+                .admin-product-images-preview(upload-multiple-preview)
 
             // Vị trí 
             .form-group

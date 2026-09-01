@@ -3,6 +3,7 @@ include ../../mixins/alert.pug
 
 block main
   +alert-success(2000)
+  +alert-error(5000)
 
   main.product-detail-page
     .container.py-4
@@ -26,17 +27,35 @@ block main
         article.product-detail-card
           .product-detail-layout
             section.product-detail-gallery
+              - const galleryImages = product.images && product.images.length ? product.images : (product.thumbnail ? [product.thumbnail] : [])
               .product-detail-media
                 if (product.discountPercentage && product.discountPercentage > 0)
                   span.product-detail-gallery__sale Giảm #{product.discountPercentage}% hôm nay
-                if (product.thumbnail)
-                  img.product-detail-media__image(src=product.thumbnail alt=product.title)
+                if (galleryImages.length)
+                  button.product-detail-media__zoom(type="button" data-product-zoom aria-label="Phóng to ảnh sản phẩm")
+                    img.product-detail-media__image(src=galleryImages[0] alt=product.title data-product-main-image)
+                  if galleryImages.length > 1
+                    button.product-detail-gallery__arrow.product-detail-gallery__arrow--previous(type="button" data-product-gallery-arrow="previous" aria-label="Xem ảnh trước")
+                      svg(viewBox="0 0 24 24" aria-hidden="true")
+                        path(d="m15 18-6-6 6-6")
+                    button.product-detail-gallery__arrow.product-detail-gallery__arrow--next(type="button" data-product-gallery-arrow="next" aria-label="Xem ảnh tiếp theo")
+                      svg(viewBox="0 0 24 24" aria-hidden="true")
+                        path(d="m9 18 6-6-6-6")
                 else
                   .product-detail-media__empty Chưa có hình ảnh sản phẩm
                 span.product-detail-gallery__hint Nhấn vào ảnh để xem sản phẩm
+              if galleryImages.length > 1
+                .product-detail-thumbnails(role="list" aria-label="Các hình ảnh sản phẩm")
+                  each image, index in galleryImages
+                    button.product-detail-thumbnail(type="button" class=(index === 0 ? "is-active" : "") data-product-thumbnail data-image=image aria-label=`Xem ảnh ${index + 1}`)
+                      img(src=image alt=`${product.title} - ảnh ${index + 1}` loading="lazy")
               .product-detail-gallery__note
                 span Sản phẩm chính hãng
                 span Hình ảnh thực tế có thể thay đổi
+
+              dialog.product-image-lightbox(data-product-lightbox aria-label="Xem ảnh sản phẩm phóng to")
+                button.product-image-lightbox__close(type="button" data-product-lightbox-close aria-label="Đóng ảnh phóng to") ×
+                img(data-product-lightbox-image src="" alt=product.title)
 
             section.product-detail-content
               .product-detail-meta
@@ -46,7 +65,7 @@ block main
                 span.product-detail-code Mã: #{product.id.toString().slice(-8).toUpperCase()}
 
               h1.product-detail-title #{product.title}
-              p.product-detail-subtitle Thông tin minh bạch · Đặt hàng nhanh · Hỗ trợ tận tâm
+              p.product-detail-subtitle Thông tin sản phẩm và tình trạng tồn kho
 
               .product-detail-status-row
                 span.product-detail-rating ★★★★★
@@ -63,7 +82,7 @@ block main
 
               .product-detail-price
                 .product-detail-price__heading
-                  span Ưu đãi đặc biệt hôm nay
+                  span Giá sản phẩm
                   if (product.discountPercentage && product.discountPercentage > 0)
                     small Tiết kiệm #{product.discountPercentage}%
                 .product-detail-price__values
@@ -73,10 +92,10 @@ block main
                     span.product-detail-price__discount -#{product.discountPercentage}%
                   else if (product.price)
                     span.product-detail-price__current #{parseInt(product.price).toLocaleString('vi-VN')}đ
-                p Miễn phí tư vấn và hỗ trợ đặt hàng
+                p Giá bán được cập nhật theo thời điểm hiện tại
 
               .product-detail-purchase
-                h2 Đặt mua sản phẩm
+                h2 Chọn số lượng và đặt hàng
                 if (product.stock > 0)
                   form.product-detail-actions(action=`/cart/add/${product.id}` method="POST")
                     .product-detail-quantity-row
@@ -88,27 +107,61 @@ block main
                       span.product-detail-ready ✓ Có sẵn, giao ngay
                     .product-detail-action-buttons
                       button.btn.product-detail-add(type="submit") Thêm vào giỏ hàng
-                      a.btn.product-detail-buy(href=`/checkout/instant/${product.id}`) Mua ngay
+                      button.btn.product-detail-buy(type="submit" formaction=`/checkout/instant/${product.id}` formmethod="GET") Mua ngay
                 else
                   .product-detail-sold-out Sản phẩm hiện đang tạm hết hàng
+                  form.product-detail-waitlist(action=`/products/detail/${product.id}/waitlist` method="POST")
+                    .product-detail-waitlist__heading
+                      span Báo khi có hàng
+                      h3 Đăng ký nhận thông báo
+                      p Người bán sẽ liên hệ với bạn khi sản phẩm được nhập lại.
+                    .product-detail-waitlist__field
+                      label(for="waitlistFullName") Họ và tên
+                      input#waitlistFullName.form-control(type="text" name="fullName" value=(user ? user.fullName : "") placeholder="Nhập họ và tên" required maxlength="100")
+                    .product-detail-waitlist__field
+                      label(for="waitlistPhone") Số điện thoại
+                      input#waitlistPhone.form-control(type="tel" name="phone" value=(user ? user.phone : "") placeholder="Nhập số điện thoại" required maxlength="30")
+                    .product-detail-waitlist__field
+                      label(for="waitlistEmail") Email #[small (không bắt buộc)]
+                      input#waitlistEmail.form-control(type="email" name="email" value=(user ? user.email : "") placeholder="Nhập địa chỉ email" maxlength="150")
+                    .product-detail-waitlist__field
+                      label(for="waitlistQuantity") Số lượng mong muốn
+                      input#waitlistQuantity.form-control(type="number" name="quantity" value="1" min="1" max="999" required)
+                    button.btn.product-detail-waitlist__submit(type="submit") Đăng ký nhận thông báo
 
               .product-detail-benefits
                 .product-detail-benefit
-                  span.product-detail-benefit__icon 🚚
+                  span.product-detail-benefit__icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M3 6h11v11H3z")
+                      path(d="M14 10h4l3 3v4h-7z")
+                      circle(cx="7" cy="18" r="2")
+                      circle(cx="18" cy="18" r="2")
                   strong Giao hàng nhanh
-                  span Hỗ trợ giao hàng 24h
+                  span Giao hàng trong 24h
                 .product-detail-benefit
-                  span.product-detail-benefit__icon ✓
+                  span.product-detail-benefit__icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z")
+                      path(d="m8.5 12 2.2 2.2 4.8-5")
                   strong Chính hãng
-                  span Thông tin rõ ràng
+                  span Nguồn gốc rõ ràng
                 .product-detail-benefit
-                  span.product-detail-benefit__icon ↻
+                  span.product-detail-benefit__icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M20 7v5h-5")
+                      path(d="M19 12a7 7 0 1 0-2 5")
                   strong Đổi trả dễ dàng
                   span Theo chính sách
                 .product-detail-benefit
-                  span.product-detail-benefit__icon ⚡
+                  span.product-detail-benefit__icon(aria-hidden="true")
+                    svg(viewBox="0 0 24 24")
+                      path(d="M4 13v-2a8 8 0 0 1 16 0v2")
+                      path(d="M4 13h3v6H5a1 1 0 0 1-1-1z")
+                      path(d="M20 13h-3v6h2a1 1 0 0 0 1-1z")
+                      path(d="M17 19c-1 2-3 2-5 2")
                   strong Hỗ trợ tận tâm
-                  span Luôn sẵn sàng
+                  span Tư vấn khi cần
 
           if (product.description)
             section.product-detail-description

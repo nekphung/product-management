@@ -61,7 +61,7 @@ block main
                         svg(viewBox="0 0 24 24" aria-hidden="true")
                           path(d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5")
                     .cart-line-item__price
-                      strong #{item.productInfo.priceNew.toLocaleString('vi-VN')}đ
+                      strong #{Number(item.productInfo.priceNew || 0).toLocaleString('vi-VN')}đ
                       if (item.productInfo.price && item.productInfo.discountPercentage)
                         del #{item.productInfo.price.toLocaleString('vi-VN')}đ
                     .cart-line-item__bottom
@@ -156,13 +156,13 @@ block main
                     .checkout-payment-options
                       label.checkout-payment-option
                         input(type="radio" name="paymentMethod" value="cod" checked)
-                        span.checkout-payment-option__mark 🚚
+                        span.checkout-payment-option__mark COD
                         span
                           strong Thanh toán khi nhận hàng
                           small Kiểm tra sản phẩm rồi thanh toán
                       label.checkout-payment-option
                         input(type="radio" name="paymentMethod" value="banking")
-                        span.checkout-payment-option__mark ▦
+                        span.checkout-payment-option__mark BANK
                         span
                           strong Chuyển khoản ngân hàng
                           small Xác nhận sau khi chuyển khoản

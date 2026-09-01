@@ -1,0 +1,41 @@
+mixin client-pagination(pagination)
+  if pagination && pagination.totalPage > 1
+    - const pageUrl = page => `${pagination.path}?${pagination.queryString ? pagination.queryString + '&' : ''}page=${page}`
+    nav.client-pagination(aria-label="Phân trang sản phẩm")
+      p.client-pagination__meta
+        span Trang hiện tại
+        strong #{pagination.currentPage}
+        span trên #{pagination.totalPage}
+      ul.client-pagination__list
+        li(class=(pagination.currentPage <= 1 ? "is-disabled" : ""))
+          if pagination.currentPage > 1
+            a.client-pagination__direction(href=pageUrl(pagination.currentPage - 1) aria-label="Trang trước")
+              span(aria-hidden="true") ←
+              | Trước
+          else
+            span.client-pagination__direction
+              span(aria-hidden="true") ←
+              | Trước
+
+        - let lastPage = 0
+        - for (let page = 1; page <= pagination.totalPage; page++)
+          - const shouldShow = pagination.totalPage <= 7 || page === 1 || page === pagination.totalPage || Math.abs(page - pagination.currentPage) <= 1
+          if shouldShow
+            if lastPage && page - lastPage > 1
+              li.client-pagination__ellipsis(aria-hidden="true") …
+            li(class=(page === pagination.currentPage ? "is-active" : ""))
+              if page === pagination.currentPage
+                span(aria-current="page") #{page}
+              else
+                a(href=pageUrl(page) aria-label=`Trang ${page}`) #{page}
+            - lastPage = page
+
+        li(class=(pagination.currentPage >= pagination.totalPage ? "is-disabled" : ""))
+          if pagination.currentPage < pagination.totalPage
+            a.client-pagination__direction(href=pageUrl(pagination.currentPage + 1) aria-label="Trang tiếp theo")
+              | Tiếp
+              span(aria-hidden="true") →
+          else
+            span.client-pagination__direction
+              | Tiếp
+              span(aria-hidden="true") →

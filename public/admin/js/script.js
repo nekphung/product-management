@@ -241,6 +241,29 @@ if (uploadImage) {
     });
 }
 
+const multipleImageUploads = document.querySelectorAll("[upload-multiple-images]");
+multipleImageUploads.forEach((uploadArea) => {
+    const input = uploadArea.querySelector("[upload-multiple-input]");
+    const preview = uploadArea.querySelector("[upload-multiple-preview]");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+        preview.innerHTML = "";
+        Array.from(input.files).slice(0, 10).forEach((file, index) => {
+            const figure = document.createElement("figure");
+            figure.className = "admin-product-image-preview";
+            const image = document.createElement("img");
+            image.src = URL.createObjectURL(file);
+            image.alt = `Ảnh xem trước ${index + 1}`;
+            image.addEventListener("load", () => URL.revokeObjectURL(image.src), { once: true });
+            const caption = document.createElement("figcaption");
+            caption.textContent = index === 0 ? "Ảnh đại diện" : `Ảnh ${index + 1}`;
+            figure.append(image, caption);
+            preview.appendChild(figure);
+        });
+    });
+});
+
 // End Upload Image 
 
 // Sort 

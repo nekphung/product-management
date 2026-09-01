@@ -28,7 +28,7 @@ footer.site-footer
             address.site-footer__contact
               if settingGeneral.phone
                 - const footerPhoneHref = String(settingGeneral.phone).replace(/[^\d+]/g, "")
-                a.site-footer__contact-item(href=`tel:${footerPhoneHref}`)
+                a.site-footer__contact-item(href=`tel:${footerPhoneHref}` aria-label=`Gọi hotline ${settingGeneral.phone}` title=`Hotline: ${settingGeneral.phone}`)
                   span.site-footer__contact-icon(aria-hidden="true")
                     svg(viewBox="0 0 24 24")
                       path(d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z")
@@ -36,7 +36,7 @@ footer.site-footer
                     small Hotline
                     strong #{settingGeneral.phone}
               if settingGeneral.email
-                a.site-footer__contact-item(href=`mailto:${settingGeneral.email}`)
+                a.site-footer__contact-item(href=`mailto:${settingGeneral.email}` aria-label=`Gửi email đến ${settingGeneral.email}` title=`Email: ${settingGeneral.email}`)
                   span.site-footer__contact-icon(aria-hidden="true")
                     svg(viewBox="0 0 24 24")
                       path(d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z")
@@ -45,7 +45,7 @@ footer.site-footer
                     small Email
                     strong #{settingGeneral.email}
 
-        a.site-footer__cta(href="/products")
+        a.site-footer__cta(href="/products" aria-label="Khám phá sản phẩm" title="Khám phá sản phẩm")
           span Khám phá sản phẩm
           span.site-footer__cta-arrow(aria-hidden="true") →
 

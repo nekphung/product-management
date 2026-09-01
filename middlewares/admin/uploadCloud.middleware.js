@@ -38,3 +38,23 @@ module.exports.upload = (req, res, next) => {
         next();
     }
 }
+
+module.exports.uploadMultiple = async (req, res, next) => {
+    try {
+        if (!req.files || req.files.length === 0) return next();
+
+        const uploadBuffer = (file) => new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream((error, result) => {
+                if (error) return reject(error);
+                resolve(result.secure_url);
+            });
+            streamifier.createReadStream(file.buffer).pipe(stream);
+        });
+
+        req.body.images = await Promise.all(req.files.map(uploadBuffer));
+        req.body.thumbnail = req.body.images[0];
+        next();
+    } catch (error) {
+        next(error);
+    }
+};

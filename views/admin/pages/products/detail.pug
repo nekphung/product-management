@@ -75,6 +75,34 @@ block main
           else
             .admin-product-detail__description-empty Sản phẩm này chưa có nội dung mô tả.
 
+        if canViewWaitlist
+          section.admin-product-detail__description
+            .admin-product-detail__section-heading
+              div
+                span Nhu cầu khi hết hàng
+                h2 Khách đăng ký chờ (#{waitlist ? waitlist.length : 0})
+            if waitlist && waitlist.length > 0
+              .table-responsive
+                table.table.table-hover
+                  thead
+                    tr
+                      th Khách hàng
+                      th Liên hệ
+                      th Số lượng
+                      th Ngày đăng ký
+                  tbody
+                    each registration in waitlist
+                      tr
+                        td #{registration.fullName}
+                        td
+                          div #{registration.phone}
+                          if registration.email
+                            small #{registration.email}
+                        td #{registration.quantity}
+                        td #{new Date(registration.createdAt).toLocaleString("vi-VN")}
+            else
+              .admin-product-detail__description-empty Chưa có khách nào đăng ký chờ sản phẩm này.
+
         footer.admin-product-detail__actions
           a.admin-product-detail__back-button(href=`${prefixAdmin}/products`) Quay lại danh sách
           a.admin-product-detail__edit(href=`${prefixAdmin}/products/edit/${product.id}`)

@@ -108,25 +108,25 @@ block main
                     value=product.stock
                 ) 
 
-            // Ảnh 
-            div(
-                class="form-group"
-                upload-image
-            )
-                label(for="thumbnail") Ảnh (URL) 
+            // Ảnh
+            .form-group(upload-multiple-images)
+                label(for="images") Hình ảnh sản phẩm
                 input( 
                     type="file" 
                     class="form-control-file"
-                    id="thumbnail" 
-                    name="thumbnail" 
-                    accept="image/*" 
-                    upload-image-input
+                    id="images"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                    upload-multiple-input
                 )
-                img(
-                    src=product.thumbnail
-                    upload-image-preview
-                    class="image-preview"
-                )
+                small.form-text.text-muted Chọn bộ ảnh mới để thay thế thư viện hiện tại. Ảnh đầu tiên là ảnh đại diện.
+                .admin-product-images-preview(upload-multiple-preview)
+                    - const currentImages = product.images && product.images.length ? product.images : (product.thumbnail ? [product.thumbnail] : [])
+                    each image, index in currentImages
+                        figure.admin-product-image-preview
+                            img(src=image alt=`Ảnh sản phẩm ${index + 1}`)
+                            figcaption= index === 0 ? "Ảnh đại diện" : `Ảnh ${index + 1}`
 
             // Vị trí 
             .form-group
