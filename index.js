@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("express-flash");
 const moment = require("moment");
+const http = require("http");
+const { Server } = require("socket.io");
 
 require("dotenv").config();
 
@@ -28,6 +30,14 @@ app.use(express.json({ limit: "32kb" }));
 
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
+
+// SocketIO
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+  console.log('a user connected', socket.id);
+})
 
 // flash
 app.use(cookieParser('nekphung7122006'));
@@ -65,7 +75,7 @@ const startServer = async () => {
   try {
     await database.connect();
 
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Server is running at http://localhost:${port}`);
     });
   } catch (error) {

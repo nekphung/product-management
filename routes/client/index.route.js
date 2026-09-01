@@ -31,6 +31,6 @@ module.exports = (app) => {
 
     app.use("/user", userRoutes);
 
-    app.use("/api/chat", chatRoutes);
+    app.use("/chat", chatRoutes);
 }
 
