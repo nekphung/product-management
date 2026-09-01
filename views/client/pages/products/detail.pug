@@ -26,6 +26,7 @@ block main
       if (product)
         article.product-detail-card
           .product-detail-layout
+            h1.product-detail-mobile-title #{product.title}
             section.product-detail-gallery
               - const galleryImages = product.images && product.images.length ? product.images : (product.thumbnail ? [product.thumbnail] : [])
               .product-detail-media
