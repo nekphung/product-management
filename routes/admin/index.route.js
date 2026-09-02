@@ -14,11 +14,14 @@ const settingRoutes = require("./setting.route");
 const orderRoutes = require("./order.route");
 const customerRoutes = require("./customer.route");
 const stockWaitlistRoutes = require("./stock-waitlist.route");
+const authController = require("../../controllers/admin/auth.controller");
 
 module.exports = (app) => {
     const PATH_ADMIN = systemConfig.prefixAdmin;
 
     app.use(PATH_ADMIN, settingMiddleware.settingGeneral);
+
+    app.get(PATH_ADMIN, authController.login);
 
     app.use(PATH_ADMIN + "/auth", authRoutes);
 
