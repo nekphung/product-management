@@ -54,4 +54,21 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
 })
 // END SERVER_RETURN_MESSAGE
 
-
+// emoji-picker 
+// document.querySelector('emoji-picker')
+//   .addEventListener('emoji-click', event => console.log(event.detail));
+const emojiPicker = document.querySelector("emoji-picker");
+if (emojiPicker) {
+    const inputChat = document.querySelector(".chat .inner-form textarea[name='content']");
+    if (inputChat) {
+        console.log("Oke");
+    }
+    emojiPicker.addEventListener("emoji-click", (event) => {
+        const icon = event.detail.unicode;
+        // console.log(icon);
+        console.log(icon);
+        console.log(inputChat.value);
+        inputChat.value = inputChat.value + icon;
+    });
+}
+// End emoji-picker 
