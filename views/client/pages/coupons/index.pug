@@ -1,0 +1,63 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(4000)
+  +alert-error(4000)
+  main.voucher-page
+    .container
+      header.voucher-heading
+        div
+          p Ưu đãi đang diễn ra
+          h1 Kho voucher
+          span Lưu voucher vào tài khoản, hệ thống sẽ tự chọn ưu đãi hợp lệ khi thanh toán.
+        div.voucher-heading__actions
+          if returnTo
+            a.btn.btn-dark(href=returnTo) Quay lại thanh toán
+          if user
+            a.btn.btn-outline-dark(href="/coupons/wallet") Voucher của tôi
+      if collections.length
+        each collection in collections
+          section.voucher-collection
+            .voucher-collection__heading
+              div
+                h2 #{collection.title}
+                if collection.description
+                  p #{collection.description}
+              span Hết hạn #{moment(collection.endAt).format("DD/MM/YYYY HH:mm")}
+            .voucher-grid
+              each coupon in collection.coupons
+                article.voucher-card(class=coupon.couponType === "shipping" ? "voucher-card--shipping" : "voucher-card--order")
+                  .voucher-card__value
+                    strong #{coupon.discountType === "percentage" ? coupon.discountValue + "%" : Number(coupon.discountValue).toLocaleString("vi-VN") + "đ"}
+                    span #{coupon.couponType === "shipping" ? "VẬN CHUYỂN" : "GIẢM GIÁ"}
+                  .voucher-card__content
+                    code #{coupon.code}
+                    h3 #{coupon.title}
+                    p #{coupon.description || `Đơn tối thiểu ${Number(coupon.minOrderValue || 0).toLocaleString("vi-VN")}đ`}
+                    small Đơn từ #{Number(coupon.minOrderValue || 0).toLocaleString("vi-VN")}đ
+                  .voucher-card__action
+                    if coupon.wallet
+                      .voucher-collect-state
+                        span.voucher-saved Đã lưu x#{coupon.walletQuantity}
+                        if coupon.canCollect
+                          form(action=`/coupons/${coupon._id}/collect` method="POST")
+                            if returnTo
+                              input(type="hidden" name="returnTo" value=returnTo)
+                            button.btn.btn-sm.btn-outline-dark(type="submit") Lưu thêm
+                        else
+                          small Đã đạt giới hạn
+                    else if user
+                      if coupon.canCollect
+                        form(action=`/coupons/${coupon._id}/collect` method="POST")
+                          if returnTo
+                            input(type="hidden" name="returnTo" value=returnTo)
+                          button.btn.btn-sm.btn-dark(type="submit") Lưu mã
+                      else
+                        span.voucher-saved Đã phát hết
+                    else
+                      a.btn.btn-sm.btn-dark(href="/user/login") Đăng nhập để lưu
+      else
+        .checkout-empty
+          h2 Chưa có voucher đang phát hành
+          p Các ưu đãi mới sẽ xuất hiện tại đây.

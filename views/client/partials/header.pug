@@ -31,6 +31,12 @@ header.site-header
                   path(d="M8 9h8M8 13h5")
                 span Tin nhắn
           li.nav-item
+            a.nav-link.site-cart-link(href="/coupons")
+              svg.site-cart-icon(viewBox="0 0 24 24" aria-hidden="true")
+                path(d="M3 8.5V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a3.5 3.5 0 0 0 0 7V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a3.5 3.5 0 0 0 0-7Z")
+                path(d="M13 8h-2M13 12h-2M13 16h-2")
+              span Voucher
+          li.nav-item
             a.nav-link.site-cart-link(href="/cart")
               svg.site-cart-icon(viewBox="0 0 24 24" aria-hidden="true")
                 circle(cx="9" cy="20" r="1.5")
@@ -75,6 +81,12 @@ header.site-header
                       path(d="M6 8h12l-1 12H7L6 8Z")
                       path(d="M9 8V6a3 3 0 0 1 6 0v2")
                   | Đơn hàng của tôi
+                a.dropdown-item(href="/coupons/wallet")
+                  span.site-user-menu__icon
+                    svg(viewBox="0 0 24 24" aria-hidden="true")
+                      path(d="M3 8.5V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a3.5 3.5 0 0 0 0 7V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a3.5 3.5 0 0 0 0-7Z")
+                      path(d="M13 8h-2M13 12h-2M13 16h-2")
+                  | Voucher của tôi
                 a.dropdown-item(href="/user/password/reset")
                   span.site-user-menu__icon
                     svg(viewBox="0 0 24 24" aria-hidden="true")

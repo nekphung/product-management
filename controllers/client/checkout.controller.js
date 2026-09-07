@@ -3,6 +3,25 @@ const Product = require("../../models/product.model");
 const productsHelper = require("../../helpers/products");
 const Order = require("../../models/order.model");
 const inventoryHelper = require("../../helpers/inventory");
+const Coupon = require("../../models/coupon.model");
+const UserCoupon = require("../../models/user-coupon.model");
+const couponHelper = require("../../helpers/coupons");
+const shippingHelper = require("../../helpers/shipping");
+
+const decorateCartWithCoupons = async (cart, user, selectedCouponIds, shippingMethod = shippingHelper.SHIPPING_METHODS[0]) => {
+    cart.totalPrice = cart.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    const couponResult = await couponHelper.getApplicableCoupons(user ? user.id : null, cart.products.map(item => ({
+        product_id: item.product_id,
+        product_category_id: item.productInfo ? item.productInfo.product_category_id : "",
+        price: item.productInfo ? item.productInfo.price : 0,
+        discountPercentage: item.productInfo ? item.productInfo.discountPercentage : 0,
+        quantity: item.quantity
+    })), { shippingFee: shippingMethod.fee, selectedCouponIds });
+    cart.discountAmount = couponResult.discount;
+    cart.shippingFee = shippingMethod.fee;
+    cart.finalPrice = Math.max(0, cart.totalPrice + shippingMethod.fee - couponResult.discount);
+    return couponResult;
+};
 
 // [GET] /checkout/
 module.exports.index = async (req, res) => {
@@ -11,6 +30,14 @@ module.exports.index = async (req, res) => {
     const cart = await Cart.findOne({
         _id: cartId
     })
+
+    if (!cart) return res.redirect("/cart");
+
+    const selectedFromCart = String(req.query.products || "").split(",").map(item => item.trim()).filter(Boolean);
+    if (selectedFromCart.length) {
+        const selectedSet = new Set(selectedFromCart);
+        cart.products = cart.products.filter(item => selectedSet.has(item.product_id));
+    }
 
     if (cart.products.length > 0) {
         for (const item of cart.products) {
@@ -29,11 +56,15 @@ module.exports.index = async (req, res) => {
     }
     // console.log(cart);
 
-    cart.totalPrice = cart.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    const couponResult = await decorateCartWithCoupons(cart, res.locals.user);
 
     res.render("client/pages/checkout/index", {
         pageTitle: "Đặt hàng",
-        cart: cart
+        cart: cart,
+        couponResult,
+        shippingMethods: shippingHelper.SHIPPING_METHODS,
+        selectedShippingMethod: shippingHelper.SHIPPING_METHODS[0],
+        checkoutReturnUrl: req.originalUrl
     });
 }
 
@@ -63,9 +94,15 @@ module.exports.instant = async (req, res) => {
         totalPrice: quantity * Number(product.priceNew)
     };
 
+    const checkoutCart = { products: [item] };
+    const couponResult = await decorateCartWithCoupons(checkoutCart, res.locals.user);
     res.render("client/pages/checkout/index", {
         pageTitle: "Mua ngay",
-        cart: { products: [item], totalPrice: item.totalPrice },
+        cart: checkoutCart,
+        couponResult,
+        shippingMethods: shippingHelper.SHIPPING_METHODS,
+        selectedShippingMethod: shippingHelper.SHIPPING_METHODS[0],
+        checkoutReturnUrl: req.originalUrl,
         checkoutMode: "instant"
     });
 };
@@ -108,6 +145,7 @@ module.exports.order = async (req, res) => {
         if (!Number.isInteger(quantity) || quantity < 1) continue;
         const objectProduct = {
             product_id: product.product_id,
+            product_category_id: "",
             price: 0,
             discountPercentage: 0,
             quantity
@@ -119,6 +157,7 @@ module.exports.order = async (req, res) => {
         if (!productInfo) continue;
         objectProduct.price = productInfo.price;
         objectProduct.discountPercentage = productInfo.discountPercentage;
+        objectProduct.product_category_id = productInfo.product_category_id;
         
         products.push(objectProduct);
     }
@@ -130,11 +169,25 @@ module.exports.order = async (req, res) => {
         return res.redirect(isInstantCheckout ? "/products" : "/cart");
     }
 
+    const subtotal = products.reduce((sum, item) => sum + couponHelper.lineTotal(item), 0);
+    const hasCouponSelection = Object.prototype.hasOwnProperty.call(req.body, "couponOrderId") || Object.prototype.hasOwnProperty.call(req.body, "couponShippingId");
+    const requestedCouponIds = hasCouponSelection
+        ? [req.body.couponOrderId, req.body.couponShippingId].map(item => String(item || "").trim()).filter(Boolean)
+        : undefined;
+    const shippingMethod = shippingHelper.getShippingMethod(req.body.shippingMethod);
+    const couponResult = await couponHelper.getApplicableCoupons(res.locals.user ? res.locals.user.id : null, products, { shippingFee: shippingMethod.fee, selectedCouponIds: requestedCouponIds });
     const objectOrder = {
         cart_id: cartId,
         userInfo: userInfo,
         products: products,
-        inventoryReserved: true
+        inventoryReserved: true,
+        subtotal,
+        shippingFee: shippingMethod.fee,
+        shippingDiscount: couponResult.shippingDiscount,
+        shippingMethod: { id: shippingMethod.id, name: shippingMethod.name, provider: shippingMethod.provider, eta: shippingMethod.eta },
+        discountAmount: couponResult.discount,
+        totalPrice: Math.max(0, subtotal + shippingMethod.fee - couponResult.discount),
+        appliedCoupons: couponResult.applied.map(item => ({ coupon_id: String(item._id), code: item.code, title: item.title, discountAmount: item.discount }))
     }
 
     // Nếu người dùng đã đăng nhập, gán user_id và avatar vào đơn hàng
@@ -152,14 +205,43 @@ module.exports.order = async (req, res) => {
         return res.redirect(isInstantCheckout ? "/products" : "/cart");
     }
 
+    const reservedCoupons = [];
+    for (const applied of couponResult.applied) {
+        const couponReserved = await Coupon.findOneAndUpdate({ _id: applied._id, status: "active", deleted: false }, { $inc: { usedCount: 1 } });
+        const userReserved = couponReserved && await UserCoupon.findOneAndUpdate(
+            { user_id: res.locals.user.id, coupon_id: String(applied._id), $or: [{ quantity: { $gt: 0 } }, { quantity: { $exists: false } }] },
+            [{ $set: { quantity: { $subtract: [{ $ifNull: ["$quantity", 1] }, 1] }, usedCount: { $add: [{ $ifNull: ["$usedCount", 0] }, 1] }, lastUsedAt: new Date() } }],
+            { updatePipeline: true }
+        );
+        if (!couponReserved || !userReserved) {
+            if (couponReserved) await Coupon.updateOne({ _id: applied._id }, { $inc: { usedCount: -1 } });
+            for (const item of reservedCoupons) {
+                await Coupon.updateOne({ _id: item.couponId }, { $inc: { usedCount: -1 } });
+                await UserCoupon.updateOne({ user_id: res.locals.user.id, coupon_id: item.couponId }, { $inc: { quantity: 1, usedCount: -1 }, $unset: { lastUsedAt: "" } });
+            }
+            await inventoryHelper.restoreProducts(reservation.reserved);
+            req.flash("error", "Một voucher vừa hết lượt sử dụng. Vui lòng kiểm tra lại đơn hàng.");
+            return res.redirect(isInstantCheckout ? `/checkout/instant/${products[0].product_id}?quantity=${products[0].quantity}` : "/checkout");
+        }
+        reservedCoupons.push({ couponId: String(applied._id) });
+    }
+
     let order;
     try {
         order = new Order(objectOrder);
         await order.save();
     } catch (error) {
         await inventoryHelper.restoreProducts(reservation.reserved);
+        for (const item of reservedCoupons) {
+            await Coupon.updateOne({ _id: item.couponId }, { $inc: { usedCount: -1 } });
+            await UserCoupon.updateOne({ user_id: res.locals.user.id, coupon_id: item.couponId }, { $inc: { quantity: 1, usedCount: -1 }, $unset: { lastUsedAt: "" } });
+        }
         req.flash("error", "Không thể tạo đơn hàng. Tồn kho chưa bị thay đổi, vui lòng thử lại.");
         return res.redirect(isInstantCheckout ? "/products" : "/cart");
+    }
+
+    if (reservedCoupons.length) {
+        await UserCoupon.updateMany({ user_id: res.locals.user.id, coupon_id: { $in: reservedCoupons.map(item => item.couponId) } }, { $push: { orderIds: order.id } });
     }
 
     if (!isInstantCheckout) {
@@ -194,7 +276,9 @@ module.exports.success = async (req, res) => {
         product.totalPrice = product.priceNew * product.quantity;
     }
 
-    order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    order.subtotal = order.subtotal || order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    order.discountAmount = order.discountAmount || 0;
+    order.totalPrice = Number.isFinite(order.totalPrice) && order.totalPrice > 0 ? order.totalPrice : Math.max(0, order.subtotal - order.discountAmount);
     
     res.render("client/pages/checkout/success", {
         pageTitle: "Đặt hàng thành công",

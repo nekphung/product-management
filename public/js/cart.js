@@ -54,5 +54,9 @@ if (cartSelectionInputs.length > 0 && cartSelectAll && cartCheckoutButton) {
         updateSelection();
     });
     cartSelectionInputs.forEach(input => input.addEventListener("change", updateSelection));
+    cartCheckoutButton.addEventListener("click", () => {
+        if (!selectedIdsInput.value) return;
+        window.location.href = `/checkout?products=${encodeURIComponent(selectedIdsInput.value)}`;
+    });
     updateSelection();
 }

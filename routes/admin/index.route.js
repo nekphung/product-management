@@ -14,6 +14,7 @@ const settingRoutes = require("./setting.route");
 const orderRoutes = require("./order.route");
 const customerRoutes = require("./customer.route");
 const stockWaitlistRoutes = require("./stock-waitlist.route");
+const couponRoutes = require("./coupon.route");
 const authController = require("../../controllers/admin/auth.controller");
 
 module.exports = (app) => {
@@ -74,6 +75,8 @@ module.exports = (app) => {
         authMiddleware.requireAuth,
         stockWaitlistRoutes
     );
+
+    app.use(PATH_ADMIN + "/coupons", authMiddleware.requireAuth, couponRoutes);
 
     // Admin-only fallback: keep unknown admin URLs inside the admin shell.
     app.use(PATH_ADMIN, authMiddleware.requireAuth, (req, res) => {

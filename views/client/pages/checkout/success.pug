@@ -25,6 +25,22 @@ block main
             |  để xác nhận thông tin giao hàng.
 
           section#order-details.order-success-summary
+            if order.subtotal > 0
+              .order-success-summary__line
+                span Tạm tính
+                strong #{parseInt(order.subtotal || 0).toLocaleString('vi-VN')}đ
+              .order-success-summary__line
+                span Phí vận chuyển
+                strong #{parseInt(order.shippingFee || 0).toLocaleString('vi-VN')}đ
+            if order.discountAmount > 0
+              if order.discountAmount - Number(order.shippingDiscount || 0) > 0
+                .order-success-summary__line
+                  span Voucher giảm giá
+                  strong -#{parseInt(order.discountAmount - Number(order.shippingDiscount || 0)).toLocaleString('vi-VN')}đ
+              if Number(order.shippingDiscount || 0) > 0
+                .order-success-summary__line
+                  span Voucher vận chuyển
+                  strong -#{parseInt(order.shippingDiscount).toLocaleString('vi-VN')}đ
             .order-success-summary__total
               span Tổng giá trị đơn hàng
               strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
@@ -37,6 +53,10 @@ block main
             .order-success-summary__line
               span Thanh toán
               strong.order-success-summary__status #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
+            if order.shippingMethod && order.shippingMethod.name
+              .order-success-summary__line
+                span Vận chuyển
+                strong #{order.shippingMethod.name} · #{order.shippingMethod.eta}
             .order-success-summary__line
               span Ngày đặt hàng
               strong #{new Date(order.createdAt).toLocaleString("vi-VN")}

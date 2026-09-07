@@ -1,0 +1,93 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  if role.permissions.includes("coupons_view") || role.permissions.includes("roles_permissions")
+    +alert-success(5000)
+    +alert-error(5000)
+    .admin-page-heading
+      div
+        p.admin-page-eyebrow Khuyến mãi
+        h1 Collection và mã giảm giá
+        p Tạo các đợt phát hành, cấu hình điều kiện và theo dõi lượt sử dụng.
+      if role.permissions.includes("coupons_create") || role.permissions.includes("roles_permissions")
+        div
+          a.btn.btn-outline-primary.mr-2(href=`${prefixAdmin}/coupons/collections/create`) Tạo collection
+          a.btn.btn-primary(href=`${prefixAdmin}/coupons/create`) Tạo mã giảm giá
+
+    .card.mb-4
+      .card-header.admin-list-header
+        span Collections
+        span #{collections.length} đợt phát hành
+      .card-body
+        .table-responsive
+          table.table.table-hover
+            thead
+              tr
+                th Tên collection
+                th Thời gian
+                th Trạng thái
+                th Thao tác
+            tbody
+              if collections.length
+                each item in collections
+                  tr
+                    td
+                      strong #{item.title}
+                      if item.description
+                        br
+                        small.text-muted #{item.description}
+                    td #{moment(item.startAt).format("DD/MM/YYYY HH:mm")} - #{moment(item.endAt).format("DD/MM/YYYY HH:mm")}
+                    td
+                      span.badge(class=item.status === "active" ? "badge-success" : "badge-secondary") #{item.status === "active" ? "Đang bật" : "Đã tắt"}
+                    td
+                      if role.permissions.includes("coupons_edit") || role.permissions.includes("roles_permissions")
+                        a.btn.btn-sm.btn-outline-primary.mr-2(href=`${prefixAdmin}/coupons/collections/edit/${item._id}`) Sửa
+                      if role.permissions.includes("coupons_delete") || role.permissions.includes("roles_permissions")
+                        form.d-inline(action=`${prefixAdmin}/coupons/collections/${item._id}?_method=DELETE` method="POST" data-confirm-title="Xóa collection" data-confirm-message="Các voucher trong collection này cũng sẽ ngừng hoạt động." data-confirm-text="Xóa")
+                          button.btn.btn-sm.btn-outline-danger(type="submit") Xóa
+              else
+                tr
+                  td.text-center.text-muted(colspan="4") Chưa có collection.
+
+    .card
+      .card-header.admin-list-header
+        span Mã giảm giá
+        span #{coupons.length} mã
+      .card-body
+        .table-responsive
+          table.table.table-hover
+            thead
+              tr
+                th Mã / Tên
+                th Collection
+                th Ưu đãi
+                th Điều kiện
+                th Phát hành / Đã dùng
+                th Trạng thái
+                th Thao tác
+            tbody
+              if coupons.length
+                each item in coupons
+                  tr
+                    td
+                      code #{item.code}
+                      br
+                      strong #{item.title}
+                    td #{item.collectionTitle}
+                    td
+                      span.badge(class=item.couponType === "shipping" ? "badge-success" : "badge-danger") #{item.couponType === "shipping" ? "Vận chuyển" : "Đơn hàng"}
+                      |  #{item.discountType === "percentage" ? item.discountValue + "%" : Number(item.discountValue).toLocaleString("vi-VN") + "đ"}
+                    td Đơn từ #{Number(item.minOrderValue || 0).toLocaleString("vi-VN")}đ
+                    td #{item.claimedCount || 0} / #{item.usageLimit || "∞"} · dùng #{item.usedCount || 0}
+                    td
+                      span.badge(class=item.status === "active" ? "badge-success" : "badge-secondary") #{item.status === "active" ? "Đang bật" : "Đã tắt"}
+                    td
+                      if role.permissions.includes("coupons_edit") || role.permissions.includes("roles_permissions")
+                        a.btn.btn-sm.btn-outline-primary.mr-2(href=`${prefixAdmin}/coupons/edit/${item._id}`) Sửa
+                      if role.permissions.includes("coupons_delete") || role.permissions.includes("roles_permissions")
+                        form.d-inline(action=`${prefixAdmin}/coupons/${item._id}?_method=DELETE` method="POST" data-confirm-title="Xóa voucher" data-confirm-message=`Xóa mã ${item.code}?` data-confirm-text="Xóa")
+                          button.btn.btn-sm.btn-outline-danger(type="submit") Xóa
+              else
+                tr
+                  td.text-center.text-muted(colspan="7") Chưa có mã giảm giá.

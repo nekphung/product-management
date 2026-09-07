@@ -8,6 +8,7 @@ const Product = require("../../models/product.model");
 const productsHelper = require("../../helpers/products");
 const { ORDER_STATUSES, getOrderStatus } = require("../../helpers/orderStatus");
 const inventoryHelper = require("../../helpers/inventory");
+const couponHelper = require("../../helpers/coupons");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -265,9 +266,11 @@ module.exports.orders = async (req, res) => {
     for (const order of orders) {
         order.status = order.status || "pending";
         order.statusMeta = getOrderStatus(order.status);
-        order.totalPrice = order.products.reduce((sum, item) => {
+        const legacyTotal = order.products.reduce((sum, item) => {
             return sum + productsHelper.priceNewProduct(item) * item.quantity;
         }, 0);
+        const hasStoredTotal = Number(order.subtotal) > 0 || (order.appliedCoupons && order.appliedCoupons.length > 0);
+        order.totalPrice = hasStoredTotal ? Number(order.totalPrice) : legacyTotal;
 
         const productIds = order.products.map(item => item.product_id);
         const productRecords = await Product.find({
@@ -347,6 +350,8 @@ module.exports.cancelOrder = async (req, res) => {
         await inventoryHelper.restoreProducts(order.products);
         await Order.updateOne({ _id: order._id }, { $set: { inventoryRestored: true } });
     }
+    await couponHelper.restoreOrderCoupons(order);
+    if (order.appliedCoupons && order.appliedCoupons.length) await Order.updateOne({ _id: order._id }, { $set: { couponsRestored: true } });
 
     req.flash("success", "Đơn hàng đã được hủy thành công.");
     return res.redirect(redirectPath);
@@ -372,7 +377,9 @@ module.exports.orderDetail = async (req, res) => {
         item.totalPrice = item.priceNew * item.quantity;
     }
 
-    order.totalPrice = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    const legacyTotal = order.products.reduce((sum, item) => sum + item.totalPrice, 0);
+    const hasStoredTotal = Number(order.subtotal) > 0 || (order.appliedCoupons && order.appliedCoupons.length > 0);
+    order.totalPrice = hasStoredTotal ? Number(order.totalPrice) : legacyTotal;
     order.status = order.status || "pending";
     order.statusMeta = getOrderStatus(order.status);
 

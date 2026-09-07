@@ -27,7 +27,7 @@ block main
         article.product-detail-card
           .product-detail-layout
             h1.product-detail-mobile-title #{product.title}
-            section.product-detail-gallery
+            section.product-detail-gallery(data-product-gallery)
               - const galleryImages = product.images && product.images.length ? product.images : (product.thumbnail ? [product.thumbnail] : [])
               .product-detail-media
                 if (product.discountPercentage && product.discountPercentage > 0)

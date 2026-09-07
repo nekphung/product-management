@@ -57,20 +57,96 @@ block main
 
               section.checkout-card.checkout-summary-card
                 h2 Chi tiết thanh toán
+                if user
+                  - const orderCoupons = couponResult.available.filter(item => (item.couponType || "order") === "order")
+                  - const shippingCoupons = couponResult.available.filter(item => item.couponType === "shipping")
+                  - const appliedIds = couponResult.applied.map(item => String(item._id))
+                  - const walletVoucherTotal = couponResult.available.reduce((sum, item) => sum + Number(item.walletQuantity || 0), 0)
+                  .checkout-voucher-picker(data-voucher-picker data-subtotal=cart.totalPrice data-shipping-fee=cart.shippingFee)
+                    .checkout-voucher-picker__heading
+                      div
+                        span.checkout-voucher-picker__icon %
+                        div
+                          strong Voucher của bạn
+                          small Hệ thống đã chọn ưu đãi tốt nhất
+                      .checkout-voucher-picker__actions
+                        span.checkout-voucher-picker__count #{walletVoucherTotal} voucher · #{couponResult.available.filter(item => item.eligible).length} loại dùng được
+                        a.checkout-voucher-picker__collect(href=`/coupons?returnTo=${encodeURIComponent(checkoutReturnUrl)}`) Thu thập thêm
+                    .checkout-voucher-group.checkout-voucher-group--order
+                      h3
+                        span Giảm giá đơn hàng
+                        small Chọn tối đa 1 mã
+                      label.checkout-voucher-option.checkout-voucher-option--none
+                        input(type="radio" name="couponOrderId" value="" checked=!couponResult.applied.some(item => (item.couponType || "order") === "order"))
+                        span.checkout-voucher-option__mark.checkout-voucher-option__mark--empty —
+                        span.checkout-voucher-option__copy
+                          strong Không dùng voucher
+                          small Giữ nguyên giá trị đơn hàng
+                      each coupon in orderCoupons
+                        label.checkout-voucher-option(class=!coupon.eligible ? "is-disabled" : "" data-coupon-option data-discount=coupon.discount)
+                          input(type="radio" name="couponOrderId" value=coupon._id checked=appliedIds.includes(String(coupon._id)) disabled=!coupon.eligible)
+                          span.checkout-voucher-option__mark.checkout-voucher-option__mark--order %
+                          span.checkout-voucher-option__copy
+                            strong #{coupon.code} · #{coupon.title} · x#{coupon.walletQuantity}
+                            small #{coupon.eligible ? `Giảm ${Number(coupon.discount).toLocaleString('vi-VN')}đ` : coupon.reason}
+                    .checkout-voucher-group.checkout-voucher-group--shipping
+                      h3
+                        span Phí vận chuyển
+                        small Chọn tối đa 1 mã
+                      label.checkout-voucher-option.checkout-voucher-option--none
+                        input(type="radio" name="couponShippingId" value="" checked=!couponResult.applied.some(item => item.couponType === "shipping"))
+                        span.checkout-voucher-option__mark.checkout-voucher-option__mark--empty —
+                        span.checkout-voucher-option__copy
+                          strong Không dùng voucher
+                          small Thanh toán đủ phí vận chuyển
+                      each coupon in shippingCoupons
+                        label.checkout-voucher-option(class=!coupon.eligible ? "is-disabled" : "" data-coupon-option data-discount=coupon.discount data-coupon-type="shipping" data-server-eligible=(coupon.eligible ? "true" : "false") data-discount-type=coupon.discountType data-discount-value=coupon.discountValue data-max-discount=coupon.maxDiscount)
+                          input(type="radio" name="couponShippingId" value=coupon._id checked=appliedIds.includes(String(coupon._id)) disabled=!coupon.eligible)
+                          span.checkout-voucher-option__mark.checkout-voucher-option__mark--shipping VC
+                          span.checkout-voucher-option__copy
+                            strong #{coupon.code} · #{coupon.title} · x#{coupon.walletQuantity}
+                            small #{coupon.eligible ? `Giảm ${Number(coupon.discount).toLocaleString('vi-VN')}đ phí giao hàng` : coupon.reason}
                 .checkout-summary-card__line
                   span Tạm tính
                   strong #{Number(cart.totalPrice || 0).toLocaleString('vi-VN')}đ
+                if !user
+                  .checkout-summary-card__line
+                    span Voucher
+                    a(href="/user/login") Đăng nhập để tự động áp dụng
                 .checkout-summary-card__line
                   span Phí vận chuyển
-                  strong.checkout-summary-card__free Miễn phí
+                  strong(data-checkout-shipping) #{Number(cart.shippingFee || 0).toLocaleString('vi-VN')}đ
+                .checkout-summary-card__line.checkout-summary-card__discount(data-checkout-order-discount hidden=!couponResult.orderDiscount)
+                  span Giảm giá đơn hàng
+                  strong -#{Number(couponResult.orderDiscount || 0).toLocaleString('vi-VN')}đ
+                .checkout-summary-card__line.checkout-summary-card__discount.checkout-summary-card__discount--shipping(data-checkout-shipping-discount hidden=!couponResult.shippingDiscount)
+                  span Giảm phí vận chuyển
+                  strong -#{Number(couponResult.shippingDiscount || 0).toLocaleString('vi-VN')}đ
                 .checkout-summary-card__total
                   span Tổng thanh toán
-                  strong #{Number(cart.totalPrice || 0).toLocaleString('vi-VN')}đ
+                  strong(data-checkout-total) #{Number(cart.finalPrice != null ? cart.finalPrice : cart.totalPrice || 0).toLocaleString('vi-VN')}đ
 
             .col-lg-5.col-12
-              section.checkout-card.checkout-recipient-card
+              section.checkout-card.checkout-shipping-card(data-shipping-picker)
                 header.checkout-recipient-card__header
                   span.checkout-card__number 02
+                  div
+                    h2 Phương thức vận chuyển
+                    p Dữ liệu mô phỏng để hoàn thiện luồng đặt hàng
+                .checkout-shipping-options
+                  each method in shippingMethods
+                    label.checkout-shipping-option
+                      input(type="radio" name="shippingMethod" value=method.id data-shipping-fee=method.fee checked=method.id === selectedShippingMethod.id)
+                      span.checkout-shipping-option__radio
+                      span.checkout-shipping-option__content
+                        strong #{method.name}
+                        small #{method.description}
+                        em #{method.provider} · #{method.eta}
+                      strong.checkout-shipping-option__fee #{method.fee > 0 ? Number(method.fee).toLocaleString('vi-VN') + 'đ' : 'Miễn phí'}
+
+              section.checkout-card.checkout-recipient-card
+                header.checkout-recipient-card__header
+                  span.checkout-card__number 03
                   div
                     h2 Thông tin nhận hàng
                     p Vui lòng nhập đầy đủ thông tin liên hệ
@@ -101,3 +177,5 @@ block main
           h2 Chưa có sản phẩm để thanh toán
           p Hãy chọn sản phẩm trước khi tiếp tục đặt hàng.
           a(href="/products") Tiếp tục mua sắm
+
+  script(src="/js/checkout.js")

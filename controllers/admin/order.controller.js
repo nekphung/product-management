@@ -7,6 +7,7 @@ const searchHelper = require("../../helpers/search");
 const { ORDER_STATUSES } = require("../../helpers/orderStatus");
 const systemConfig = require("../../config/system");
 const inventoryHelper = require("../../helpers/inventory");
+const couponHelper = require("../../helpers/coupons");
 
 const validStatuses = ORDER_STATUSES.map(item => item.value);
 
@@ -23,7 +24,7 @@ const decorateOrder = order => ({
     code: order._id.toString().slice(-10).toUpperCase(),
     status: order.status || "pending",
     totalQuantity: order.products.reduce((total, item) => total + (Number(item.quantity) || 0), 0),
-    totalPrice: calculateOrderTotal(order.products)
+    totalPrice: Number(order.subtotal) > 0 || (order.appliedCoupons && order.appliedCoupons.length > 0) ? Number(order.totalPrice) : calculateOrderTotal(order.products)
 });
 
 const can = (res, permission) => res.locals.role.permissions.includes(permission);
@@ -100,6 +101,10 @@ module.exports.changeStatus = async (req, res) => {
         await inventoryHelper.restoreProducts(previousOrder.products);
         await Order.updateOne({ _id: previousOrder._id }, { $set: { inventoryRestored: true } });
     }
+    if (req.params.status === "cancelled" && previousOrder.status !== "cancelled") {
+        await couponHelper.restoreOrderCoupons(previousOrder);
+        if (previousOrder.appliedCoupons && previousOrder.appliedCoupons.length) await Order.updateOne({ _id: previousOrder._id }, { $set: { couponsRestored: true } });
+    }
 
     req.flash("success", "Cập nhật trạng thái đơn hàng thành công.");
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/orders`);
@@ -126,6 +131,10 @@ module.exports.changeMulti = async (req, res) => {
             if (req.body.type === "cancelled" && order.inventoryReserved && !order.inventoryRestored) {
                 await inventoryHelper.restoreProducts(order.products);
                 order.inventoryRestored = true;
+            }
+            if (req.body.type === "cancelled") {
+                await couponHelper.restoreOrderCoupons(order);
+                if (order.appliedCoupons && order.appliedCoupons.length) order.couponsRestored = true;
             }
             await order.save();
         }

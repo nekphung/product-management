@@ -42,6 +42,12 @@ block main
                   strong.admin-order-product__subtotal #{item.totalPrice.toLocaleString("vi-VN")}đ
 
           .admin-order-detail__summary
+            if order.subtotal > 0
+              span Tạm tính: #{Number(order.subtotal).toLocaleString("vi-VN")}đ · Phí vận chuyển: #{Number(order.shippingFee || 0).toLocaleString("vi-VN")}đ
+              if order.discountAmount - Number(order.shippingDiscount || 0) > 0
+                span Giảm giá đơn hàng: -#{Number(order.discountAmount - Number(order.shippingDiscount || 0)).toLocaleString("vi-VN")}đ
+              if Number(order.shippingDiscount || 0) > 0
+                span Giảm phí vận chuyển: -#{Number(order.shippingDiscount).toLocaleString("vi-VN")}đ
             span Tổng thanh toán
             strong #{order.totalPrice.toLocaleString("vi-VN")}đ
 
@@ -50,6 +56,10 @@ block main
             p.admin-order-info-card__eyebrow Người nhận
             h2 #{order.userInfo.fullName || "Chưa cập nhật"}
             dl
+              if order.shippingMethod && order.shippingMethod.name
+                div
+                  dt Vận chuyển
+                  dd #{order.shippingMethod.name} · #{order.shippingMethod.eta}
               div
                 dt Số điện thoại
                 dd #{order.userInfo.phone || "Chưa cập nhật"}

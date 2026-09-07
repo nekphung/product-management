@@ -1,0 +1,32 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+  .admin-page-heading
+    div
+      p.admin-page-eyebrow Khuyến mãi
+      h1 #{pageTitle}
+  .card
+    .card-body
+      form(method="POST" action=collection ? `${prefixAdmin}/coupons/collections/edit/${collection._id}?_method=PATCH` : `${prefixAdmin}/coupons/collections/create`)
+        .form-group
+          label(for="title") Tên collection *
+          input#title.form-control(type="text" name="title" required value=collection ? collection.title : "" placeholder="Ví dụ: Sale 9.9")
+        .form-group
+          label(for="description") Mô tả
+          textarea#description.form-control(name="description" rows="3") #{collection ? collection.description : ""}
+        .form-row
+          .form-group.col-md-5
+            label(for="startAt") Bắt đầu *
+            input#startAt.form-control(type="datetime-local" name="startAt" required value=collection ? moment(collection.startAt).format("YYYY-MM-DDTHH:mm") : "")
+          .form-group.col-md-5
+            label(for="endAt") Kết thúc *
+            input#endAt.form-control(type="datetime-local" name="endAt" required value=collection ? moment(collection.endAt).format("YYYY-MM-DDTHH:mm") : "")
+          .form-group.col-md-2
+            label(for="status") Trạng thái
+            select#status.form-control(name="status")
+              option(value="active" selected=!collection || collection.status === "active") Đang bật
+              option(value="inactive" selected=collection && collection.status === "inactive") Đã tắt
+        button.btn.btn-primary(type="submit") #{collection ? "Lưu thay đổi" : "Tạo collection"}
+        a.btn.btn-light.ml-2(href=`${prefixAdmin}/coupons`) Hủy

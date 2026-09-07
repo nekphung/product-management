@@ -1,6 +1,7 @@
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const productsHelper = require("../../helpers/products");
+const UserCoupon = require("../../models/user-coupon.model");
 
 // [GET] /
 module.exports.index = async (req, res) => {
@@ -29,9 +30,12 @@ module.exports.index = async (req, res) => {
 
     cart.totalPrice = cart.products.reduce((sum, item) => sum + item.totalPrice, 0);
 
+    const walletCoupons = res.locals.user ? await UserCoupon.find({ user_id: res.locals.user.id }).select("quantity").lean() : [];
+    const voucherCount = walletCoupons.reduce((sum, item) => sum + Number(item.quantity == null ? 1 : item.quantity), 0);
     res.render("client/pages/cart/index", {
         pageTitle: "Giỏ hàng",
-        cart: cart
+        cart: cart,
+        voucherCount
     });
 }
 

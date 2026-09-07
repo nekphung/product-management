@@ -1,0 +1,84 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-error(5000)
+  .admin-page-heading
+    div
+      p.admin-page-eyebrow Khuyến mãi
+      h1 #{pageTitle}
+  .card
+    .card-body
+      form(method="POST" action=coupon ? `${prefixAdmin}/coupons/edit/${coupon._id}?_method=PATCH` : `${prefixAdmin}/coupons/create`)
+        .form-row
+          .form-group.col-md-4
+            label Mã voucher *
+            input.form-control(type="text" name="code" required value=coupon ? coupon.code : "" placeholder="SALE100K")
+          .form-group.col-md-4
+            label Tên hiển thị *
+            input.form-control(type="text" name="title" required value=coupon ? coupon.title : "")
+          .form-group.col-md-4
+            label Collection *
+            select.form-control(name="collection_id" required)
+              each item in collections
+                option(value=item._id selected=coupon && coupon.collection_id === String(item._id)) #{item.title}
+        .form-row
+          .form-group.col-md-8
+            label Mô tả
+            textarea.form-control(name="description" rows="2") #{coupon ? coupon.description : ""}
+          .form-group.col-md-4
+            label Loại voucher
+            select.form-control(name="couponType")
+              option(value="order" selected=!coupon || coupon.couponType !== "shipping") Giảm giá đơn hàng
+              option(value="shipping" selected=coupon && coupon.couponType === "shipping") Giảm phí vận chuyển
+        .form-row
+          .form-group.col-md-3
+            label Kiểu giảm
+            select.form-control(name="discountType")
+              option(value="percentage" selected=!coupon || coupon.discountType === "percentage") Phần trăm
+              option(value="fixed" selected=coupon && coupon.discountType === "fixed") Số tiền
+          .form-group.col-md-3
+            label Giá trị giảm *
+            input.form-control(type="number" name="discountValue" min="1" required value=coupon ? coupon.discountValue : "")
+          .form-group.col-md-3
+            label Giảm tối đa (0 = không giới hạn)
+            input.form-control(type="number" name="maxDiscount" min="0" value=coupon ? coupon.maxDiscount : 0)
+          .form-group.col-md-3
+            label Giá trị đơn tối thiểu
+            input.form-control(type="number" name="minOrderValue" min="0" value=coupon ? coupon.minOrderValue : 0)
+        .form-row
+          .form-group.col-md-4
+            label Phạm vi áp dụng
+            select.form-control(name="scope")
+              option(value="order" selected=!coupon || coupon.scope === "order") Toàn đơn hàng
+              option(value="products" selected=coupon && coupon.scope === "products") Sản phẩm chỉ định
+              option(value="categories" selected=coupon && coupon.scope === "categories") Danh mục chỉ định
+          .form-group.col-md-4
+            label Sản phẩm áp dụng (giữ Ctrl để chọn nhiều)
+            select.form-control(name="productIds" multiple size="5")
+              each item in products
+                option(value=item._id selected=coupon && coupon.productIds.includes(String(item._id))) #{item.title}
+          .form-group.col-md-4
+            label Danh mục áp dụng
+            select.form-control(name="categoryIds" multiple size="5")
+              each item in categories
+                option(value=item._id selected=coupon && coupon.categoryIds.includes(String(item._id))) #{item.title}
+        .form-row
+          .form-group.col-md-3
+            label Số lượng phát hành (0 = không giới hạn)
+            input.form-control(type="number" name="usageLimit" min="0" value=coupon ? coupon.usageLimit : 0)
+          .form-group.col-md-3
+            label Số lượng tối đa mỗi khách
+            input.form-control(type="number" name="perUserLimit" min="1" value=coupon ? coupon.perUserLimit : 1)
+          .form-group.col-md-2
+            label Cho phép cộng dồn
+            select.form-control(name="stackable")
+              option(value="false" selected=!coupon || !coupon.stackable) Không
+              option(value="true" selected=coupon && coupon.stackable) Có
+          .form-group.col-md-2
+            label Trạng thái
+            select.form-control(name="status")
+              option(value="active" selected=!coupon || coupon.status === "active") Đang bật
+              option(value="inactive" selected=coupon && coupon.status === "inactive") Đã tắt
+        button.btn.btn-primary(type="submit") #{coupon ? "Lưu thay đổi" : "Tạo voucher"}
+        a.btn.btn-light.ml-2(href=`${prefixAdmin}/coupons`) Hủy

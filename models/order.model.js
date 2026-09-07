@@ -18,11 +18,25 @@ const orderSchema = new mongoose.Schema(
         products: [
             {
                 product_id: String,
+                product_category_id: String,
                 price: Number,
                 discountPercentage: Number,
                 quantity: Number
             }
         ],
+        subtotal: { type: Number, default: 0 },
+        shippingFee: { type: Number, default: 0 },
+        shippingDiscount: { type: Number, default: 0 },
+        shippingMethod: {
+            id: String,
+            name: String,
+            provider: String,
+            eta: String
+        },
+        discountAmount: { type: Number, default: 0 },
+        totalPrice: { type: Number, default: 0 },
+        appliedCoupons: [{ coupon_id: String, code: String, title: String, discountAmount: Number }],
+        couponsRestored: { type: Boolean, default: false },
         status: {
             type: String,
             enum: ["pending", "confirmed", "shipping", "completed", "cancelled"],

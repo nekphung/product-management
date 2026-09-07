@@ -86,11 +86,17 @@ block main
                   strong(data-cart-subtotal) #{cart.totalPrice.toLocaleString('vi-VN')}đ
                 .cart-summary-card__line
                   span Phí giao hàng
-                  strong.cart-summary-card__free Miễn phí
+                  strong Tính ở bước thanh toán
+                .cart-summary-card__line.cart-summary-card__voucher
+                  span Voucher của bạn
+                  if user
+                    a(href="/coupons/wallet") #{voucherCount} voucher
+                  else
+                    a(href="/user/login") Đăng nhập để xem
               .cart-summary-card__total
                 span Tổng thanh toán
                 strong(data-cart-total) #{cart.totalPrice.toLocaleString('vi-VN')}đ
-              button.btn.cart-summary-card__checkout(type="button" data-cart-checkout data-toggle="modal" data-target="#checkoutModal")
+              button.btn.cart-summary-card__checkout(type="button" data-cart-checkout)
                 span Tiến hành đặt hàng
                 strong →
               p.cart-summary-card__note Bạn có thể kiểm tra lại địa chỉ và phương thức thanh toán ở bước tiếp theo.

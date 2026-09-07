@@ -1,0 +1,27 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(4000)
+  main.voucher-page
+    .container
+      header.voucher-heading
+        div
+          p Tài khoản của bạn
+          h1 Voucher của tôi
+          span #{validVoucherCount} voucher còn hiệu lực và chưa sử dụng.
+        a.btn.btn-outline-dark(href="/coupons") Thu thập thêm
+      .voucher-grid
+        each coupon in coupons
+          article.voucher-card(class=(coupon.couponType === "shipping" ? "voucher-card--shipping " : "voucher-card--order ") + (coupon.expired ? "voucher-card--disabled" : ""))
+            .voucher-card__value
+              strong #{coupon.discountType === "percentage" ? coupon.discountValue + "%" : Number(coupon.discountValue).toLocaleString("vi-VN") + "đ"}
+              span #{coupon.couponType === "shipping" ? "VẬN CHUYỂN" : "GIẢM GIÁ"}
+            .voucher-card__content
+              .voucher-card__code-row
+                code #{coupon.code}
+                strong.voucher-quantity ×#{coupon.walletQuantity}
+              h3 #{coupon.title}
+              p #{coupon.expired ? "Đã hết hạn" : `${coupon.walletQuantity} voucher chưa sử dụng`}
+              if coupon.collection
+                small Hạn dùng #{moment(coupon.collection.endAt).format("DD/MM/YYYY HH:mm")}

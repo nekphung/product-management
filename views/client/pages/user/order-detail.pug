@@ -74,7 +74,19 @@ block main
                 div
                   dt Thanh toán
                   dd #{order.userInfo.paymentMethod == "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng"}
+                if order.shippingMethod && order.shippingMethod.name
+                  div
+                    dt Vận chuyển
+                    dd #{order.shippingMethod.name} · #{order.shippingMethod.eta}
             footer.user-order-detail__footer
+              if order.subtotal > 0
+                span Tạm tính: #{parseInt(order.subtotal).toLocaleString('vi-VN')}đ
+                span Phí vận chuyển: #{parseInt(order.shippingFee || 0).toLocaleString('vi-VN')}đ
+              if order.discountAmount > 0
+                if order.discountAmount - Number(order.shippingDiscount || 0) > 0
+                  span Voucher giảm giá: -#{parseInt(order.discountAmount - Number(order.shippingDiscount || 0)).toLocaleString('vi-VN')}đ
+                if Number(order.shippingDiscount || 0) > 0
+                  span Voucher vận chuyển: -#{parseInt(order.shippingDiscount).toLocaleString('vi-VN')}đ
               span Tổng thanh toán
               strong #{parseInt(order.totalPrice || 0).toLocaleString('vi-VN')}đ
 
