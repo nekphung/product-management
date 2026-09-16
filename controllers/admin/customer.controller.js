@@ -17,7 +17,6 @@ const orderTotal = products => (products || []).reduce((total, item) => {
 }, 0);
 
 module.exports.index = async (req, res) => {
-    if (!can(res, "customers_view")) return res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
     const find = { deleted: false };
     const objectSearch = searchHelper(req.query);
 
@@ -64,7 +63,6 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.detail = async (req, res) => {
-    if (!can(res, "customers_view")) return res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
     if (!mongoose.isValidObjectId(req.params.id)) return res.redirect(customerPath);
     const customer = await User.findOne({ _id: req.params.id, deleted: false }).select("-password -tokenUser").lean();
     if (!customer) return res.redirect(customerPath);
@@ -80,10 +78,10 @@ module.exports.detail = async (req, res) => {
     res.render("admin/pages/customers/detail", { pageTitle: customer.fullName || "Chi tiết khách hàng", customer, orders });
 };
 
-module.exports.edit = async (req, res) => {
+modmule.exports.edit = async (req, res) => {
     if (!can(res, "customers_edit") || !mongoose.isValidObjectId(req.params.id)) return res.redirect(customerPath);
     const customer = await User.findOne({ _id: req.params.id, deleted: false }).select("-password -tokenUser").lean();
-    if (!customer) return res.redirect(customerPath);
+    if (!customer) return res.redirect(custoerPath);
     res.render("admin/pages/customers/edit", { pageTitle: "Chỉnh sửa khách hàng", customer });
 };
 

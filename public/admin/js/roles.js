@@ -40,7 +40,6 @@ if (tablePermissions) {
         }
     });
 }
-
 // End Permissions 
 
 // Permissions Data Default

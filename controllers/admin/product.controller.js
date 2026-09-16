@@ -1,7 +1,6 @@
 const Product = require("../../models/product.model");
 const ProductCategory = require("../../models/products-category.model");
 const Account = require("../../models/account.model");
-const StockWaitlist = require("../../models/stock-waitlist.model");
 
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search")
@@ -310,6 +309,10 @@ module.exports.editPatch = async (req, res) => {
     req.body.stock = parseInt(req.body.stock);
     req.body.position = parseInt(req.body.position);
 
+    if (req.file) {
+        req.body.thumbnail = `/uploads/${req.file.filename}`;
+    }
+
     try {
         const updatedBy = {
             account_id: res.locals.user.id,
@@ -342,22 +345,10 @@ module.exports.detail = async (req, res) => {
 
         const product = await Product.findOne(find);
 
-        const permissions = res.locals.role?.permissions || [];
-        const canViewWaitlist = permissions.includes("roles_permissions")
-            || permissions.includes("stock-waitlist_view");
-        const waitlist = canViewWaitlist
-            ? await StockWaitlist.find({
-                product_id: product.id,
-                status: "waiting"
-            }).sort({ createdAt: -1 }).lean()
-            : [];
-
         // console.log(product);
         res.render("admin/pages/products/detail", {
             pageTitle: product.title,
-            product: product,
-            waitlist,
-            canViewWaitlist
+            product: product
         });
     } catch (error) {
         res.redirect(`${systemConfig.prefixAdmin}/products`);
