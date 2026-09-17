@@ -78,10 +78,10 @@ module.exports.detail = async (req, res) => {
     res.render("admin/pages/customers/detail", { pageTitle: customer.fullName || "Chi tiết khách hàng", customer, orders });
 };
 
-modmule.exports.edit = async (req, res) => {
+module.exports.edit = async (req, res) => {
     if (!can(res, "customers_edit") || !mongoose.isValidObjectId(req.params.id)) return res.redirect(customerPath);
     const customer = await User.findOne({ _id: req.params.id, deleted: false }).select("-password -tokenUser").lean();
-    if (!customer) return res.redirect(custoerPath);
+    if (!customer) return res.redirect(customerPath);
     res.render("admin/pages/customers/edit", { pageTitle: "Chỉnh sửa khách hàng", customer });
 };
 
